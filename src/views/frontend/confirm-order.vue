@@ -1,5 +1,5 @@
 <script setup>
-    import frontend_navbar from '../../components/frontend/navbar.vue';
+import frontend_navbar from '../../components/frontend/navbar.vue';
 </script>
 
 <template>
@@ -47,13 +47,28 @@
                                 <!--ที่อยู่จัดส่ง-->
                                 <div class="mb-8">
                                     <p class="mb-2 text-xl font-semibold">ที่อยู่จัดส่ง</p>
-                                    <div class="p-4 text-md text-gray-600 rounded-lg bg-gray-50 shadow-md">
+                                    <div class="p-4 lg:flex gap-6 text-md text-gray-600 rounded-lg bg-gray-50 shadow-md">
                                         <label class="flex items-center space-x-2">
-                                            <input type="radio" name="deliveryOption" value="asiaMart"
+                                            <input type="radio" name="deliveryOption" value="0"
                                                 class="h-4 w-4 text-gray-600 border-gray-300 focus:ring-gray-500 cursor-pointer">
                                             <span class="text-gray-700">รับที่ Asia Mart</span>
                                         </label>
-                                        <div class="flex justify-between pt-4 items-center">
+                                        <label class="flex items-center space-x-2 pt-4 lg:pt-0">
+                                            <input type="radio" name="deliveryOption" value="1"
+                                                class="h-4 w-4 text-gray-600 border-gray-300 focus:ring-gray-500 cursor-pointer">
+                                            <span class="text-gray-700">รับที่สาขาบางมด</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 pt-4 lg:pt-0">
+                                            <input type="radio" name="deliveryOption" value="2"
+                                                class="h-4 w-4 text-gray-600 border-gray-300 focus:ring-gray-500 cursor-pointer">
+                                            <span class="text-gray-700">รับที่สาขาบ้านเเพ้ว</span>
+                                        </label>
+                                        <label class="flex items-center space-x-2 pt-4 lg:pt-0">
+                                            <input type="radio" name="deliveryOption" value="3"
+                                                class="h-4 w-4 text-gray-600 border-gray-300 focus:ring-gray-500 cursor-pointer">
+                                            <span class="text-gray-700">รับที่สาขามหาชัย</span>
+                                        </label>
+                                        <!-- <div class="flex justify-between pt-4 items-center">
                                             <label class="flex items-center space-x-2">
                                                 <input type="radio" name="deliveryOption" value="address"
                                                     class="h-4 w-4 text-gray-600 border-gray-300 focus:ring-gray-500 cursor-pointer">
@@ -65,7 +80,7 @@
                                         </div>
                                         <textarea rows="4"
                                             class="block p-2 w-full text-md text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:border-gray-300 mt-2"
-                                            placeholder="ใส่ที่อยู่ในการจัดส่ง"></textarea>
+                                            placeholder="ใส่ที่อยู่ในการจัดส่ง"></textarea> -->
                                     </div>
                                 </div>
                                 <!--รายการสินค้า-->

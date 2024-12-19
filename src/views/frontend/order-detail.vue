@@ -1,5 +1,5 @@
 <script setup>
-    import frontend_navbar from '../../components/frontend/navbar.vue';
+import frontend_navbar from '../../components/frontend/navbar.vue';
 </script>
 
 <template>
@@ -59,11 +59,12 @@
                                 </div>
                                 <div class="mb-5">
 
-                                    <span class="text-gray-700">ที่อยู่ในการจัดส่ง</span> , <span
-                                        class="text-gray-700">รับที่ Asia Mart</span>
-                                    <textarea rows="4"
-                                        class="block p-2 w-full text-md text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:border-gray-300 mt-2 text-orange-500"
-                                        placeholder="ใส่ที่อยู่ในการจัดส่ง" disabled>xxxx xxxxx xxxxxx</textarea>
+                                    <span class="text-gray-700">ที่อยู่ในการจัดส่ง</span>
+                                    <label class="flex items-center space-x-2 mt-4">
+                                        <input checked type="radio" name="deliveryOption" value="0"
+                                            class="h-4 w-4 text-gray-600 border-gray-300 focus:ring-gray-500 cursor-pointer">
+                                        <span class="text-gray-700">รับที่ Asia Mart</span>
+                                    </label>
                                 </div>
 
                             </div>
