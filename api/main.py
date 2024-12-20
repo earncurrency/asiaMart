@@ -36,6 +36,7 @@ class Member(Base):
     status = Column(String(15))
     image = Column(String(255))
 
+
 # ฟังก์ชั่นในการดึงข้อมูลจากตาราง tb_member
 @app.get("/members")
 def get_members():
