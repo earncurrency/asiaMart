@@ -1,17 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import os
-from database import connection, get_db
+from database import SessionLocal, engine
 
-# import mysql.connector
-# def get_db_connection():
-#     cnx = mysql.connector.connect(
-#         host = "localhost",
-#         user = "root",
-#         password = "150744",
-#         database = "db_crm",
-#     )
-#     return cnx
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+# from sqlalchemy.orm import sessionmaker
+# from sqlalchemy.future import select
 
 app = FastAPI()
 
@@ -27,22 +21,33 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get('/members')
-def get_member():
-    sql = """
-        select * from tb_employee limit 10
-    """
-    result = connection.execute(sql).fetchall()
+# กำหนด Base สำหรับการสร้าง Model
+Base = declarative_base()
+# สร้างตารางในฐานข้อมูล (หากยังไม่มี)
+Base.metadata.create_all(bind=engine)
 
-    sql = """
-        select count(id) as total from tb_employee
-    """
-    total = connection.execute(sql).fetchone()
+# สร้าง Model สำหรับตาราง tb_member
+class Member(Base):
+    __tablename__ = "tb_member"
 
-    return {'total':total, 'rows':result}
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(50))
+    phone = Column(String(15))
+    status = Column(String(15))
+    image = Column(String(255))
 
-
-@app.get('/')
-def read_root():
-    return {"msg" : "test"}
-
+# ฟังก์ชั่นในการดึงข้อมูลจากตาราง tb_member
+@app.get("/members")
+def get_members():
+    # สร้าง session
+    session = SessionLocal()
+    try:
+        # ดึงข้อมูลทั้งหมดจากตาราง tb_member
+        members = session.query(Member).all()
+        # คืนค่าผลลัพธ์ในรูปแบบ JSON
+        return {
+            "rows": [{"id": member.id, "name": member.name, "phone": member.phone, "status": member.status, "image": member.image} for member in members],
+            "total":10
+        }
+    finally:
+        session.close()
