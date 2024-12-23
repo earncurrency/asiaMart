@@ -259,7 +259,7 @@ import axios from 'axios'
 export default {
     data() {
         return {
-            apiUrl: 'http://127.0.0.1:8000',
+            apiUrl: 'http://127.0.0.1:8000/members',
             members: [],
 
             isFocus: false,
@@ -267,7 +267,7 @@ export default {
             nameMember: '',
             phoneMember: '',
             statusMember: '',
-            // addressMember: '',
+            imageMember: '',
 
             formTable: true,
             formAdd: false,
@@ -303,7 +303,7 @@ export default {
 
         async getListMember() {
 
-            await axios.get(this.apiUrl + '/members')
+            await axios.get(this.apiUrl)
                 .then(response => {
                     const data = response.data;
                     this.members = data.rows;
