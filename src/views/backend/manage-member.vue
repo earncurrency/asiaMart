@@ -1,6 +1,8 @@
 <script setup>
 import backend_navbar from '@/components/backend/navbar.vue';
 import Modal from '@/components/backend/modal.vue';
+import axios from 'axios'
+
 </script>
 
 <template class="">
@@ -134,7 +136,7 @@ import Modal from '@/components/backend/modal.vue';
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr @click="showFormEdit"
+                                    <tr v-for="(member, index) in members" :key="index" @click="showFormEdit"
                                         class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 cursor-pointer hover:bg-gray-100 transition">
                                         <th scope="row" class="px-6 py-4">
                                             <div class="w-20 h-20">
@@ -144,65 +146,17 @@ import Modal from '@/components/backend/modal.vue';
                                         </th>
 
                                         <td class="px-6 py-4 whitespace-nowrap font-semibold">
-                                            1670525
+                                            {{ member.code }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            เจษฎากร หวานสนิท
+                                            {{ member.name }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            0xx xxx xxxx
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span
-                                                class="font-semibold text-green-500 p-1 bg-green-100 rounded-md">ใช้งาน</span>
-                                        </td>
-
-                                    </tr>
-                                    <tr @click="showFormEdit"
-                                        class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 cursor-pointer hover:bg-gray-100 transition">
-                                        <th scope="row" class="px-6 py-4">
-                                            <div class="w-20 h-20">
-                                                <img class="w-full h-full rounded-full object-cover ring-4 ring-gray-300 shadow-md"
-                                                    src="../../assets/image/system/dogcoloruser.jpg">
-                                            </div>
-                                        </th>
-
-                                        <td class="px-6 py-4 whitespace-nowrap font-semibold">
-                                            1670580
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            สมหมา จนจัด
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            0xx xxx xxxx
+                                            {{ member.phone }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span
-                                                class="font-semibold text-green-500 p-1 bg-green-100 rounded-md">ใช้งาน</span>
-                                        </td>
-
-                                    </tr>
-                                    <tr @click="showFormEdit"
-                                        class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 cursor-pointer hover:bg-gray-100 transition">
-                                        <th scope="row" class="px-6 py-4">
-                                            <div class="w-20 h-20">
-                                                <img class="w-full h-full rounded-full object-cover ring-4 ring-gray-300 shadow-md"
-                                                    src="../../assets/image/system/catuser.jpg">
-                                            </div>
-                                        </th>
-
-                                        <td class="px-6 py-4 whitespace-nowrap font-semibold">
-                                            1670580
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            เเมวเป้า ปลาทูนึ่ง
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            0xx xxx xxxx
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span
-                                                class="font-semibold text-green-500 p-1 bg-green-100 rounded-md">ใช้งาน</span>
+                                                class="font-semibold text-green-500 p-1 bg-green-100 rounded-md">{{ member.status }}</span>
                                         </td>
 
                                     </tr>
@@ -305,6 +259,9 @@ import Modal from '@/components/backend/modal.vue';
 export default {
     data() {
         return {
+            apiUrl: 'http://127.0.0.1:8000',
+            members: [],
+
             isFocus: false,
             codeMember: '',
             nameMember: '',
@@ -321,6 +278,8 @@ export default {
         };
     },
     mounted() {
+        this.getListMember();
+
         document.addEventListener('click', this.closeDropdownStatus);
         document.addEventListener('click', this.closeDropdown);
 
@@ -341,18 +300,20 @@ export default {
             this.formAdd = false;
             this.formEdit = true;
         },
-        // btnEdit() {
-        //     if (!this.statusMember) {
-        //         this.isFocus = true;
-        //         this.$refs.inputStatusMember.focus();
-        //     } else {
-        //         this.$refs.modal.showAlertModal({
-        //             swlIcon: 'success',
-        //             swlTitle: 'สำเร็จ',
-        //             swlText: 'เเก้ไขข้อมูลลูกค้าสำเร็จ!',
-        //         });
-        //     }
-        // },
+
+        async getListMember() {
+
+            await axios.get(this.apiUrl + '/members')
+                .then(response => {
+                    const data = response.data;
+                    this.members = data.rows;
+                    console.log(this.members)
+
+                })
+                .catch(error => {
+                    console.error('There was an error fetching the data:', error);
+                });
+        },
 
         DropdownStatus(statusName) {
             this.pageSizeOpen = false;
