@@ -259,7 +259,7 @@ import axios from 'axios'
 export default {
     data() {
         return {
-            apiUrl: 'http://127.0.0.1:8000/members',
+            apiUrl: 'http://127.0.0.1:8000/',
             members: [],
 
             isFocus: false,
@@ -301,9 +301,10 @@ export default {
             this.formEdit = true;
         },
 
+        //เเสดงข้อมูลสมาชิกบนตาราง
         async getListMember() {
 
-            await axios.get(this.apiUrl)
+            await axios.get(this.apiUrl + 'members')
                 .then(response => {
                     const data = response.data;
                     this.members = data.rows;

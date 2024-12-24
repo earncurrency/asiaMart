@@ -1,11 +1,12 @@
 <script setup>
 import backend_navbar from '@/components/backend/navbar.vue';
 import Modal from '@/components/backend/modal.vue';
+import axios from 'axios'
 </script>
 
 <template class="">
 
-    <backend_navbar  @showFormTable="showFormTable"/>
+    <backend_navbar @showFormTable="showFormTable" />
     <Modal ref="modal" @showFormTable="showFormTable" />
 
     <div class="p-4 lg:pr-24 lg:pl-24 pt-6 sm:ml-64">
@@ -153,30 +154,30 @@ import Modal from '@/components/backend/modal.vue';
                                 </thead>
 
                                 <tbody>
-                                    <tr @click="showFormEdit"
+                                    <tr v-for="(product, index) in products" :key="index" @click="showFormEdit"
                                         class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 cursor-pointer hover:bg-gray-100 transition">
                                         <th scope="row" class="px-6 py-4">
-                                            <div class="w-24 h-14 lg:w-36 lg:h-24">
+                                            <div class="w-24 h-24 lg:w-24 lg:h-24 ">
                                                 <img class="w-full h-full rounded-md object-cover ring-4 ring-gray-300 shadow-md"
-                                                    src="../../assets/image/product/food1.jpg">
+                                                    src="../../assets/image/product/product.png">
                                             </div>
                                         </th>
 
                                         <td class="px-6 py-4 whitespace-nowrap font-semibold">
-                                            78945623
+                                            {{ product.code }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            สินค้าทดสอบ 01
+                                            {{ product.name }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            145 บาท
+                                            {{ product.cost }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            150 บาท
+                                            {{ product.sell }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span
-                                                class="font-semibold text-green-500 p-1 bg-green-100 rounded-md">เเสดง</span>
+                                                class="font-semibold text-green-500 p-1 bg-green-100 rounded-md">{{ product.status }}</span>
                                         </td>
                                         <td class="px-6 py-4">
                                             <button @click.stop="btnDelete"
@@ -185,131 +186,7 @@ import Modal from '@/components/backend/modal.vue';
                                         </td>
 
                                     </tr>
-                                    <tr @click="showFormEdit"
-                                        class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 cursor-pointer hover:bg-gray-100 transition">
-                                        <th scope="row" class="px-6 py-4">
-                                            <div class="w-24 h-14 lg:w-36 lg:h-24">
-                                                <img class="w-full h-full rounded-md object-cover ring-4 ring-gray-300 shadow-md"
-                                                    src="../../assets/image/product/food2.jpg">
-                                            </div>
-                                        </th>
-
-                                        <td class="px-6 py-4 whitespace-nowrap font-semibold">
-                                            78945623
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            สินค้าทดสอบ 02
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            145 บาท
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            150 บาท
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span
-                                                class="font-semibold text-green-500 p-1 bg-green-100 rounded-md">เเสดง</span>
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <button @click.stop="btnDelete"
-                                                class="bg-red-500 text-white px-4 py-2 rounded-md">
-                                                <i class="fa-solid fa-trash-can"></i></button>
-                                        </td>
-
-                                    </tr>
-                                    <tr @click="showFormEdit"
-                                        class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 cursor-pointer hover:bg-gray-100 transition">
-                                        <th scope="row" class="px-6 py-4">
-                                            <div class="w-24 h-14 lg:w-36 lg:h-24">
-                                                <img class="w-full h-full rounded-md object-cover ring-4 ring-gray-300 shadow-md"
-                                                    src="../../assets/image/product/food3.jpg">
-                                            </div>
-                                        </th>
-                                        <td class="px-6 py-4 whitespace-nowrap font-semibold">
-                                            78945623
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            สินค้าทดสอบ 03
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            145 บาท
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            150 บาท
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span
-                                                class="font-semibold text-green-500 p-1 bg-green-100 rounded-md">เเสดง</span>
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <button @click.stop="btnDelete"
-                                                class="bg-red-500 text-white px-4 py-2 rounded-md">
-                                                <i class="fa-solid fa-trash-can"></i></button>
-                                        </td>
-                                    </tr>
-                                    <tr @click="showFormEdit"
-                                        class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 cursor-pointer hover:bg-gray-100 transition">
-                                        <th scope="row" class="px-6 py-4">
-                                            <div class="w-24 h-14 lg:w-36 lg:h-24">
-                                                <img class="w-full h-full rounded-md object-cover ring-4 ring-gray-300 shadow-md"
-                                                    src="../../assets/image/product/food4.jpg">
-                                            </div>
-                                        </th>
-
-                                        <td class="px-6 py-4 whitespace-nowrap font-semibold">
-                                            78945623
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            สินค้าทดสอบ 04
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            145 บาท
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            150 บาท
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span
-                                                class="font-semibold text-green-500 p-1 bg-green-100 rounded-md">เเสดง</span>
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <button @click.stop="btnDelete"
-                                                class="bg-red-500 text-white px-4 py-2 rounded-md">
-                                                <i class="fa-solid fa-trash-can"></i></button>
-                                        </td>
-                                    </tr>
-                                    <tr @click="showFormEdit"
-                                        class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 cursor-pointer hover:bg-gray-100 transition">
-                                        <th scope="row" class="px-6 py-4">
-                                            <div class="w-24 h-14 lg:w-36 lg:h-24">
-                                                <img class="w-full h-full rounded-md object-cover ring-4 ring-gray-300 shadow-md"
-                                                    src="../../assets/image/product/food5.jpg">
-                                            </div>
-                                        </th>
-
-                                        <td class="px-6 py-4 whitespace-nowrap font-semibold">
-                                            78945623
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            สินค้าทดสอบ 05
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            145 บาท
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            150 บาท
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span
-                                                class="font-semibold text-red-500 p-1 bg-red-100 rounded-md">ไม่เเสดง</span>
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <button @click.stop="btnDelete"
-                                                class="bg-red-500 text-white px-4 py-2 rounded-md">
-                                                <i class="fa-solid fa-trash-can"></i></button>
-                                        </td>
-                                    </tr>
-
+    
                                 </tbody>
                             </table>
                         </div>
@@ -572,8 +449,11 @@ import Modal from '@/components/backend/modal.vue';
 export default {
     data() {
         return {
+            apiUrl: 'http://127.0.0.1:8000/',
+            products: [],
 
             isFocus: false,
+
             codeProduct: '',
             nameProduct: '',
             costPriceProduct: '',
@@ -593,6 +473,9 @@ export default {
         };
     },
     mounted() {
+        this.getListProduct();
+
+
         document.addEventListener('click', this.closeDropdownStatus);
         document.addEventListener('click', this.closeDropdown);
 
@@ -623,6 +506,23 @@ export default {
             this.formEdit = true;
             this.nameProductType = '';
         },
+
+        //เเสดงข้อมูลสมาชิกบนตาราง
+        async getListProduct() {
+
+            await axios.get(this.apiUrl + 'products')
+                .then(response => {
+                    const data = response.data;
+                    this.products = data.rows;
+                    console.log(this.products)
+
+                })
+                .catch(error => {
+                    console.error('There was an error fetching the data:', error);
+                });
+        },
+
+
         btnAdd() {
             if (!this.nameProduct) {
                 this.isFocus = true;
@@ -698,7 +598,6 @@ export default {
         removeImage(imageIndex) {
             this.previewImages.splice(imageIndex, 1);
         },
-
         btnDelete() {
             this.$refs.modal.showDeleteModal({
                 swlIcon: 'warning',
@@ -706,7 +605,6 @@ export default {
                 swlText: 'คุณต้องการลบสินค้านี้หรือไม่!',
             })
         },
-
 
         DropdownStatus(statusName) {
             this.pageSizeOpen = false;

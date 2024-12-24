@@ -1,7 +1,9 @@
 # main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from router import member  # import member router
+
+from router import member
+from router import product
 
 # สร้างแอปพลิเคชัน FastAPI
 app = FastAPI()
@@ -23,3 +25,4 @@ app.add_middleware(
 
 # รวม Router สำหรับสมาชิก
 app.include_router(member.router)
+app.include_router(product.router)
