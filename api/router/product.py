@@ -3,8 +3,9 @@ from fastapi import APIRouter, HTTPException
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
-from database import SessionLocal, engine
 from sqlalchemy.ext.declarative import declarative_base
+
+from database import SessionLocal, engine
 
 # สร้าง base สำหรับการสร้าง Modal
 Base = declarative_base()
