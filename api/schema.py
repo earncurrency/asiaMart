@@ -15,3 +15,16 @@ class MemberSchema(Base):
     phone = Column(String(15))
     status = Column(String(15))
     image = Column(String(255))
+
+#สร้าง โครงสร้างของตาราง tb_product
+class ProductSchema(Base):
+
+    __tablename__ = "tb_product"
+
+    id = Column(Integer, primary_key=True, index=True)
+    code = Column(String(10))
+    name = Column(String(50))
+    cost = Column(String(10))
+    sell = Column(String(10))
+    status = Column(String(15))
+    

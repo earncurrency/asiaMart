@@ -1,41 +1,13 @@
 # router/product.py
 from fastapi import APIRouter, HTTPException
-from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
-from sqlalchemy.ext.declarative import declarative_base
 
 from database import SessionLocal, engine
-
-# สร้าง base สำหรับการสร้าง Modal
-Base = declarative_base()
-
-#สร้าง โครงสร้างของตาราง tb_product
-class SchemaProduct(Base):
-
-    __tablename__ = "tb_product"
-
-    id = Column(Integer, primary_key=True, index=True)
-    code = Column(String(10))
-    name = Column(String(50))
-    cost = Column(String(10))
-    sell = Column(String(10))
-    status = Column(String(15))
-    
+from model import ProductModel 
+from schema import ProductSchema , Base
 # สร้างตารางในฐานข้อมูล (หากยังไม่มี)
 Base.metadata.create_all(bind=engine)
 
-# Pydantic model โครงสร้างข้อมูล สำหรับการรับข้อมูลที่ต้องการอัปเดท
-class ModelProduct(BaseModel):  
-    code: str
-    name: str
-    cost: str
-    sell: str
-    status: str
-
-    class Config:
-        orm_mode = True
-        
 # สร้าง APIRouter สำหรับสมาชิก
 router = APIRouter(
     prefix = "/products",
@@ -47,7 +19,7 @@ router = APIRouter(
 def get_products():
     session = SessionLocal()
     try:
-        products = session.query(SchemaProduct).all()
+        products = session.query(ProductSchema).all()
         return {
             "message": "Get products",
             "rows": [{"id": product.id, "code": product.code, "name": product.name, 
@@ -59,11 +31,11 @@ def get_products():
         
 # API สำหรับเพิ่มข้อมูลสินค้า
 @router.post("/")
-def add_product(product: ModelProduct):
+def add_product(product: ProductModel):
     session = SessionLocal()
     try:
         # สร้างสมาชิกใหม่จากข้อมูลที่รับมา
-        new_product = SchemaProduct(
+        new_product = ProductSchema(
             code=product.code,
             name=product.name,
             cost=product.cost,
@@ -82,10 +54,10 @@ def add_product(product: ModelProduct):
         
 # API สำหรับอัปเดทข้อมูลสินค้า
 @router.put("/{product_id}")
-def update_product(product_id: int, product: ModelProduct):
+def update_product(product_id: int, product: ProductModel):
     session = SessionLocal()
     try:
-        existing_product = session.query(SchemaProduct).filter(SchemaProduct.id == product_id).first()
+        existing_product = session.query(ProductSchema).filter(ProductSchema.id == product_id).first()
 
         if not existing_product:
             raise HTTPException(status_code=404, detail="Product not found")

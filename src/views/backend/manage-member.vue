@@ -155,8 +155,8 @@ import axios from 'axios'
                                             {{ member.phone }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <span
-                                                class="font-semibold text-green-500 p-1 bg-green-100 rounded-md">{{ member.status }}</span>
+                                            <span class="font-semibold text-green-500 p-1 bg-green-100 rounded-md">{{
+                                                member.status }}</span>
                                         </td>
 
                                     </tr>
@@ -183,34 +183,34 @@ import axios from 'axios'
 
                             <div class="flex gap-2 w-full">
                                 <div class="lg:w-1/2 w-full">
-                                    <input type="text" v-model="codeMember" ref="inputCodeMember" :class="{
+                                    <input type="text" v-model="code" ref="inputCodeMember" :class="{
                                         'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                                         'focus:border-blue-300 focus:ring-2 focus:ring-blue-300': !codeMember
-                                    }" placeholder="รหัส" disabled />
+                                    }" placeholder="รหัส" />
                                 </div>
 
                                 <div class="lg:w-1/2 w-full">
-                                    <input type="text" v-model="nameMember" ref="inputNameMember" :class="{
+                                    <input type="text" v-model="name" ref="inputNameMember" :class="{
                                         'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                                         'focus:border-blue-300 focus:ring-2 focus:ring-blue-300': !nameMember
-                                    }" placeholder="ชื่อลูกค้า" disabled />
+                                    }" placeholder="ชื่อลูกค้า" />
                                 </div>
                             </div>
 
                             <div class="flex gap-2 w-full pt-1 mt-4 lg:pt-0 lg:mt-0">
                                 <div class="lg:w-1/2 w-full">
-                                    <input type="text" v-model="phoneMember" ref="inputPhoneMember" :class="{
+                                    <input type="text" v-model="phone" ref="inputPhoneMember" :class="{
                                         'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                                         'focus:border-blue-300 focus:ring-2 focus:ring-blue-300': !phoneMember
-                                    }" placeholder="เบอร์" disabled />
+                                    }" placeholder="เบอร์" />
                                 </div>
 
                                 <div class="lg:w-1/2 w-full">
-                                    <select v-model="statusMember" ref="inputStatusMember" :class="{
+                                    <select v-model="status" ref="inputStatusMember" :class="{
                                         'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-200 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                                         'focus:border-blue-300 focus:ring-2 focus:ring-blue-300': !statusMember
-                                    }" disabled>
-                                        <option value="" disabled selected>สถานะ</option>
+                                    }">
+                                        <option value="" selected>สถานะ</option>
                                         <option value="เเสดง">เเสดง</option>
                                         <option value="ไม่เเสดง">ไม่เเสดง</option>
                                     </select>
@@ -234,10 +234,10 @@ import axios from 'axios'
                         <hr class="my-2 text-gray-600">
 
                         <div class="flex gap-2 justify-center mt-4 md:mt-4">
-                            <!-- <button @click="btnEdit"
+                            <button @click="updateMember"
                                 class="text-white bg-blue-500 border border-blue-500 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center h-full">
                                 ยืนยัน
-                            </button> -->
+                            </button>
                             <button @click="showFormTable"
                                 class="text-black bg-gray-200 border border-gray-400 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center h-full">
                                 ยกเลิก
@@ -263,11 +263,12 @@ export default {
             members: [],
 
             isFocus: false,
-            codeMember: '',
-            nameMember: '',
-            phoneMember: '',
-            statusMember: '',
-            imageMember: '',
+            code: '',
+            name: '',
+            phone: '',
+            status: '',
+            image: '',
+            memberId: 8,
 
             formTable: true,
             formAdd: false,
@@ -315,6 +316,29 @@ export default {
                     console.error('There was an error fetching the data:', error);
                 });
         },
+        async updateMember() {
+            try {
+                const dataMember = {
+                    code: this.code,
+                    name: this.name,
+                    phone: this.phone,
+                    status: this.status,
+                };
+
+                // ส่งคำขอ HTTP PUT โดยใช้ axios
+                const response = await axios.put(this.apiUrl + `members/${this.memberId}`, dataMember);
+
+                // ตรวจสอบผลลัพธ์
+                if (response.status === 200) {
+                    alert("อัปเดตข้อมูลสำเร็จ: " + response.data.message);
+                }
+            } catch (error) {
+                console.error("เกิดข้อผิดพลาด:", error);
+                alert("เกิดข้อผิดพลาด: " + (error.response?.data?.detail || error.message));
+            }
+        },
+
+
 
         DropdownStatus(statusName) {
             this.pageSizeOpen = false;

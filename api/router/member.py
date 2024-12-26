@@ -1,10 +1,11 @@
 # router/member.py
 from fastapi import APIRouter, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import asc, desc
 
+from database import SessionLocal, engine
 from model import MemberModel 
 from schema import MemberSchema , Base
-from database import SessionLocal, engine
 
 # สร้างตารางในฐานข้อมูล (หากยังไม่มี)
 Base.metadata.create_all(bind=engine)
@@ -17,10 +18,10 @@ router = APIRouter(
 
 # ดึงข้อมูลจากตาราง tb_member
 @router.get("/")
-def get_members():
+def get_members(limit: int = 10, offset: int = 0 ):
     session = SessionLocal()
     try:
-        members = session.query(MemberSchema).all()
+        members = session.query(MemberSchema).order_by(desc(MemberSchema.id)).limit(limit).offset(offset).all()
         return {
             "message": "Get members",
             "rows": [{"id": member.id, "code": member.code, "name": member.name, "phone": member.phone, "status": member.status, "image": member.image} for member in members],
@@ -52,25 +53,33 @@ def add_member(member: MemberModel):
     finally:
         session.close()
 
-
-# API สำหรับอัปเดทข้อมูลสมาชิก
 @router.put("/{member_id}")
 def update_member(member_id: int, member: MemberModel):
-    session = SessionLocal()
+    session: Session = SessionLocal()
     try:
         existing_member = session.query(MemberSchema).filter(MemberSchema.id == member_id).first()
 
         if not existing_member:
             raise HTTPException(status_code=404, detail="Member not found")
         
-        existing_member.code = member.code
-        existing_member.name = member.name
-        existing_member.phone = member.phone
-        existing_member.status = member.status
-        existing_member.image = member.image
+        # อัปเดตเฉพาะฟิลด์ที่มีค่า
+        if member.code is not None:
+            existing_member.code = member.code
+        if member.name is not None:
+            existing_member.name = member.name
+        if member.phone is not None:
+            existing_member.phone = member.phone
+        if member.status is not None:
+            existing_member.status = member.status
+        if member.image is not None:
+            existing_member.image = member.image
 
         session.commit()
 
-        return {"message": "Update successful" ,"id": member_id}
+        return {
+            "success": True,
+            "message": "Update successful",
+            "id": member_id
+        }
     finally:
         session.close()
