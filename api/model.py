@@ -1,20 +1,20 @@
 from pydantic import BaseModel
+from typing import Optional
 
 # โมเดล Pydantic สำหรับข้อมูลสมาชิก
 class MemberModel(BaseModel):
-    code: str = None
-    name: str = None
-    phone: str = None
-    status: str = None
-    image: str = None
-
+    code: Optional[str] = None
+    name: Optional[str] = None
+    phone: Optional[str] = None
+    status: Optional[str] = None
 
 # โมเดล Pydantic สำหรับข้อมูลสินค้า
 class ProductModel(BaseModel):
-    code: str
-    name: str
-    status: str
-    image: str
+    code: Optional[str] = None
+    name: Optional[str] = None
+    cost:Optional[str] = None
+    sell:Optional[str] = None
+    status: Optional[str] = None
 
-    class Config:
-        orm_mode = True
+class Config:
+    orm_mode = True

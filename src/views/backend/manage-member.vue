@@ -136,7 +136,7 @@ import axios from 'axios'
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="(member, index) in members" :key="index" @click="showFormEdit"
+                                    <tr v-for="(member, index) in members" :key="index" @click="showFormEdit(member.id)"
                                         class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 cursor-pointer hover:bg-gray-100 transition">
                                         <th scope="row" class="px-6 py-4">
                                             <div class="w-20 h-20">
@@ -155,11 +155,12 @@ import axios from 'axios'
                                             {{ member.phone }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="font-semibold text-green-500 p-1 bg-green-100 rounded-md">{{
-                                                member.status }}</span>
+                                            <span class="font-semibold text-green-500 p-1 bg-green-100 rounded-md">
+                                                {{ member.status }}
+                                            </span>
                                         </td>
-
                                     </tr>
+
                                 </tbody>
                             </table>
                         </div>
@@ -183,14 +184,14 @@ import axios from 'axios'
 
                             <div class="flex gap-2 w-full">
                                 <div class="lg:w-1/2 w-full">
-                                    <input type="text" v-model="code" ref="inputCodeMember" :class="{
+                                    <input type="text" v-model="codeMember" ref="inputCodeMember" :class="{
                                         'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                                         'focus:border-blue-300 focus:ring-2 focus:ring-blue-300': !codeMember
                                     }" placeholder="รหัส" />
                                 </div>
 
                                 <div class="lg:w-1/2 w-full">
-                                    <input type="text" v-model="name" ref="inputNameMember" :class="{
+                                    <input type="text" v-model="nameMember" ref="inputNameMember" :class="{
                                         'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                                         'focus:border-blue-300 focus:ring-2 focus:ring-blue-300': !nameMember
                                     }" placeholder="ชื่อลูกค้า" />
@@ -199,18 +200,18 @@ import axios from 'axios'
 
                             <div class="flex gap-2 w-full pt-1 mt-4 lg:pt-0 lg:mt-0">
                                 <div class="lg:w-1/2 w-full">
-                                    <input type="text" v-model="phone" ref="inputPhoneMember" :class="{
+                                    <input type="text" v-model="phoneMember" ref="inputPhoneMember" :class="{
                                         'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                                         'focus:border-blue-300 focus:ring-2 focus:ring-blue-300': !phoneMember
                                     }" placeholder="เบอร์" />
                                 </div>
 
                                 <div class="lg:w-1/2 w-full">
-                                    <select v-model="status" ref="inputStatusMember" :class="{
+                                    <select v-model="statusMember" ref="inputStatusMember" :class="{
                                         'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-200 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                                         'focus:border-blue-300 focus:ring-2 focus:ring-blue-300': !statusMember
                                     }">
-                                        <option value="" selected>สถานะ</option>
+                                        <option value="" disabled>สถานะ</option>
                                         <option value="เเสดง">เเสดง</option>
                                         <option value="ไม่เเสดง">ไม่เเสดง</option>
                                     </select>
@@ -263,12 +264,11 @@ export default {
             members: [],
 
             isFocus: false,
-            code: '',
-            name: '',
-            phone: '',
-            status: '',
-            image: '',
-            memberId: 8,
+            codeMember: '',
+            nameMember: '',
+            phoneMember: '',
+            statusMember: '',
+            memberId: '',
 
             formTable: true,
             formAdd: false,
@@ -291,21 +291,14 @@ export default {
             this.formTable = true;
             this.formAdd = false;
             this.formEdit = false;
-            this.nameMember = '';
-            this.phoneMember = '';
-            this.statusMember = '';
-            this.addressMember = '';
-        },
-        showFormEdit() {
-            this.formTable = false;
-            this.formAdd = false;
-            this.formEdit = true;
+
+            this.getListMember();
         },
 
         //เเสดงข้อมูลสมาชิกบนตาราง
         async getListMember() {
 
-            await axios.get(this.apiUrl + 'members')
+            await axios.get(`${this.apiUrl}members`)
                 .then(response => {
                     const data = response.data;
                     this.members = data.rows;
@@ -316,28 +309,64 @@ export default {
                     console.error('There was an error fetching the data:', error);
                 });
         },
-        async updateMember() {
+
+        async showFormEdit(memberId) {
+            // รีเซ็ตค่าเริ่มต้นในฟอร์ม
+            this.codeMember = "";
+            this.nameMember = "";
+            this.phoneMember = "";
+            this.statusMember = "";
+
+            // เปิดฟอร์มแก้ไข
+            this.formTable = false;
+            this.formAdd = false;
+            this.formEdit = true;
+
             try {
-                const dataMember = {
-                    code: this.code,
-                    name: this.name,
-                    phone: this.phone,
-                    status: this.status,
-                };
+                // เรียก API เพื่อดึงข้อมูลสมาชิกที่ระบุ
+                const response = await axios.get(`${this.apiUrl}members/${memberId}`);  // ใช้ URL ที่ถูกต้อง
 
-                // ส่งคำขอ HTTP PUT โดยใช้ axios
-                const response = await axios.put(this.apiUrl + `members/${this.memberId}`, dataMember);
-
-                // ตรวจสอบผลลัพธ์
                 if (response.status === 200) {
-                    alert("อัปเดตข้อมูลสำเร็จ: " + response.data.message);
+                    const member = response.data.row;  // ค่าที่ได้รับจาก API คือตัวเดียว
+
+                    if (member) {
+                        this.memberId = memberId;
+                        this.codeMember = member.code;
+                        this.nameMember = member.name;
+                        this.phoneMember = member.phone;
+                        this.statusMember = member.status;
+                    } else {
+                        alert("ไม่พบข้อมูลสมาชิกที่ต้องการแก้ไข");
+                    }
                 }
             } catch (error) {
-                console.error("เกิดข้อผิดพลาด:", error);
+                console.error("เกิดข้อผิดพลาดในการดึงข้อมูลสมาชิก:", error);
                 alert("เกิดข้อผิดพลาด: " + (error.response?.data?.detail || error.message));
             }
         },
 
+        async updateMember() {
+            try {
+                const dataMember = {
+                    code: this.codeMember,
+                    name: this.nameMember,
+                    phone: this.phoneMember,
+                    status: this.statusMember,
+                };
+
+                // เรียก API เพื่ออัปเดตข้อมูลสมาชิก
+                const response = await axios.put(`${this.apiUrl}members/${this.memberId}`, dataMember);
+
+                // ตรวจสอบผลลัพธ์
+                if (response.status === 200) {
+                    alert("อัปเดตข้อมูลสำเร็จ: " + response.data.message);
+                    this.showFormTable(); // กลับไปที่ตารางหลังจากอัปเดตเสร็จ
+                }
+            } catch (error) {
+                console.error("เกิดข้อผิดพลาดในการอัปเดตข้อมูล:", error);
+                alert("เกิดข้อผิดพลาด: " + (error.response?.data?.detail || error.message));
+            }
+        },
 
 
         DropdownStatus(statusName) {

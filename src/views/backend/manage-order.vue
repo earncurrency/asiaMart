@@ -15,7 +15,7 @@ import backend_navbar from '@/components/backend/navbar.vue';
 
                     <div v-if="formTable">
 
-                        <!-- title -->
+                        <!-- title  -->
                         <div class="flex justify-between items-center mb-2">
                             <p class="text-3xl font-semibold">จัดการออร์เดอร์</p>
                         </div>

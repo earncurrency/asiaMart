@@ -14,7 +14,6 @@ class MemberSchema(Base):
     name = Column(String(50))
     phone = Column(String(15))
     status = Column(String(15))
-    image = Column(String(255))
 
 #สร้าง โครงสร้างของตาราง tb_product
 class ProductSchema(Base):

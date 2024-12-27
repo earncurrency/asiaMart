@@ -40,7 +40,7 @@ def add_product(product: ProductModel):
             name=product.name,
             cost=product.cost,
             sell=product.sell,
-            status=product.status,
+            status=product.status
         )
 
         # เพิ่มสินค้าใหม่ลงในฐานข้อมูล
@@ -55,21 +55,33 @@ def add_product(product: ProductModel):
 # API สำหรับอัปเดทข้อมูลสินค้า
 @router.put("/{product_id}")
 def update_product(product_id: int, product: ProductModel):
-    session = SessionLocal()
+    session: Session = SessionLocal()
     try:
-        existing_product = session.query(ProductSchema).filter(ProductSchema.id == product_id).first()
+        existing_member = session.query(ProductSchema).filter(ProductSchema.id == product_id).first()
 
-        if not existing_product:
-            raise HTTPException(status_code=404, detail="Product not found")
-        
-        existing_product.code = product.code
-        existing_product.name = product.name
-        existing_product.cost = product.cost
-        existing_product.sell = product.sell
-        existing_product.status = product.status
+        if not existing_member:
+            raise HTTPException(status_code=404, detail="product not found")
 
+        if product.code is not None:
+            existing_member.code = product.code
+        if product.name is not None:
+            existing_member.name = product.name
+        if product.cost is not None:
+            existing_member.cost = product.cost
+        if product.sell is not None:
+            existing_member.sell = product.sell
+        if product.status is not None:
+            existing_member.status = product.status
+
+        updated_fields = {} 
+        updated_fields = existing_member
         session.commit()
 
-        return {"message": "Update successful" ,"id": product_id}
+        return {
+            "success": True,
+            "message": "Update successful",
+            "id": product_id,
+            "updated_data": updated_fields  
+        }
     finally:
-        session.close()        
+        session.close()

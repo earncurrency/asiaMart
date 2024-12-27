@@ -16,21 +16,38 @@ router = APIRouter(
     tags = ["members"],
 )
 
-# ดึงข้อมูลจากตาราง tb_member
+# ดึงข้อมูลทั้งหมดจากตาราง tb_member
 @router.get("/")
-def get_members(limit: int = 10, offset: int = 0 ):
+def get_members(limit: int = 10, offset: int = 0):
     session = SessionLocal()
     try:
         members = session.query(MemberSchema).order_by(desc(MemberSchema.id)).limit(limit).offset(offset).all()
+        total_members = session.query(MemberSchema).count()
         return {
-            "message": "Get members",
-            "rows": [{"id": member.id, "code": member.code, "name": member.name, "phone": member.phone, "status": member.status, "image": member.image} for member in members],
-            "total": len(members)
+            "message": "Get all members",
+            "rows": [{"id": member.id, "code": member.code, "name": member.name, "phone": member.phone, "status": member.status} for member in members],
+            "total": total_members
         }
     finally:
         session.close()
 
-# API สำหรับเพิ่มข้อมูลสมาชิก
+# ดึงข้อมูลตามไอดีจากตาราง tb_member
+@router.get("/{member_id}")
+def get_member(member_id: int):
+    session = SessionLocal()
+    try:
+        member = session.query(MemberSchema).filter(MemberSchema.id == member_id).first()
+        if not member:
+            raise HTTPException(status_code=404, detail="Member not found")
+        return {
+            "message": "Get member by ID",
+            "row": {"id": member.id, "code": member.code, "name": member.name, "phone": member.phone, "status": member.status}
+        }
+    finally:
+        session.close()
+
+
+# เพิ่มข้อมูลสมาชิก
 @router.post("/")
 def add_member(member: MemberModel):
     session = SessionLocal()
@@ -41,7 +58,6 @@ def add_member(member: MemberModel):
             name=member.name,
             phone=member.phone,
             status=member.status,
-            image=member.image,
         )
 
         # เพิ่มสมาชิกใหม่ลงในฐานข้อมูล
@@ -61,8 +77,7 @@ def update_member(member_id: int, member: MemberModel):
 
         if not existing_member:
             raise HTTPException(status_code=404, detail="Member not found")
-        
-        # อัปเดตเฉพาะฟิลด์ที่มีค่า
+
         if member.code is not None:
             existing_member.code = member.code
         if member.name is not None:
@@ -71,15 +86,17 @@ def update_member(member_id: int, member: MemberModel):
             existing_member.phone = member.phone
         if member.status is not None:
             existing_member.status = member.status
-        if member.image is not None:
-            existing_member.image = member.image
 
+        updated_fields = {} 
+        updated_fields = existing_member
         session.commit()
 
         return {
             "success": True,
             "message": "Update successful",
-            "id": member_id
+            "id": member_id,
+            "updated_data": updated_fields  
         }
     finally:
         session.close()
+
