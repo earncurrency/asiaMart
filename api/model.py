@@ -15,6 +15,8 @@ class ProductModel(BaseModel):
     cost:Optional[str] = None
     sell:Optional[str] = None
     status: Optional[str] = None
+    type: Optional[str] = None
+    detail: Optional[str] = None
 
 class Config:
     orm_mode = True

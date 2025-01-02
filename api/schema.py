@@ -1,8 +1,11 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
-
+from database import engine
 
 Base = declarative_base()
+
+# สร้างตารางในฐานข้อมูล (หากยังไม่มี)
+Base.metadata.create_all(bind=engine)
 
 # สร้าง โครงสร้างของตาราง tb_member
 class MemberSchema(Base):
@@ -26,4 +29,6 @@ class ProductSchema(Base):
     cost = Column(String(10))
     sell = Column(String(10))
     status = Column(String(15))
+    type = Column(String(15))
+    detail = Column(String(255))
     

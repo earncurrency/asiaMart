@@ -5,10 +5,7 @@ from sqlalchemy import asc, desc
 
 from database import SessionLocal, engine
 from model import MemberModel 
-from schema import MemberSchema , Base
-
-# สร้างตารางในฐานข้อมูล (หากยังไม่มี)
-Base.metadata.create_all(bind=engine)
+from schema import MemberSchema 
 
 # สร้าง APIRouter สำหรับสมาชิก
 router = APIRouter(
@@ -38,7 +35,7 @@ def get_member(member_id: int):
     try:
         member = session.query(MemberSchema).filter(MemberSchema.id == member_id).first()
         if not member:
-            raise HTTPException(status_code=404, detail="Member not found")
+            raise HTTPException(status_code=404, detail="ไม่พบข้อมูลสมาชิก")
         return {
             "message": "Get member by ID",
             "row": {"id": member.id, "code": member.code, "name": member.name, "phone": member.phone, "status": member.status}
@@ -69,6 +66,7 @@ def add_member(member: MemberModel):
     finally:
         session.close()
 
+# API สำหรับอัปเดทข้อมูลสมาชิก
 @router.put("/{member_id}")
 def update_member(member_id: int, member: MemberModel):
     session: Session = SessionLocal()
@@ -76,7 +74,7 @@ def update_member(member_id: int, member: MemberModel):
         existing_member = session.query(MemberSchema).filter(MemberSchema.id == member_id).first()
 
         if not existing_member:
-            raise HTTPException(status_code=404, detail="Member not found")
+            raise HTTPException(status_code=404, detail="ไม่พบข้อมูลสมาชิก")
 
         if member.code is not None:
             existing_member.code = member.code
@@ -93,7 +91,7 @@ def update_member(member_id: int, member: MemberModel):
 
         return {
             "success": True,
-            "message": "Update successful",
+            "message": "เเก้ไขข้อมูลสมาชิกสำเร็จ!",
             "id": member_id,
             "updated_data": updated_fields  
         }

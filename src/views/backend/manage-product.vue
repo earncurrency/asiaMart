@@ -154,7 +154,8 @@ import axios from 'axios'
                                 </thead>
 
                                 <tbody>
-                                    <tr v-for="(product, index) in products" :key="index" @click="showFormEdit"
+                                    <tr v-for="(product, index) in products" :key="index"
+                                        @click="showFormEdit(product.id)"
                                         class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 cursor-pointer hover:bg-gray-100 transition">
                                         <th scope="row" class="px-6 py-4">
                                             <div class="w-24 h-24 lg:w-24 lg:h-24 ">
@@ -176,8 +177,8 @@ import axios from 'axios'
                                             {{ product.sell }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <span
-                                                class="font-semibold text-green-500 p-1 bg-green-100 rounded-md">{{ product.status }}</span>
+                                            <span class="font-semibold text-green-500 p-1 bg-green-100 rounded-md">{{
+                                                product.status }}</span>
                                         </td>
                                         <td class="px-6 py-4">
                                             <button @click.stop="btnDelete"
@@ -186,7 +187,7 @@ import axios from 'axios'
                                         </td>
 
                                     </tr>
-    
+
                                 </tbody>
                             </table>
                         </div>
@@ -203,7 +204,7 @@ import axios from 'axios'
                                 <input type="text" v-model="codeProduct" ref="inputCodeProduct" :class="{
                                     'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                                     'focus:border-blue-300 focus:ring-2 focus:ring-blue-300': !codeProduct
-                                }" placeholder="รหัสสินค้า" disabled />
+                                }" placeholder="รหัสสินค้า" required />
                             </div>
                             <div class="w-full lg:w-3/4">
                                 <input type="text" v-model="nameProduct" ref="inputNameProduct" :class="{
@@ -327,7 +328,7 @@ import axios from 'axios'
                                 <input type="text" v-model="codeProduct" ref="inputCodeProduct" :class="{
                                     'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                                     'focus:border-blue-300 focus:ring-2 focus:ring-blue-300': !codeProduct
-                                }" placeholder="รหัสสินค้า" disabled />
+                                }" placeholder="รหัสสินค้า" required />
                             </div>
                             <div class="w-full lg:w-3/4">
                                 <input type="text" v-model="nameProduct" ref="inputNameProduct" :class="{
@@ -454,6 +455,7 @@ export default {
 
             isFocus: false,
 
+            productId: '',
             codeProduct: '',
             nameProduct: '',
             costPriceProduct: '',
@@ -461,8 +463,7 @@ export default {
             typeProduct: '',
             statusProduct: '',
             detailProduct: '',
-
-            previewImages: [], // ใช้เก็บ URLs ของภาพที่เลือก
+            previewImages: [],
 
             formTable: true,
             formAdd: false,
@@ -492,25 +493,14 @@ export default {
             this.formTable = true;
             this.formAdd = false;
             this.formEdit = false;
-            this.nameProduct = '';
-            this.costPriceProduct = '';
-            this.sellPriceProduct = '';
-            this.typeProduct = '';
-            this.statusProduct = '';
-            this.detailProduct = '';
-            this.previewImages = [];
-        },
-        showFormEdit() {
-            this.formTable = false;
-            this.formAdd = false;
-            this.formEdit = true;
-            this.nameProductType = '';
+
+            this.getListProduct();
         },
 
         //เเสดงข้อมูลสมาชิกบนตาราง
         async getListProduct() {
 
-            await axios.get(this.apiUrl + 'products')
+            await axios.get(`${this.apiUrl}products`)
                 .then(response => {
                     const data = response.data;
                     this.products = data.rows;
@@ -522,36 +512,48 @@ export default {
                 });
         },
 
+        async showFormEdit(productId) {
 
-        btnAdd() {
-            if (!this.nameProduct) {
-                this.isFocus = true;
-                this.$refs.inputNameProduct.focus();
-            } else if (!this.costPriceProduct) {
-                this.isFocus = true;
-                this.$refs.inputCostPriceProduct.focus();
-            } else if (!this.sellPriceProduct) {
-                this.isFocus = true;
-                this.$refs.inputSellPriceProduct.focus();
-            } else if (!this.typeProduct) {
-                this.isFocus = true;
-                this.$refs.inputTypeProduct.focus();
-            } else if (!this.statusProduct) {
-                this.isFocus = true;
-                this.$refs.inputStatusProduct.focus();
-            } else if (!this.detailProduct) {
-                this.isFocus = true;
-                this.$refs.inputDetailProduct.focus();
-            } else {
+            // เปิดฟอร์มแก้ไข
+            this.formTable = false;
+            this.formAdd = false;
+            this.formEdit = true;
+
+            try {
+                // เรียก API เพื่อดึงข้อมูลสมาชิกที่ระบุ
+                const response = await axios.get(`${this.apiUrl}products/${productId}`);
+
+                if (response.status === 200) {
+                    const product = response.data.row;
+
+                    if (product) {
+                        this.productId = productId;
+                        this.codeProduct = product.code;
+                        this.nameProduct = product.name;
+                        this.costPriceProduct = product.cost;
+                        this.sellPriceProduct = product.sell;
+                        this.typeProduct = product.type;
+                        this.statusProduct = product.status;
+                        this.detailProduct = product.detail;
+                    } else {
+                        alert("ไม่พบข้อมูลสมาชิกที่ต้องการแก้ไข");
+                    }
+                }
+            } catch (error) {
+                console.error("เกิดข้อผิดพลาดในการดึงข้อมูลสมาชิก:", error.response?.data?.detail || error.message);
                 this.$refs.modal.showAlertModal({
-                    swlIcon: 'success',
-                    swlTitle: 'สำเร็จ',
-                    swlText: 'เพิ่มสินค้าสำเร็จ!',
+                    swlIcon: 'error',
+                    swlTitle: 'ล้มเหลว',
+                    swlText: "เกิดข้อผิดพลาด",
                 });
             }
         },
-        btnEdit() {
-            if (!this.nameProduct) {
+
+        async btnAdd() {
+            if (!this.codeProduct) {
+                this.isFocus = true;
+                this.$refs.inputCodeProduct.focus();
+            } else if (!this.nameProduct) {
                 this.isFocus = true;
                 this.$refs.inputNameProduct.focus();
             } else if (!this.costPriceProduct) {
@@ -570,11 +572,86 @@ export default {
                 this.isFocus = true;
                 this.$refs.inputDetailProduct.focus();
             } else {
-                this.$refs.modal.showAlertModal({
-                    swlIcon: 'success',
-                    swlTitle: 'สำเร็จ',
-                    swlText: 'เเก้ไขข้อมูลสินค้าสำเร็จ!',
-                });
+                try {
+                    const dataProduct = {
+                        code: this.codeProduct,
+                        name: this.nameProduct,
+                        cost: this.costPriceProduct,
+                        sell: this.sellPriceProduct,
+                        status: this.statusProduct,
+                        type: this.typeProduct,
+                        detail: this.detailProduct,
+                    };
+
+                    const response = await axios.post(`${this.apiUrl}products/${this.productId}`, dataProduct);
+
+                    if (response.status === 200) {
+                        this.$refs.modal.showAlertModal({
+                            swlIcon: 'success',
+                            swlTitle: 'สำเร็จ',
+                            swlText: response.data.message,
+                        });
+                    }
+                } catch (error) {
+                    this.$refs.modal.showAlertModal({
+                        swlIcon: 'error',
+                        swlTitle: 'ล้มเหลว',
+                        swlText: "เกิดข้อผิดพลาด",
+                    });
+                }
+            }
+        },
+
+        async btnEdit() {
+            if (!this.codeProduct) {
+                this.isFocus = true;
+                this.$refs.inputCodeProduct.focus();
+            } else if (!this.nameProduct) {
+                this.isFocus = true;
+                this.$refs.inputNameProduct.focus();
+            } else if (!this.costPriceProduct) {
+                this.isFocus = true;
+                this.$refs.inputCostPriceProduct.focus();
+            } else if (!this.sellPriceProduct) {
+                this.isFocus = true;
+                this.$refs.inputSellPriceProduct.focus();
+            } else if (!this.typeProduct) {
+                this.isFocus = true;
+                this.$refs.inputTypeProduct.focus();
+            } else if (!this.statusProduct) {
+                this.isFocus = true;
+                this.$refs.inputStatusProduct.focus();
+            } else if (!this.detailProduct) {
+                this.isFocus = true;
+                this.$refs.inputDetailProduct.focus();
+            } else {
+                try {
+                    const dataProduct = {
+                        code: this.codeProduct,
+                        name: this.nameProduct,
+                        cost: this.costPriceProduct,
+                        sell: this.sellPriceProduct,
+                        status: this.statusProduct,
+                        type: this.typeProduct,
+                        detail: this.detailProduct,
+                    };
+
+                    const response = await axios.put(`${this.apiUrl}products/${this.productId}`, dataProduct);
+
+                    if (response.status === 200) {
+                        this.$refs.modal.showAlertModal({
+                            swlIcon: 'success',
+                            swlTitle: 'สำเร็จ',
+                            swlText: response.data.message,
+                        });
+                    }
+                } catch (error) {
+                    this.$refs.modal.showAlertModal({
+                        swlIcon: 'error',
+                        swlTitle: 'ล้มเหลว',
+                        swlText: "เกิดข้อผิดพลาด",
+                    });
+                }
             }
         },
         inputImage(event) {
@@ -593,6 +670,7 @@ export default {
                     reader.readAsDataURL(file);
                 }
             }
+            console.log(this.previewImages)
         },
         //ลบภาพจาก array previewImages
         removeImage(imageIndex) {

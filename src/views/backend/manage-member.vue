@@ -264,11 +264,12 @@ export default {
             members: [],
 
             isFocus: false,
+
+            memberId: '',
             codeMember: '',
             nameMember: '',
             phoneMember: '',
             statusMember: '',
-            memberId: '',
 
             formTable: true,
             formAdd: false,
@@ -311,23 +312,24 @@ export default {
         },
 
         async showFormEdit(memberId) {
-            // รีเซ็ตค่าเริ่มต้นในฟอร์ม
-            this.codeMember = "";
-            this.nameMember = "";
-            this.phoneMember = "";
-            this.statusMember = "";
 
             // เปิดฟอร์มแก้ไข
             this.formTable = false;
             this.formAdd = false;
             this.formEdit = true;
 
+            // รีเซ็ตค่าเริ่มต้นในฟอร์ม
+            this.codeMember = "";
+            this.nameMember = "";
+            this.phoneMember = "";
+            this.statusMember = "";
+
             try {
                 // เรียก API เพื่อดึงข้อมูลสมาชิกที่ระบุ
-                const response = await axios.get(`${this.apiUrl}members/${memberId}`);  // ใช้ URL ที่ถูกต้อง
+                const response = await axios.get(`${this.apiUrl}members/${memberId}`);
 
                 if (response.status === 200) {
-                    const member = response.data.row;  // ค่าที่ได้รับจาก API คือตัวเดียว
+                    const member = response.data.row;
 
                     if (member) {
                         this.memberId = memberId;
@@ -357,14 +359,19 @@ export default {
                 // เรียก API เพื่ออัปเดตข้อมูลสมาชิก
                 const response = await axios.put(`${this.apiUrl}members/${this.memberId}`, dataMember);
 
-                // ตรวจสอบผลลัพธ์
                 if (response.status === 200) {
-                    alert("อัปเดตข้อมูลสำเร็จ: " + response.data.message);
-                    this.showFormTable(); // กลับไปที่ตารางหลังจากอัปเดตเสร็จ
+                    this.$refs.modal.showAlertModal({
+                        swlIcon: 'success',
+                        swlTitle: 'สำเร็จ',
+                        swlText: response.data.message,
+                    });
                 }
             } catch (error) {
-                console.error("เกิดข้อผิดพลาดในการอัปเดตข้อมูล:", error);
-                alert("เกิดข้อผิดพลาด: " + (error.response?.data?.detail || error.message));
+                this.$refs.modal.showAlertModal({
+                    swlIcon: 'error',
+                    swlTitle: 'ล้มเหลว',
+                    swlText: "เกิดข้อผิดพลาดในการอัปเดตข้อมูล",
+                });
             }
         },
 
