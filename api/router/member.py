@@ -62,7 +62,7 @@ def add_member(member: MemberModel):
         session.commit()
 
         # ส่งคืนข้อความการเพิ่มข้อมูลสำเร็จ
-        return {"message": "Member added successfully", "id": new_member.id}
+        return {"message": "เพิ่มสมาชิกสำเร็จ", "id": new_member.id}
     finally:
         session.close()
 

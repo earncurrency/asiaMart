@@ -488,6 +488,16 @@ export default {
             this.formTable = false;
             this.formAdd = true;
             this.formEdit = false;
+
+            this.productId = "";
+            this.codeProduct = "";
+            this.nameProduct = "";
+            this.costPriceProduct = "";
+            this.sellPriceProduct = "";
+            this.typeProduct = "";
+            this.statusProduct = "";
+            this.detailProduct = "";
+            this.previewImages = "";
         },
         showFormTable() {
             this.formTable = true;
@@ -550,6 +560,7 @@ export default {
         },
 
         async btnAdd() {
+            // ตรวจสอบความครบถ้วนของข้อมูล
             if (!this.codeProduct) {
                 this.isFocus = true;
                 this.$refs.inputCodeProduct.focus();
@@ -573,6 +584,7 @@ export default {
                 this.$refs.inputDetailProduct.focus();
             } else {
                 try {
+                    // ข้อมูลที่ต้องการส่งไปยัง API สำหรับผลิตภัณฑ์
                     const dataProduct = {
                         code: this.codeProduct,
                         name: this.nameProduct,
@@ -583,16 +595,37 @@ export default {
                         detail: this.detailProduct,
                     };
 
-                    const response = await axios.post(`${this.apiUrl}products/${this.productId}`, dataProduct);
+                    // ส่งข้อมูลผลิตภัณฑ์ไปยัง API
+                    const productResponse = await axios.post(`${this.apiUrl}products/`, dataProduct);
 
-                    if (response.status === 200) {
-                        this.$refs.modal.showAlertModal({
-                            swlIcon: 'success',
-                            swlTitle: 'สำเร็จ',
-                            swlText: response.data.message,
+                    // ตรวจสอบผลลัพธ์จากการเพิ่มผลิตภัณฑ์
+                    if (productResponse.status === 200) {
+                        // ถ้ามีรูปภาพที่ต้องการส่ง
+                        const imagesData = this.previewImages.map((image) => {
+                            return {
+                                product_id: productResponse.data.id, // ใช้ productId ที่ได้จากการสร้างผลิตภัณฑ์ใหม่
+                                path: image, // ส่ง path หรือ URL ของรูปภาพ
+                            };
                         });
+
+                        // ส่งข้อมูลรูปภาพ
+                        const imagesResponse = await axios.post(`${this.apiUrl}product_image/`, imagesData, {
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                        });
+
+                        // แสดงผลลัพธ์หลังการอัปโหลดรูปภาพ
+                        if (imagesResponse.status === 200) {
+                            this.$refs.modal.showAlertModal({
+                                swlIcon: 'success',
+                                swlTitle: 'สำเร็จ',
+                                swlText: productResponse.data.message,
+                            });
+                        }
                     }
                 } catch (error) {
+                    // หากเกิดข้อผิดพลาดในการส่งข้อมูล
                     this.$refs.modal.showAlertModal({
                         swlIcon: 'error',
                         swlTitle: 'ล้มเหลว',
@@ -654,6 +687,7 @@ export default {
                 }
             }
         },
+
         inputImage(event) {
             const files = event.target.files;
             this.previewImages = [];

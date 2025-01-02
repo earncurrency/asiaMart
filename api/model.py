@@ -18,5 +18,11 @@ class ProductModel(BaseModel):
     type: Optional[str] = None
     detail: Optional[str] = None
 
+# โมเดล Pydantic สำหรับข้อมูลรูปภาพสินค้า
+class ProductImageModel(BaseModel):
+    product_id: Optional[int] = None
+    path: Optional[str] = None
+
+
 class Config:
     orm_mode = True

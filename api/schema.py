@@ -13,7 +13,7 @@ class MemberSchema(Base):
     __tablename__ = "tb_member"
 
     id = Column(Integer, primary_key=True, index=True)
-    code = Column(String(10))
+    code = Column(String(15))
     name = Column(String(50))
     phone = Column(String(15))
     status = Column(String(15))
@@ -24,11 +24,20 @@ class ProductSchema(Base):
     __tablename__ = "tb_product"
 
     id = Column(Integer, primary_key=True, index=True)
-    code = Column(String(10))
+    code = Column(String(15))
     name = Column(String(50))
-    cost = Column(String(10))
-    sell = Column(String(10))
+    cost = Column(String(15))
+    sell = Column(String(15))
     status = Column(String(15))
     type = Column(String(15))
     detail = Column(String(255))
+
+#สร้าง โครงสร้างของตาราง tb_product_image
+class ProductImageSchema(Base):
+
+    __tablename__ = "tb_product_image"
+
+    id = Column(Integer, primary_key=True, index=True)
+    product_id = Column(String(15))
+    path = Column(String(50))  
     
