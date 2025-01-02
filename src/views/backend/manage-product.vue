@@ -616,7 +616,7 @@ export default {
                         });
 
                         // แสดงผลลัพธ์หลังการอัปโหลดรูปภาพ
-                        if (imagesResponse.status === 200) {
+                        if (productResponse.status === 200) {
                             this.$refs.modal.showAlertModal({
                                 swlIcon: 'success',
                                 swlTitle: 'สำเร็จ',
