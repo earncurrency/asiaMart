@@ -1,6 +1,9 @@
-from fastapi import APIRouter, HTTPException
+
+import os
+import base64
+from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
-from typing import List
+import uuid
 
 from database import SessionLocal, engine
 from model import ProductImageModel
@@ -12,25 +15,59 @@ router = APIRouter(
     tags=["product_image"],
 )
 
-# เพิ่มรูปภาพสินค้า (หลายรูปภาพ)
-@router.post("/")
-def add_product_image(p_images: List[ProductImageModel]):
-    session = SessionLocal()
+def get_db():
+    db = SessionLocal()
     try:
-        # สร้างรายการของรูปภาพที่ต้องการเพิ่ม
-        new_product_images = []
-        for p_image in p_images:
-            new_product_image = ProductImageSchema(
-                product_id=p_image.product_id,
-                path=p_image.path,
-            )
-            new_product_images.append(new_product_image)
-        
-        # เพิ่มข้อมูลหลายๆ รูปภาพลงในฐานข้อมูล
-        session.add_all(new_product_images)
-        session.commit()
-
-        # ส่งคืนข้อความการเพิ่มข้อมูลสำเร็จ
-        return {"message": "เพิ่มรูปภาพสินค้าสำเร็จ", "ids": [img.id for img in new_product_images]}
+        yield db
     finally:
-        session.close()
+        db.close()
+
+def save_image_from_base64(base64_str: str, folder: str = "uploads") -> str:
+    """
+    ฟังก์ชันที่ใช้แปลง base64 string เป็นไฟล์รูปภาพ และบันทึกในโฟลเดอร์ที่กำหนด
+    """
+    try:
+        # ตัด "data:image/png;base64," หรือ "data:image/jpeg;base64," ออก
+        image_data = base64_str.split(",")[1]
+        image_bytes = base64.b64decode(image_data)
+
+        # กำหนดประเภทของไฟล์ตามชนิดใน Base64 (เช่น .jpeg, .png)
+        file_extension = "png"  # กำหนดค่าเริ่มต้นเป็น png
+        if base64_str.startswith("data:image/jpeg"):
+            file_extension = "jpeg"
+        elif base64_str.startswith("data:image/gif"):
+            file_extension = "gif"
+        
+        # สร้างชื่อไฟล์ด้วย UUID
+        filename = f"{uuid.uuid4()}.{file_extension}"
+        file_path = os.path.join(folder, filename)
+
+        # สร้างโฟลเดอร์ถ้ายังไม่มี
+        os.makedirs(folder, exist_ok=True)
+
+        # บันทึกไฟล์ลงในระบบ
+        with open(file_path, "wb") as f:
+            f.write(image_bytes)
+        
+        return file_path
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="ไม่สามารถบันทึกรูปภาพได้")
+
+@router.post("/")
+async def upload_images(product_images: list[str], db: Session = Depends(get_db)):
+
+    image_paths = []
+    for base64_image in product_images:
+        # แปลง Base64 เป็นไฟล์
+        file_path = save_image_from_base64(base64_image)
+
+        # บันทึกข้อมูล path ของไฟล์ลงในฐานข้อมูล
+        db_image = ProductImageSchema(path=file_path)
+        db.add(db_image)
+        db.commit()
+        db.refresh(db_image)
+
+        # เก็บ path ไฟล์ไว้เพื่อส่งกลับ
+        image_paths.append(db_image.path)
+    
+    return {"message": "บันทึกรูปภาพเรียบร้อย", "paths": image_paths}  

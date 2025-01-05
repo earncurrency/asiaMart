@@ -595,34 +595,19 @@ export default {
                         detail: this.detailProduct,
                     };
 
+
                     // ส่งข้อมูลผลิตภัณฑ์ไปยัง API
                     const productResponse = await axios.post(`${this.apiUrl}products/`, dataProduct);
 
+                    await axios.post(`${this.apiUrl}product_image/`, this.previewImages);
+
                     // ตรวจสอบผลลัพธ์จากการเพิ่มผลิตภัณฑ์
                     if (productResponse.status === 200) {
-                        // ถ้ามีรูปภาพที่ต้องการส่ง
-                        const imagesData = this.previewImages.map((image) => {
-                            return {
-                                product_id: productResponse.data.id, // ใช้ productId ที่ได้จากการสร้างผลิตภัณฑ์ใหม่
-                                path: image, // ส่ง path หรือ URL ของรูปภาพ
-                            };
+                        this.$refs.modal.showAlertModal({
+                            swlIcon: 'success',
+                            swlTitle: 'สำเร็จ',
+                            swlText: productResponse.data.message,
                         });
-
-                        // ส่งข้อมูลรูปภาพ
-                        const imagesResponse = await axios.post(`${this.apiUrl}product_image/`, imagesData, {
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                        });
-
-                        // แสดงผลลัพธ์หลังการอัปโหลดรูปภาพ
-                        if (productResponse.status === 200) {
-                            this.$refs.modal.showAlertModal({
-                                swlIcon: 'success',
-                                swlTitle: 'สำเร็จ',
-                                swlText: productResponse.data.message,
-                            });
-                        }
                     }
                 } catch (error) {
                     // หากเกิดข้อผิดพลาดในการส่งข้อมูล
