@@ -47,25 +47,26 @@ def save_image_from_base64(base64_str: str, folder: str = "uploads") -> str:
 
 @router.post("/")
 async def upload_images(product_images: list[str]):
-
     # สร้าง Session เองในที่นี้
     session = SessionLocal()
-    image_paths = []
+    image_filenames = []  # เก็บแค่ชื่อไฟล์
     try:
         for base64_image in product_images:
             # แปลง Base64 เป็นไฟล์
             file_path = save_image_from_base64(base64_image)
+            # แยกแค่ชื่อไฟล์จาก path (เช่น "abc123.png")
+            filename = os.path.basename(file_path)
 
-            # บันทึกข้อมูล path ของไฟล์ลงในฐานข้อมูล
-            db_image = ProductImageSchema(path=file_path)
+            # บันทึกแค่ชื่อไฟล์ลงในฐานข้อมูล
+            db_image = ProductImageSchema(path=filename)  # บันทึกแค่ชื่อไฟล์
             session.add(db_image)
             session.commit()
             session.refresh(db_image)
 
-            # เก็บ path ไฟล์ไว้เพื่อส่งกลับ
-            image_paths.append(db_image.path)
-        
-        return {"message": "บันทึกรูปภาพเรียบร้อย", "paths": image_paths}
+            # เก็บชื่อไฟล์ไว้เพื่อส่งกลับ
+            image_filenames.append(db_image.path)
+
+        return {"message": "บันทึกรูปภาพเรียบร้อย", "filenames": image_filenames}
     except Exception as e:
         # ในกรณีเกิดข้อผิดพลาดต้อง rollback การเปลี่ยนแปลงทั้งหมด
         session.rollback()
