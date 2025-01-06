@@ -1,11 +1,10 @@
-
 import os
 import base64
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException
 from sqlalchemy.orm import Session
 import uuid
 
-from database import SessionLocal, engine
+from database import SessionLocal
 from model import ProductImageModel
 from schema import ProductImageSchema 
 
@@ -14,13 +13,6 @@ router = APIRouter(
     prefix="/product_image",
     tags=["product_image"],
 )
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 def save_image_from_base64(base64_str: str, folder: str = "uploads") -> str:
     """
@@ -54,20 +46,30 @@ def save_image_from_base64(base64_str: str, folder: str = "uploads") -> str:
         raise HTTPException(status_code=400, detail="ไม่สามารถบันทึกรูปภาพได้")
 
 @router.post("/")
-async def upload_images(product_images: list[str], db: Session = Depends(get_db)):
+async def upload_images(product_images: list[str]):
 
+    # สร้าง Session เองในที่นี้
+    session = SessionLocal()
     image_paths = []
-    for base64_image in product_images:
-        # แปลง Base64 เป็นไฟล์
-        file_path = save_image_from_base64(base64_image)
+    try:
+        for base64_image in product_images:
+            # แปลง Base64 เป็นไฟล์
+            file_path = save_image_from_base64(base64_image)
 
-        # บันทึกข้อมูล path ของไฟล์ลงในฐานข้อมูล
-        db_image = ProductImageSchema(path=file_path)
-        db.add(db_image)
-        db.commit()
-        db.refresh(db_image)
+            # บันทึกข้อมูล path ของไฟล์ลงในฐานข้อมูล
+            db_image = ProductImageSchema(path=file_path)
+            session.add(db_image)
+            session.commit()
+            session.refresh(db_image)
 
-        # เก็บ path ไฟล์ไว้เพื่อส่งกลับ
-        image_paths.append(db_image.path)
-    
-    return {"message": "บันทึกรูปภาพเรียบร้อย", "paths": image_paths}  
+            # เก็บ path ไฟล์ไว้เพื่อส่งกลับ
+            image_paths.append(db_image.path)
+        
+        return {"message": "บันทึกรูปภาพเรียบร้อย", "paths": image_paths}
+    except Exception as e:
+        # ในกรณีเกิดข้อผิดพลาดต้อง rollback การเปลี่ยนแปลงทั้งหมด
+        session.rollback()
+        raise HTTPException(status_code=500, detail="เกิดข้อผิดพลาดในการบันทึกข้อมูล")
+    finally:
+        # ปิดการเชื่อมต่อ session
+        session.close()
