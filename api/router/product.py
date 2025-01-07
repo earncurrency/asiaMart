@@ -5,6 +5,7 @@ from sqlalchemy import asc, desc
 import os
 import base64
 import uuid
+from typing import List
 
 from database import SessionLocal, engine
 from model import ProductModel ,ProductImageModel
@@ -168,4 +169,49 @@ async def upload_images(product_images: list[str]):
         raise HTTPException(status_code=500, detail="เกิดข้อผิดพลาดในการบันทึกข้อมูล")
     finally:
         # ปิดการเชื่อมต่อ session
+        session.close()
+
+@router.post("/add_data_product")
+async def add_data_product(product: ProductModel, product_images: list[str] = []):
+    session = SessionLocal()
+    try:
+        # 1. เพิ่มข้อมูลสินค้าใหม่
+        new_product = ProductSchema(
+            code=product.code,
+            name=product.name,
+            cost=product.cost,
+            sell=product.sell,
+            status=product.status,
+            type=product.type,
+            detail=product.detail
+        )
+        session.add(new_product)
+        session.commit()  # commit เพื่อบันทึกสินค้าใหม่
+        session.refresh(new_product)
+
+        # 2. บันทึกข้อมูลภาพที่สัมพันธ์กับสินค้า
+        image_filenames = []
+        for base64_image in product_images:
+            # แปลง Base64 เป็นไฟล์
+            file_path = save_image_from_base64(base64_image)
+
+            # แยกแค่ชื่อไฟล์จาก path
+            filename = os.path.basename(file_path)
+
+            # บันทึกภาพในฐานข้อมูล พร้อมกับ product_id ที่เชื่อมโยงกับสินค้าใหม่
+            db_image = ProductImageSchema(
+                path=filename,
+                product_id=new_product.id  # เชื่อมโยงกับสินค้า
+            )
+            session.add(db_image)
+            session.commit()
+            session.refresh(db_image)
+
+            image_filenames.append(db_image.path)
+
+        return {"message": "เพิ่มสินค้าพร้อมรูปภาพสำเร็จ", "id": new_product.id, "filenames": image_filenames}
+    except Exception as e:
+        session.rollback()
+        raise HTTPException(status_code=500, detail="เกิดข้อผิดพลาดในการบันทึกข้อมูล")
+    finally:
         session.close()

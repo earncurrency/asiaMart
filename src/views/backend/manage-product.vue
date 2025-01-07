@@ -784,6 +784,12 @@ export default {
       } else if (!this.detailProduct) {
         this.isFocus = true;
         this.$refs.inputDetailProduct.focus();
+      } else if (!this.previewImages) {
+        this.$refs.modal.showAlertModal({
+          swlIcon: "info",
+          swlTitle: "เเจ้งเตือน",
+          swlText: "คุณยังไม่ได้เพิ่มรูปภาพสินค้า",
+        });
       } else {
         try {
           // ข้อมูลที่ต้องการส่งไปยัง API สำหรับผลิตภัณฑ์
@@ -797,19 +803,14 @@ export default {
             detail: this.detailProduct,
           };
 
-          // ส่งข้อมูลผลิตภัณฑ์ไปยัง API
+          // ส่งข้อมูลผลิตภัณฑ์และรูปภาพไปยัง API
           const productResponse = await axios.post(
-            `${this.apiUrl}products/`,
-            dataProduct
+            `${this.apiUrl}products/add_data_product`,
+            {
+              product: dataProduct,
+              product_images: this.previewImages,
+            }
           );
-
-          // ตรวจสอบว่า previewImages มีข้อมูลหรือไม่ ถ้ามีค่อยส่งข้อมูลภาพ
-          if (this.previewImages && this.previewImages.length > 0) {
-            await axios.post(
-              `${this.apiUrl}products/product_image`,
-              this.previewImages
-            );
-          }
 
           // ตรวจสอบผลลัพธ์จากการเพิ่มผลิตภัณฑ์
           if (productResponse.status === 200) {
