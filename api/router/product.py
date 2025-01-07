@@ -110,6 +110,7 @@ def update_product(product_id: int, product: ProductModel):
     finally:
         session.close()
 
+#ฟังก์ชันที่ใช้แปลง base64 string เป็นไฟล์รูปภาพ
 def save_image_from_base64(base64_str: str, folder: str = "uploads") -> str:
     """
     ฟังก์ชันที่ใช้แปลง base64 string เป็นไฟล์รูปภาพ และบันทึกในโฟลเดอร์ที่กำหนด
@@ -141,6 +142,7 @@ def save_image_from_base64(base64_str: str, folder: str = "uploads") -> str:
     except Exception as e:
         raise HTTPException(status_code=400, detail="ไม่สามารถบันทึกรูปภาพได้")
 
+# API สำหรับบันทึกรูปสินค้า
 @router.post("/product_image")
 async def upload_images(product_images: list[str]):
     # สร้าง Session เองในที่นี้
