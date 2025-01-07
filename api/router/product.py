@@ -17,7 +17,7 @@ router = APIRouter(
     tags = ["products"],
 )
 
-# ดึงข้อมูลจากตาราง tb_product
+# ดึงข้อมูลทั้งหมดจากตาราง tb_product
 @router.get("/")
 def get_products():
     session = SessionLocal()
@@ -31,8 +31,8 @@ def get_products():
         }
     finally:
         session.close()    
-        
-#ดึงข้อมูลตามไอดีจากตาราง tb_product
+    
+#ดึงข้อมูลสินค้าตามไอดีจากตาราง tb_product
 @router.get("/{product_id}")
 def get_product(product_id:int):
     session = SessionLocal()
@@ -46,67 +46,26 @@ def get_product(product_id:int):
         }    
     finally:
         session.close()    
-
-# API สำหรับเพิ่มข้อมูลสินค้า
-@router.post("/")
-def add_product(product: ProductModel):
+  
+#ดึงรูปภาพสินค้าตาม product_id จากตาราง tb_product_image
+@router.get("/get_product_image/{product_id}")
+def get_product_image(product_id: int):
     session = SessionLocal()
     try:
-        # สร้างสมาชิกใหม่จากข้อมูลที่รับมา
-        new_product = ProductSchema(
-            code=product.code,
-            name=product.name,
-            cost=product.cost,
-            sell=product.sell,
-            status=product.status,
-            type=product.type,
-            detail=product.detail
-        )
+        # ดึงข้อมูลรูปภาพทั้งหมดที่มี product_id ตรงกัน
+        product_images = session.query(ProductImageSchema).filter(ProductImageSchema.product_id == product_id).all()
 
-        # เพิ่มสินค้าใหม่ลงในฐานข้อมูล
-        session.add(new_product)
-        session.commit()
+        if not product_images:
+            raise HTTPException(status_code=404, detail="ไม่พบข้อมูลสินค้าที่มี product_id นี้")
 
-        # ส่งคืนข้อความการเพิ่มข้อมูลสำเร็จ
-        return {"message": "เพิ่มสินค้าสำเร็จ", "id": new_product.id}
-    finally:
-        session.close()
-        
-# API สำหรับอัปเดทข้อมูลสินค้า
-@router.put("/{product_id}")
-def update_product(product_id: int, product: ProductModel):
-    session: Session = SessionLocal()
-    try:
-        existing_member = session.query(ProductSchema).filter(ProductSchema.id == product_id).first()
-
-        if not existing_member:
-            raise HTTPException(status_code=404, detail="ไม่พบข้อมูลสินค้า")
-
-        if product.code is not None:
-            existing_member.code = product.code
-        if product.name is not None:
-            existing_member.name = product.name
-        if product.cost is not None:
-            existing_member.cost = product.cost
-        if product.sell is not None:
-            existing_member.sell = product.sell
-        if product.status is not None:
-            existing_member.status = product.status
-        if product.type is not None: 
-            existing_member.type = product.type
-        if product.detail is not None: 
-            existing_member.detail = product.detail    
-
-        updated_fields = {} 
-        updated_fields = existing_member
-        session.commit()
-
+        # คืนค่าผลลัพธ์เป็นรายการรูปภาพที่เกี่ยวข้องกับ product_id
         return {
-            "success": True,
-            "message": "เเก้ไขข้อมูลสินค้าสำเร็จ",
-            "id": product_id,
-            "updated_data": updated_fields  
-        }
+            "message": "Get product images by product_id",
+            "images": [
+                {"id": product_image.id, "product_id": product_image.product_id, "path": product_image.path}
+                for product_image in product_images
+            ]
+        }    
     finally:
         session.close()
 
@@ -142,37 +101,7 @@ def save_image_from_base64(base64_str: str, folder: str = "uploads") -> str:
     except Exception as e:
         raise HTTPException(status_code=400, detail="ไม่สามารถบันทึกรูปภาพได้")
 
-# API สำหรับบันทึกรูปสินค้า
-@router.post("/product_image")
-async def upload_images(product_images: list[str]):
-    # สร้าง Session เองในที่นี้
-    session = SessionLocal()
-    image_filenames = []  # เก็บแค่ชื่อไฟล์
-    try:
-        for base64_image in product_images:
-            # แปลง Base64 เป็นไฟล์
-            file_path = save_image_from_base64(base64_image)
-            # แยกแค่ชื่อไฟล์จาก path (เช่น "abc123.png")
-            filename = os.path.basename(file_path)
-
-            # บันทึกแค่ชื่อไฟล์ลงในฐานข้อมูล
-            db_image = ProductImageSchema(path=filename)  # บันทึกแค่ชื่อไฟล์
-            session.add(db_image)
-            session.commit()
-            session.refresh(db_image)
-
-            # เก็บชื่อไฟล์ไว้เพื่อส่งกลับ
-            image_filenames.append(db_image.path)
-
-        return {"message": "บันทึกรูปภาพเรียบร้อย", "filenames": image_filenames}
-    except Exception as e:
-        # ในกรณีเกิดข้อผิดพลาดต้อง rollback การเปลี่ยนแปลงทั้งหมด
-        session.rollback()
-        raise HTTPException(status_code=500, detail="เกิดข้อผิดพลาดในการบันทึกข้อมูล")
-    finally:
-        # ปิดการเชื่อมต่อ session
-        session.close()
-
+# API สำหรับเพิ่มข้อมูลสินค้า เเละรูปภาพ
 @router.post("/add_data_product")
 async def add_data_product(product: ProductModel, product_images: list[str] = []):
     session = SessionLocal()
@@ -215,5 +144,43 @@ async def add_data_product(product: ProductModel, product_images: list[str] = []
     except Exception as e:
         session.rollback()
         raise HTTPException(status_code=500, detail="เกิดข้อผิดพลาดในการบันทึกข้อมูล")
+    finally:
+        session.close()
+
+# API สำหรับอัปเดทข้อมูลสินค้า
+@router.put("/{product_id}")
+def update_product(product_id: int, product: ProductModel):
+    session: Session = SessionLocal()
+    try:
+        existing_member = session.query(ProductSchema).filter(ProductSchema.id == product_id).first()
+
+        if not existing_member:
+            raise HTTPException(status_code=404, detail="ไม่พบข้อมูลสินค้า")
+
+        if product.code is not None:
+            existing_member.code = product.code
+        if product.name is not None:
+            existing_member.name = product.name
+        if product.cost is not None:
+            existing_member.cost = product.cost
+        if product.sell is not None:
+            existing_member.sell = product.sell
+        if product.status is not None:
+            existing_member.status = product.status
+        if product.type is not None: 
+            existing_member.type = product.type
+        if product.detail is not None: 
+            existing_member.detail = product.detail    
+
+        updated_fields = {} 
+        updated_fields = existing_member
+        session.commit()
+
+        return {
+            "success": True,
+            "message": "เเก้ไขข้อมูลสินค้าสำเร็จ",
+            "id": product_id,
+            "updated_data": updated_fields  
+        }
     finally:
         session.close()
