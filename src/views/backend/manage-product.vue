@@ -806,7 +806,7 @@ export default {
           // ตรวจสอบว่า previewImages มีข้อมูลหรือไม่ ถ้ามีค่อยส่งข้อมูลภาพ
           if (this.previewImages && this.previewImages.length > 0) {
             await axios.post(
-              `${this.apiUrl}product_image/`,
+              `${this.apiUrl}products/product_image`,
               this.previewImages
             );
           }
