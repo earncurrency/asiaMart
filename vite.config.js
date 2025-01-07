@@ -15,5 +15,16 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  define: {
+    __BASE_URL__: JSON.stringify('https://www.example.com'),
+    __API_BASE_URL__: JSON.stringify('https://api.example.com'),
+  },
 })
 
+// export default {
+//   mounted() {
+//     console.log(__API_BASE_URL__); // Output: "https://api.example.com"
+//     console.log(__APP_NAME__);    // Output: "My Awesome App"
+//     console.log(__VERSION__);     // Output: "1.0.0"
+//   }
+// };
