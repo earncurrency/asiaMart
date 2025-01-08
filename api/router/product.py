@@ -1,10 +1,8 @@
 # router/product.py
 from fastapi import APIRouter, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session ,aliased
 from sqlalchemy import asc, desc
-import os
-import base64
-import uuid
+import os ,base64 ,uuid
 from typing import List
 
 from database import SessionLocal, engine
@@ -22,15 +20,40 @@ router = APIRouter(
 def get_products():
     session = SessionLocal()
     try:
-        products = session.query(ProductSchema).order_by(desc(ProductSchema.id)).all()
+        # ทำการ query และ join ข้อมูลจาก tb_product และ tb_product_image
+        products = session.query(ProductSchema).join(
+            ProductImageSchema, ProductImageSchema.product_id == ProductSchema.id, isouter=True
+        ).order_by(desc(ProductSchema.id)).all()
+
+        # สร้างผลลัพธ์ที่จะส่งกลับ
+        result = []
+        for product in products:
+            # ดึงข้อมูลภาพ (ถ้ามี)
+            product_images = session.query(ProductImageSchema).filter(ProductImageSchema.product_id == product.id).all()
+
+            # สร้างรายการรูปภาพที่เกี่ยวข้อง
+            image_paths = [image.path for image in product_images]
+
+            result.append({
+                "id": product.id,
+                "code": product.code,
+                "name": product.name,
+                "cost": product.cost,
+                "sell": product.sell,
+                "status": product.status,
+                "type": product.type,
+                "detail": product.detail,
+                "images": image_paths  # ส่งข้อมูลภาพทั้งหมดที่เกี่ยวข้องกับสินค้า
+            })
+
         return {
             "message": "Get products",
-            "rows": [{"id": product.id, "code": product.code, "name": product.name, 
-                      "cost": product.cost, "sell": product.sell, "status": product.status , "type": product.type , "detail":product.detail} for product in products],
-            "total": len(products)
+            "rows": result,
+            "total": len(result)
         }
+
     finally:
-        session.close()    
+        session.close() 
     
 #ดึงข้อมูลสินค้าตามไอดีจากตาราง tb_product
 @router.get("/{product_id}")
