@@ -215,12 +215,16 @@ import axios from "axios";
                     :key="index"
                     @click="showFormEdit(product.id)"
                     class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 cursor-pointer hover:bg-gray-100 transition"
-                  >
+                    >
                     <th scope="row" class="px-6 py-4">
                       <div class="w-24 h-24 lg:w-24 lg:h-24">
-                        <img
+                        <!-- <img
                           class="w-full h-full rounded-md object-cover ring-4 ring-gray-300 shadow-md"
                           src="../../assets/image/product/product.png"
+                        /> -->
+                        <img
+                          class="w-full h-full rounded-md object-cover ring-4 ring-gray-300 shadow-md"
+                          src="../../../api/uploads/34e00d95-bd1b-44c3-881f-d15d8b6debdc.jpeg"
                         />
                       </div>
                     </th>
@@ -600,6 +604,7 @@ import axios from "axios";
                 เลือกรูปภาพ
               </label>
             </div>
+
             <div class="md:flex w-full gap-2 mb-4 pt-1 mt-5">
               <!-- แสดงภาพตัวอย่างที่เลือก -->
               <div
@@ -614,6 +619,33 @@ import axios from "axios";
                   <img
                     :src="image"
                     alt="Image preview"
+                    class="w-32 h-32 lg:w-64 lg:h-48 object-cover rounded-md"
+                  />
+                  <!-- ปุ่มลบภาพ -->
+                  <button
+                    @click="removeImage(imageIndex)"
+                    class="absolute text-white bg-red-500 font-medium rounded-lg text-md text-center inline-flex items-center -top-2 -right-3 px-4 py-2.5"
+                  >
+                    <i class="fa-solid fa-trash-can"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="md:flex w-full gap-2 mb-4 pt-1 mt-5">
+              <!-- แสดงภาพของสินค้า -->
+              <div
+                v-if="productImage.length > 0"
+                class="image-preview grid grid-cols-2 lg:grid-cols-5 gap-8"
+              >
+                <div
+                  v-for="(image, imageIndex) in productImage"
+                  :key="imageIndex"
+                  class="preview-item relative"
+                >
+                  <!-- แทนที่ชื่อไฟล์ภาพด้วยตัวแปร image -->
+                  <img
+                    :src="`../../../api/uploads/${image.path}`"
+                    alt="Product Image Preview"
                     class="w-32 h-32 lg:w-64 lg:h-48 object-cover rounded-md"
                   />
                   <!-- ปุ่มลบภาพ -->
@@ -668,6 +700,7 @@ export default {
       statusProduct: "",
       detailProduct: "",
       previewImages: [],
+      productImage: [],
 
       formTable: true,
       formAdd: false,
@@ -704,10 +737,9 @@ export default {
       this.formTable = true;
       this.formAdd = false;
       this.formEdit = false;
-      
+
       this.getListProduct();
     },
-
     //เเสดงข้อมูลสมาชิกบนตาราง
     async getListProduct() {
       await axios
@@ -716,6 +748,14 @@ export default {
           const data = response.data;
           this.products = data.rows;
           console.log(this.products);
+
+          const responseImage = axios.get(
+            `${this.apiUrl}products/get_product_image/${this.products.id}`
+          );
+          if (responseImage.status === 200 && responseImage.data) {
+            this.productImage = responseImage.data.images;
+            console.log("Product Image URL:", this.productImage);
+          }
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error);
@@ -727,11 +767,19 @@ export default {
       this.formTable = false;
       this.formAdd = false;
       this.formEdit = true;
+      this.previewImages = "";
+
+      // Set loading state to true
+      this.loading = true;
 
       try {
-        // เรียก API เพื่อดึงข้อมูลสมาชิกที่ระบุ
+        // เรียก API เพื่อดึงข้อมูลสินค้าที่ระบุ
         const response = await axios.get(`${this.apiUrl}products/${productId}`);
+        const responseImage = await axios.get(
+          `${this.apiUrl}products/get_product_image/${productId}`
+        );
 
+        // ตรวจสอบว่าข้อมูลของสินค้าได้รับมาอย่างถูกต้อง
         if (response.status === 200) {
           const product = response.data.row;
 
@@ -744,14 +792,24 @@ export default {
             this.typeProduct = product.type;
             this.statusProduct = product.status;
             this.detailProduct = product.detail;
+
+            // แสดงข้อมูลสินค้าใน console
+            console.log("Product Data:", product);
+
+            // Set product image if available
+            if (responseImage.status === 200 && responseImage.data) {
+              this.productImage = responseImage.data.images;
+              console.log("Product Image URL:", this.productImage);
+            }
           } else {
             alert("ไม่พบข้อมูลสมาชิกที่ต้องการแก้ไข");
           }
+        } else {
+          alert(`Failed to fetch product details: ${response.statusText}`);
         }
-
       } catch (error) {
         console.error(
-          "เกิดข้อผิดพลาดในการดึงข้อมูลสมาชิก:",
+          `Error fetching product ${productId} from ${this.apiUrl}products/${productId}:`,
           error.response?.data?.detail || error.message
         );
         this.$refs.modal.showAlertModal({
@@ -759,6 +817,9 @@ export default {
           swlTitle: "ล้มเหลว",
           swlText: "เกิดข้อผิดพลาด",
         });
+      } finally {
+        // Set loading state to false
+        this.loading = false;
       }
     },
 
