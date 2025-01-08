@@ -704,7 +704,7 @@ export default {
       this.formTable = true;
       this.formAdd = false;
       this.formEdit = false;
-
+      
       this.getListProduct();
     },
 
