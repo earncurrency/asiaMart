@@ -16,8 +16,8 @@ export default defineConfig({
     },
   },
   define: {
-    __BASE_URL__: JSON.stringify('https://www.example.com'),
-    __API_BASE_URL__: JSON.stringify('https://api.example.com'),
+    __BASE_URL__: JSON.stringify('http://localhost:5173/asiaMart'),
+    // __API_BASE_URL__: JSON.stringify('https://api.example.com'),
   },
 })
 

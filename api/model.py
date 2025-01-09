@@ -17,6 +17,7 @@ class ProductModel(BaseModel):
     status: Optional[str] = None
     type: Optional[str] = None
     detail: Optional[str] = None
+    record_status : Optional[str] = None
 
 # โมเดล Pydantic สำหรับข้อมูลรูปภาพสินค้า
 class ProductImageModel(BaseModel):

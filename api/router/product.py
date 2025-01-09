@@ -20,10 +20,10 @@ router = APIRouter(
 def get_products():
     session = SessionLocal()
     try:
-        # ทำการ query และ join ข้อมูลจาก tb_product และ tb_product_image
+        # ทำการ query และ join ข้อมูลจาก tb_product และ tb_product_image โดยกรองเฉพาะสินค้าที่มี record_status เป็น 'active'
         products = session.query(ProductSchema).join(
             ProductImageSchema, ProductImageSchema.product_id == ProductSchema.id, isouter=True
-        ).order_by(desc(ProductSchema.id)).all()
+        ).filter(ProductSchema.record_status == 'active').order_by(desc(ProductSchema.id)).all()
 
         # สร้างผลลัพธ์ที่จะส่งกลับ
         result = []
@@ -47,13 +47,14 @@ def get_products():
             })
 
         return {
-            "message": "Get products",
+            "message": "Get active products",
             "rows": result,
             "total": len(result)
         }
 
     finally:
-        session.close() 
+        session.close()
+
     
 #ดึงข้อมูลสินค้าตามไอดีจากตาราง tb_product
 @router.get("/{product_id}")
@@ -137,7 +138,8 @@ async def add_data_product(product: ProductModel, product_images: list[str] = []
             sell=product.sell,
             status=product.status,
             type=product.type,
-            detail=product.detail
+            detail=product.detail,
+            record_status="Active"
         )
         session.add(new_product)
         session.commit()  # commit เพื่อบันทึกสินค้าใหม่
@@ -175,7 +177,7 @@ async def add_data_product(product: ProductModel, product_images: list[str] = []
         session.close()
 
 # API สำหรับอัปเดทข้อมูลสินค้า
-@router.put("/{product_id}")
+@router.put("/update_data_product/{product_id}")
 def update_product(product_id: int, product: ProductModel, product_images: list[str] = []):
     session: Session = SessionLocal()
     try:
@@ -195,6 +197,8 @@ def update_product(product_id: int, product: ProductModel, product_images: list[
             existing_member.type = product.type
         if product.detail is not None: 
             existing_member.detail = product.detail    
+
+        existing_member.record_status = "Active"    
 
         updated_fields = {} 
         updated_fields = existing_member
@@ -230,3 +234,28 @@ def update_product(product_id: int, product: ProductModel, product_images: list[
         }
     finally:
         session.close()
+@router.put("/inactive_data_product/{product_id}")
+def update_product(product_id: int):
+    session: Session = SessionLocal()  # สร้าง session ใหม่
+
+    try:
+        # ค้นหาสินค้าจาก product_id
+        existing_product = session.query(ProductSchema).filter(ProductSchema.id == product_id).first()
+
+        # เปลี่ยนสถานะสินค้าเป็น Inactive
+        existing_product.record_status = "Inactive"
+
+        # บันทึกการเปลี่ยนแปลง
+        session.commit()
+
+        # อัปเดตข้อมูลสินค้าและส่งกลับ
+        session.refresh(existing_product)
+
+        return {
+            "success": True,
+            "message": "อัปเดตสถานะสินค้าเป็น Inactive สำเร็จ",
+            "updated_data": existing_product
+        }
+
+    finally:
+        session.close()  # ปิด session

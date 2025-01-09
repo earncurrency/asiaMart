@@ -223,8 +223,9 @@ import axios from "axios";
                       >
                         <!-- <img
                           class="w-full h-full rounded-md object-cover ring-4 ring-gray-300 shadow-md"
-                          src="../../assets/image/product/product.png"
+                            :src="`${baseUrl}/api/uploads/1/${product.image}`"
                         /> -->
+
                         <img
                           class="w-full h-full rounded-md object-cover ring-4 ring-gray-300 shadow-md"
                           :src="`../../../api/uploads/${Math.ceil(
@@ -254,7 +255,7 @@ import axios from "axios";
                     </td>
                     <td class="px-6 py-4">
                       <button
-                        @click.stop="btnDelete"
+                        @click.stop="btnDelete(product.id)"
                         class="bg-red-500 text-white px-4 py-2 rounded-md"
                       >
                         <i class="fa-solid fa-trash-can"></i>
@@ -693,6 +694,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      // baseUrl: import.meta.env.__BASE_URL__,
       apiUrl: "http://127.0.0.1:8000/",
       products: [],
 
@@ -913,7 +915,7 @@ export default {
           };
 
           const response = await axios.put(
-            `${this.apiUrl}products/${this.productId}`,
+            `${this.apiUrl}products/update_data_product/${this.productId}`,
             {
               product: dataProduct,
               product_images: this.previewImages,
@@ -959,11 +961,48 @@ export default {
     removeImage(imageIndex) {
       this.previewImages.splice(imageIndex, 1);
     },
-    btnDelete() {
+
+    btnDelete(productId) {
+      // เรียกใช้งาน modal เพื่อแสดงคำเตือน
       this.$refs.modal.showDeleteModal({
         swlIcon: "warning",
-        swlTitle: "เเจ้งเตือน",
+        swlTitle: "แจ้งเตือน",
         swlText: "คุณต้องการลบสินค้านี้หรือไม่!",
+        onConfirm: () => {
+          // เมื่อผู้ใช้กด "ยืนยัน" ใน modal
+          axios
+            .put(`${this.apiUrl}products/inactive_data_product/${productId}`)
+            .then((response) => {
+              // แสดงข้อความว่า "ลบสำเร็จ"
+              this.$swal
+                .fire({
+                  title: "ลบสำเร็จ",
+                  icon: "success",
+                  confirmButtonText: "ยืนยัน",
+                  customClass: {
+                    confirmButton:
+                      "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400",
+                  },
+                })
+                .then(() => {
+                  // เมื่อกดปุ่ม "ยืนยัน" ใน swal ที่สอง
+                  this.showFormTable(); 
+                });
+            })
+            .catch((error) => {
+              console.error("Error updating product status:", error);
+              this.$swal.fire({
+                title: "เกิดข้อผิดพลาด",
+                text: "ไม่สามารถอัปเดตสถานะสินค้าได้",
+                icon: "error",
+                confirmButtonText: "ยืนยัน",
+                customClass: {
+                  confirmButton:
+                    "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400",
+                },
+              });
+            });
+        },
       });
     },
 

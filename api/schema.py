@@ -28,6 +28,7 @@ class ProductSchema(Base):
     status = Column(String(15))
     type = Column(String(15))
     detail = Column(String(255))
+    record_status = Column(String(1))
 
 #สร้าง โครงสร้างของตาราง tb_product_image
 class ProductImageSchema(Base):
