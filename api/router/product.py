@@ -144,7 +144,7 @@ async def add_data_product(product: ProductModel, product_images: list[str] = []
         session.commit()  # commit เพื่อบันทึกสินค้าใหม่
         session.refresh(new_product)
        
-        uploadPath = 'uploads/'+math.ceil(new_product.id/1000)
+        uploadPath = 'uploads/'+math.ceil(new_product.id/100)
 
         # 2. บันทึกข้อมูลภาพที่สัมพันธ์กับสินค้า
         image_filenames = []
