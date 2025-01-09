@@ -2,7 +2,7 @@
 from fastapi import APIRouter, HTTPException
 from sqlalchemy.orm import Session ,aliased
 from sqlalchemy import asc, desc
-import os ,base64 ,uuid
+import os ,base64 ,uuid, math
 from typing import List
 
 from database import SessionLocal, engine
@@ -113,6 +113,7 @@ def save_image_from_base64(base64_str: str, folder: str = "uploads") -> str:
         filename = f"{uuid.uuid4()}.{file_extension}"
         file_path = os.path.join(folder, filename)
 
+        
         # สร้างโฟลเดอร์ถ้ายังไม่มี
         os.makedirs(folder, exist_ok=True)
 
@@ -142,12 +143,14 @@ async def add_data_product(product: ProductModel, product_images: list[str] = []
         session.add(new_product)
         session.commit()  # commit เพื่อบันทึกสินค้าใหม่
         session.refresh(new_product)
+       
+        uploadPath = 'uploads/'+math.ceil(new_product.id/1000)
 
         # 2. บันทึกข้อมูลภาพที่สัมพันธ์กับสินค้า
         image_filenames = []
         for base64_image in product_images:
             # แปลง Base64 เป็นไฟล์
-            file_path = save_image_from_base64(base64_image)
+            file_path = save_image_from_base64(base64_image,uploadPath)
 
             # แยกแค่ชื่อไฟล์จาก path
             filename = os.path.basename(file_path)
