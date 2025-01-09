@@ -169,7 +169,6 @@ async def add_data_product(product: ProductModel, product_images: list[str] = []
         return {
             "success": True,
             "message": "บันทึกข้อมูลสินค้าสำเร็จ",
-            "id": new_product.id,
             "updated_data": new_product  
         }
     finally:
@@ -227,8 +226,7 @@ def update_product(product_id: int, product: ProductModel, product_images: list[
         return {
             "success": True,
             "message": "เเก้ไขข้อมูลสินค้าสำเร็จ",
-            "id": product_id,
-            "updated_data": updated_fields  
+            "updated_data": product
         }
     finally:
         session.close()
