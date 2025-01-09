@@ -57,43 +57,43 @@ def get_products():
     
 #ดึงข้อมูลสินค้าตามไอดีจากตาราง tb_product
 @router.get("/{product_id}")
-def get_product(product_id:int):
+def get_product_by_id(product_id: int):
     session = SessionLocal()
     try:
-        product = session.query(ProductSchema).filter(ProductSchema.id == product_id).first()
+        # ทำการ query และ join ข้อมูลจาก tb_product และ tb_product_image โดยกรองตาม product_id
+        product = session.query(ProductSchema).join(
+            ProductImageSchema, ProductImageSchema.product_id == ProductSchema.id, isouter=True
+        ).filter(ProductSchema.id == product_id).first()
+
         if not product:
-            raise HTTPException(status_code=404, detail="ไม่พบข้อมูลสินค้า")
-        return {
-            "message": "Get product by ID",
-            "row": {"id": product.id, "code": product.code, "name": product.name, "cost": product.cost, "sell": product.sell, "status": product.status , "type": product.type , "detail":product.detail}
-        }    
-    finally:
-        session.close()    
-  
-#ดึงรูปภาพสินค้าตาม product_id จากตาราง tb_product_image
-@router.get("/get_product_image/{product_id}")
-def get_product_image(product_id: int):
-    session = SessionLocal()
-    try:
-        # ดึงข้อมูลรูปภาพทั้งหมดที่มี product_id ตรงกัน
-        product_images = session.query(ProductImageSchema).filter(ProductImageSchema.product_id == product_id).all()
+            raise HTTPException(status_code=404, detail="ไม่พบข้อมูลสินค้าตาม ID ที่ระบุ")
 
-        if not product_images:
-            raise HTTPException(status_code=404, detail="ไม่พบข้อมูลสินค้าที่มี product_id นี้")
+        # ดึงข้อมูลรูปภาพทั้งหมดที่เกี่ยวข้องกับ product_id
+        product_images = session.query(ProductImageSchema).filter(ProductImageSchema.product_id == product.id).all()
 
-        # คืนค่าผลลัพธ์เป็นรายการรูปภาพที่เกี่ยวข้องกับ product_id
+        # สร้างรายการรูปภาพที่เกี่ยวข้อง
+        image_paths = [image.path for image in product_images]
+
         return {
-            "message": "Get product images by product_id",
-            "images": [
-                {"id": product_image.id, "product_id": product_image.product_id, "path": product_image.path}
-                for product_image in product_images
-            ]
-        }    
+            "message": "Get product by product_id",
+            "row": {
+                "id": product.id,
+                "code": product.code,
+                "name": product.name,
+                "cost": product.cost,
+                "sell": product.sell,
+                "status": product.status,
+                "type": product.type,
+                "detail": product.detail,
+                "images": image_paths  # ส่งข้อมูลภาพทั้งหมดที่เกี่ยวข้องกับสินค้า
+            }
+        }
+
     finally:
-        session.close()
+        session.close()  
 
 #ฟังก์ชันที่ใช้แปลง base64 string เป็นไฟล์รูปภาพ
-def save_image_from_base64(base64_str: str, folder: str = "uploads") -> str:
+def save_image_from_base64(base64_str: str, folder: str ) -> str:
     """
     ฟังก์ชันที่ใช้แปลง base64 string เป็นไฟล์รูปภาพ และบันทึกในโฟลเดอร์ที่กำหนด
     """
@@ -112,7 +112,6 @@ def save_image_from_base64(base64_str: str, folder: str = "uploads") -> str:
         # สร้างชื่อไฟล์ด้วย UUID
         filename = f"{uuid.uuid4()}.{file_extension}"
         file_path = os.path.join(folder, filename)
-
         
         # สร้างโฟลเดอร์ถ้ายังไม่มี
         os.makedirs(folder, exist_ok=True)
@@ -143,10 +142,11 @@ async def add_data_product(product: ProductModel, product_images: list[str] = []
         session.add(new_product)
         session.commit()  # commit เพื่อบันทึกสินค้าใหม่
         session.refresh(new_product)
-       
-        uploadPath = 'uploads/'+math.ceil(new_product.id/100)
 
         # 2. บันทึกข้อมูลภาพที่สัมพันธ์กับสินค้า
+
+        uploadPath = 'uploads/' + str(math.ceil(new_product.id / 100))
+
         image_filenames = []
         for base64_image in product_images:
             # แปลง Base64 เป็นไฟล์
@@ -166,22 +166,21 @@ async def add_data_product(product: ProductModel, product_images: list[str] = []
 
             image_filenames.append(db_image.path)
 
-        return {"message": "เพิ่มสินค้าพร้อมรูปภาพสำเร็จ", "id": new_product.id, "filenames": image_filenames}
-    except Exception as e:
-        session.rollback()
-        raise HTTPException(status_code=500, detail="เกิดข้อผิดพลาดในการบันทึกข้อมูล")
+        return {
+            "success": True,
+            "message": "บันทึกข้อมูลสินค้าสำเร็จ",
+            "id": new_product.id,
+            "updated_data": new_product  
+        }
     finally:
         session.close()
 
 # API สำหรับอัปเดทข้อมูลสินค้า
 @router.put("/{product_id}")
-def update_product(product_id: int, product: ProductModel):
+def update_product(product_id: int, product: ProductModel, product_images: list[str] = []):
     session: Session = SessionLocal()
     try:
         existing_member = session.query(ProductSchema).filter(ProductSchema.id == product_id).first()
-
-        if not existing_member:
-            raise HTTPException(status_code=404, detail="ไม่พบข้อมูลสินค้า")
 
         if product.code is not None:
             existing_member.code = product.code
@@ -201,6 +200,29 @@ def update_product(product_id: int, product: ProductModel):
         updated_fields = {} 
         updated_fields = existing_member
         session.commit()
+
+        # 2. บันทึกข้อมูลภาพที่สัมพันธ์กับสินค้า
+
+        uploadPath = 'uploads/' + str(math.ceil(product_id / 100))
+
+        image_filenames = []
+        for base64_image in product_images:
+            # แปลง Base64 เป็นไฟล์
+            file_path = save_image_from_base64(base64_image,uploadPath)
+
+            # แยกแค่ชื่อไฟล์จาก path
+            filename = os.path.basename(file_path)
+
+            # บันทึกภาพในฐานข้อมูล พร้อมกับ product_id ที่เชื่อมโยงกับสินค้าใหม่
+            db_image = ProductImageSchema(
+                path=filename,
+                product_id=product_id  # เชื่อมโยงกับสินค้า
+            )
+            session.add(db_image)
+            session.commit()
+            session.refresh(db_image)
+
+            image_filenames.append(db_image.path)
 
         return {
             "success": True,
