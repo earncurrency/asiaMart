@@ -13,16 +13,16 @@ class ProductModel(BaseModel):
     code: Optional[str] = None
     name: Optional[str] = None
     cost:Optional[str] = None
-    sell:Optional[str] = None
+    price:Optional[str] = None
     status: Optional[str] = None
     type: Optional[str] = None
     detail: Optional[str] = None
-    record_status : Optional[str] = None
 
 # โมเดล Pydantic สำหรับข้อมูลรูปภาพสินค้า
 class ProductImageModel(BaseModel):
     product_id: Optional[int] = None
     path: Optional[str] = None
+    status: Optional[str] = None
 
 
 class Config:

@@ -223,12 +223,12 @@ import axios from "axios";
                       >
                         <!-- <img
                           class="w-full h-full rounded-md object-cover ring-4 ring-gray-300 shadow-md"
-                            :src="`${baseUrl}/api/uploads/1/${product.image}`"
+                            :src="`${baseUrl}/api/uploads/1/${product.images}`"
                         /> -->
 
                         <img
                           class="w-full h-full rounded-md object-cover ring-4 ring-gray-300 shadow-md"
-                          :src="`../../../api/uploads/${Math.ceil(
+                          :src="`${baseUrl}/api/uploads/${Math.ceil(
                             product.id / 100
                           )}/${product.images[0]}`"
                         />
@@ -245,14 +245,23 @@ import axios from "axios";
                       {{ product.cost }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                      {{ product.sell }}
+                      {{ product.price }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                       <span
+                        v-if="product.status === 'active'"
                         class="font-semibold text-green-500 p-1 bg-green-100 rounded-md"
-                        >{{ product.status }}</span
                       >
+                        แสดง
+                      </span>
+                      <span
+                        v-else
+                        class="font-semibold text-red-500 p-1 bg-red-100 rounded-md"
+                      >
+                        ไม่แสดง
+                      </span>
                     </td>
+
                     <td class="px-6 py-4">
                       <button
                         @click.stop="btnDelete(product.id)"
@@ -277,12 +286,12 @@ import axios from "axios";
               <div class="w-full lg:w-1/4">
                 <input
                   type="text"
-                  v-model="codeProduct"
+                  v-model="product.code"
                   ref="inputCodeProduct"
                   :class="{
                     'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                     'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                      !codeProduct,
+                      !product.code,
                   }"
                   placeholder="รหัสสินค้า"
                   required
@@ -291,12 +300,12 @@ import axios from "axios";
               <div class="w-full lg:w-3/4">
                 <input
                   type="text"
-                  v-model="nameProduct"
+                  v-model="product.name"
                   ref="inputNameProduct"
                   :class="{
                     'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                     'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                      !nameProduct,
+                      !product.name,
                   }"
                   placeholder="ใส่ชื่อสินค้า"
                   required
@@ -309,12 +318,12 @@ import axios from "axios";
                 <div class="lg:w-1/2 w-full">
                   <input
                     type="text"
-                    v-model="costPriceProduct"
+                    v-model="product.cost"
                     ref="inputCostPriceProduct"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !costPriceProduct,
+                        !product.cost,
                     }"
                     placeholder="ราคาทุน"
                     required
@@ -324,12 +333,12 @@ import axios from "axios";
                 <div class="lg:w-1/2 w-full">
                   <input
                     type="text"
-                    v-model="sellPriceProduct"
+                    v-model="product.price"
                     ref="inputSellPriceProduct"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !sellPriceProduct,
+                        !product.price,
                     }"
                     placeholder="ราคาขาย"
                     required
@@ -340,12 +349,12 @@ import axios from "axios";
               <div class="flex gap-2 w-full pt-1 mt-4 lg:pt-0 lg:mt-0">
                 <div class="lg:w-1/2 w-full">
                   <select
-                    v-model="typeProduct"
+                    v-model="product.type"
                     ref="inputTypeProduct"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !typeProduct,
+                        !product.type,
                     }"
                     required
                   >
@@ -359,18 +368,18 @@ import axios from "axios";
 
                 <div class="lg:w-1/2 w-full">
                   <select
-                    v-model="statusProduct"
+                    v-model="product.status"
                     ref="inputStatusProduct"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !statusProduct,
+                        !product.status,
                     }"
                     required
                   >
                     <option value="" disabled selected>สถานะ</option>
-                    <option value="เเสดง">เเสดง</option>
-                    <option value="ไม่เเสดง">ไม่เเสดง</option>
+                    <option value="active">เเสดง</option>
+                    <option value="inactive">ไม่เเสดง</option>
                   </select>
                 </div>
               </div>
@@ -381,13 +390,13 @@ import axios from "axios";
                 <div class="w-full">
                   <textarea
                     type="text"
-                    v-model="detailProduct"
+                    v-model="product.detail"
                     ref="inputDetailProduct"
                     rows="4"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !detailProduct,
+                        !product.detail,
                     }"
                     placeholder="รายละเอียดสินค้า"
                     required
@@ -463,7 +472,7 @@ import axios from "axios";
             <div class="flex justify-between items-center mb-2">
               <p class="text-3xl font-semibold">เเก้ไขข้อมูลสินค้า</p>
               <button
-                @click.stop="btnDelete"
+                @click.stop="btnDelete(product.id)"
                 class="bg-red-500 text-white px-4 py-1.5 rounded-md"
               >
                 <i class="fa-solid fa-trash-can"></i>
@@ -474,12 +483,12 @@ import axios from "axios";
               <div class="w-full lg:w-1/4">
                 <input
                   type="text"
-                  v-model="codeProduct"
+                  v-model="product.code"
                   ref="inputCodeProduct"
                   :class="{
                     'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                     'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                      !codeProduct,
+                      !product.code,
                   }"
                   placeholder="รหัสสินค้า"
                   required
@@ -488,12 +497,12 @@ import axios from "axios";
               <div class="w-full lg:w-3/4">
                 <input
                   type="text"
-                  v-model="nameProduct"
+                  v-model="product.name"
                   ref="inputNameProduct"
                   :class="{
                     'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                     'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                      !nameProduct,
+                      !product.name,
                   }"
                   placeholder="ใส่ชื่อสินค้า"
                   required
@@ -506,12 +515,12 @@ import axios from "axios";
                 <div class="lg:w-1/2 w-full">
                   <input
                     type="text"
-                    v-model="costPriceProduct"
+                    v-model="product.cost"
                     ref="inputCostPriceProduct"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !costPriceProduct,
+                        !product.cost,
                     }"
                     placeholder="ราคาทุน"
                     required
@@ -521,12 +530,12 @@ import axios from "axios";
                 <div class="lg:w-1/2 w-full">
                   <input
                     type="text"
-                    v-model="sellPriceProduct"
+                    v-model="product.price"
                     ref="inputSellPriceProduct"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !sellPriceProduct,
+                        !product.price,
                     }"
                     placeholder="ราคาขาย"
                     required
@@ -537,12 +546,12 @@ import axios from "axios";
               <div class="flex gap-2 w-full pt-1 mt-4 lg:pt-0 lg:mt-0">
                 <div class="lg:w-1/2 w-full">
                   <select
-                    v-model="typeProduct"
+                    v-model="product.type"
                     ref="inputTypeProduct"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !typeProduct,
+                        !product.type,
                     }"
                     required
                   >
@@ -556,18 +565,18 @@ import axios from "axios";
 
                 <div class="lg:w-1/2 w-full">
                   <select
-                    v-model="statusProduct"
+                    v-model="product.status"
                     ref="inputStatusProduct"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !statusProduct,
+                        !product.status,
                     }"
                     required
                   >
                     <option value="" disabled selected>สถานะ</option>
-                    <option value="เเสดง">เเสดง</option>
-                    <option value="ไม่เเสดง">ไม่เเสดง</option>
+                    <option value="active">เเสดง</option>
+                    <option value="inactive">ไม่เเสดง</option>
                   </select>
                 </div>
               </div>
@@ -578,13 +587,13 @@ import axios from "axios";
                 <div class="w-full">
                   <textarea
                     type="text"
-                    v-model="detailProduct"
+                    v-model="product.detail"
                     ref="inputDetailProduct"
                     rows="4"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !detailProduct,
+                        !product.detail,
                     }"
                     placeholder="รายละเอียดสินค้า"
                     required
@@ -640,18 +649,18 @@ import axios from "axios";
             <div class="md:flex w-full gap-2 mb-4 pt-1 mt-5">
               <!-- แสดงภาพของสินค้า -->
               <div
-                v-if="productImage.length > 0"
+                v-if="product.images.length > 0"
                 class="image-preview grid grid-cols-2 lg:grid-cols-5 gap-8"
               >
                 <div
-                  v-for="(image, imageIndex) in productImage"
+                  v-for="(image, imageIndex) in product.images"
                   :key="imageIndex"
                   class="preview-item relative"
                 >
                   <!-- แทนที่ชื่อไฟล์ภาพด้วยตัวแปร image -->
                   <img
-                    :src="`../../../api/uploads/${Math.ceil(
-                      productId / 100
+                    :src="`${baseUrl}/api/uploads/${Math.ceil(
+                      product.id / 100
                     )}/${image}`"
                     alt="Product Image Preview"
                     class="w-32 h-32 lg:w-64 lg:h-48 object-cover rounded-md"
@@ -694,22 +703,25 @@ import axios from "axios";
 export default {
   data() {
     return {
-      // baseUrl: import.meta.env.__BASE_URL__,
+      baseUrl: __BASE_URL__,
       apiUrl: "http://127.0.0.1:8000/",
       products: [],
 
       isFocus: false,
 
       productId: "",
-      codeProduct: "",
-      nameProduct: "",
-      costPriceProduct: "",
-      sellPriceProduct: "",
-      typeProduct: "",
-      statusProduct: "",
-      detailProduct: "",
+      product: {
+        id:"",
+        code: "",
+        name: "",
+        cost: "",
+        price: "",
+        type: "",
+        status: "",
+        detail: "",
+        images: [],
+      },
       previewImages: [],
-      productImage: [],
 
       formTable: true,
       formAdd: false,
@@ -733,13 +745,13 @@ export default {
       this.formEdit = false;
 
       this.productId = "";
-      this.codeProduct = "";
-      this.nameProduct = "";
-      this.costPriceProduct = "";
-      this.sellPriceProduct = "";
-      this.typeProduct = "";
-      this.statusProduct = "";
-      this.detailProduct = "";
+      this.product.code = "";
+      this.product.name = "";
+      this.product.cost = "";
+      this.product.price = "";
+      this.product.type = "";
+      this.product.status = "";
+      this.product.detail = "";
       this.previewImages = [];
     },
     showFormTable() {
@@ -749,7 +761,7 @@ export default {
 
       this.getListProduct();
     },
-    //เเสดงข้อมูลสมาชิกบนตาราง
+    //เเสดงข้อมูลสินค้าบนตาราง
     async getListProduct() {
       await axios
         .get(`${this.apiUrl}products`)
@@ -782,15 +794,15 @@ export default {
           const product = response.data.row;
 
           if (product) {
-            this.productId = productId;
-            this.codeProduct = product.code;
-            this.nameProduct = product.name;
-            this.costPriceProduct = product.cost;
-            this.sellPriceProduct = product.sell;
-            this.typeProduct = product.type;
-            this.statusProduct = product.status;
-            this.detailProduct = product.detail;
-            this.productImage = product.images;
+            this.product.id = productId;
+            this.product.code = product.code;
+            this.product.name = product.name;
+            this.product.cost = product.cost;
+            this.product.price = product.price;
+            this.product.type = product.type;
+            this.product.status = product.status;
+            this.product.detail = product.detail;
+            this.product.images = product.images;
 
             // แสดงข้อมูลสินค้าใน console
             console.log("Product Data:", product);
@@ -818,46 +830,46 @@ export default {
 
     async btnAdd() {
       // ตรวจสอบความครบถ้วนของข้อมูล
-      if (!this.codeProduct) {
+      if (!this.product.code) {
         this.isFocus = true;
         this.$refs.inputCodeProduct.focus();
-      } else if (!this.nameProduct) {
+      } else if (!this.product.name) {
         this.isFocus = true;
         this.$refs.inputNameProduct.focus();
-      } else if (!this.costPriceProduct) {
+      } else if (!this.product.cost) {
         this.isFocus = true;
         this.$refs.inputCostPriceProduct.focus();
-      } else if (!this.sellPriceProduct) {
+      } else if (!this.product.price) {
         this.isFocus = true;
         this.$refs.inputSellPriceProduct.focus();
-      } else if (!this.typeProduct) {
+      } else if (!this.product.type) {
         this.isFocus = true;
         this.$refs.inputTypeProduct.focus();
-      } else if (!this.statusProduct) {
+      } else if (!this.product.status) {
         this.isFocus = true;
         this.$refs.inputStatusProduct.focus();
-      } else if (!this.detailProduct) {
+      } else if (!this.product.detail) {
         this.isFocus = true;
         this.$refs.inputDetailProduct.focus();
       } else {
         try {
           // ข้อมูลที่ต้องการส่งไปยัง API สำหรับผลิตภัณฑ์
           const dataProduct = {
-            code: this.codeProduct,
-            name: this.nameProduct,
-            cost: this.costPriceProduct,
-            sell: this.sellPriceProduct,
-            status: this.statusProduct,
-            type: this.typeProduct,
-            detail: this.detailProduct,
+            code: this.product.code,
+            name: this.product.name,
+            cost: this.product.cost,
+            price: this.product.price,
+            status: this.product.status,
+            type: this.product.type,
+            detail: this.product.detail,
           };
 
           // ส่งข้อมูลผลิตภัณฑ์และรูปภาพไปยัง API
           const productResponse = await axios.post(
-            `${this.apiUrl}products/add_data_product`,
+            `${this.apiUrl}products/add_product`,
             {
               product: dataProduct,
-              product_images: this.previewImages,
+              product_images: this.previewImages
             }
           );
 
@@ -881,41 +893,41 @@ export default {
     },
 
     async btnEdit() {
-      if (!this.codeProduct) {
+      if (!this.product.code) {
         this.isFocus = true;
         this.$refs.inputCodeProduct.focus();
-      } else if (!this.nameProduct) {
+      } else if (!this.product.name) {
         this.isFocus = true;
         this.$refs.inputNameProduct.focus();
-      } else if (!this.costPriceProduct) {
+      } else if (!this.product.cost) {
         this.isFocus = true;
         this.$refs.inputCostPriceProduct.focus();
-      } else if (!this.sellPriceProduct) {
+      } else if (!this.product.price) {
         this.isFocus = true;
         this.$refs.inputSellPriceProduct.focus();
-      } else if (!this.typeProduct) {
+      } else if (!this.product.type) {
         this.isFocus = true;
         this.$refs.inputTypeProduct.focus();
-      } else if (!this.statusProduct) {
+      } else if (!this.product.status) {
         this.isFocus = true;
         this.$refs.inputStatusProduct.focus();
-      } else if (!this.detailProduct) {
+      } else if (!this.product.detail) {
         this.isFocus = true;
         this.$refs.inputDetailProduct.focus();
       } else {
         try {
           const dataProduct = {
-            code: this.codeProduct,
-            name: this.nameProduct,
-            cost: this.costPriceProduct,
-            sell: this.sellPriceProduct,
-            status: this.statusProduct,
-            type: this.typeProduct,
-            detail: this.detailProduct,
+            code: this.product.code,
+            name: this.product.name,
+            cost: this.product.cost,
+            price: this.product.price,
+            status: this.product.status,
+            type: this.product.type,
+            detail: this.product.detail,
           };
 
           const response = await axios.put(
-            `${this.apiUrl}products/update_data_product/${this.productId}`,
+            `${this.apiUrl}products/update_product/${this.product.id}`,
             {
               product: dataProduct,
               product_images: this.previewImages,
@@ -963,6 +975,7 @@ export default {
     },
 
     btnDelete(productId) {
+
       // เรียกใช้งาน modal เพื่อแสดงคำเตือน
       this.$refs.modal.showDeleteModal({
         swlIcon: "warning",
@@ -971,7 +984,7 @@ export default {
         onConfirm: () => {
           // เมื่อผู้ใช้กด "ยืนยัน" ใน modal
           axios
-            .put(`${this.apiUrl}products/inactive_data_product/${productId}`)
+            .put(`${this.apiUrl}products/remove_product/${productId}`)
             .then((response) => {
               // แสดงข้อความว่า "ลบสำเร็จ"
               this.$swal
@@ -986,10 +999,9 @@ export default {
                 })
                 .then(() => {
                   // เมื่อกดปุ่ม "ยืนยัน" ใน swal ที่สอง
-                  this.showFormTable(); 
+                  this.showFormTable();
                 });
-            })
-            .catch((error) => {
+            }).catch((error) => {
               console.error("Error updating product status:", error);
               this.$swal.fire({
                 title: "เกิดข้อผิดพลาด",

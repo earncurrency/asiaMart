@@ -20,10 +20,10 @@ router = APIRouter(
 def get_products():
     session = SessionLocal()
     try:
-        # ทำการ query และ join ข้อมูลจาก tb_product และ tb_product_image โดยกรองเฉพาะสินค้าที่มี record_status เป็น 'active'
+        # ทำการ query และ join ข้อมูลจาก tb_product และ tb_product_image โดยกรองเฉพาะสินค้าที่มี status เป็น 'active'
         products = session.query(ProductSchema).join(
             ProductImageSchema, ProductImageSchema.product_id == ProductSchema.id, isouter=True
-        ).filter(ProductSchema.record_status == 'active').order_by(desc(ProductSchema.id)).all()
+        ).filter(ProductSchema.status != 'remove').order_by(desc(ProductSchema.id)).all()
 
         # สร้างผลลัพธ์ที่จะส่งกลับ
         result = []
@@ -39,7 +39,7 @@ def get_products():
                 "code": product.code,
                 "name": product.name,
                 "cost": product.cost,
-                "sell": product.sell,
+                "price": product.price,
                 "status": product.status,
                 "type": product.type,
                 "detail": product.detail,
@@ -61,16 +61,14 @@ def get_products():
 def get_product_by_id(product_id: int):
     session = SessionLocal()
     try:
-        # ทำการ query และ join ข้อมูลจาก tb_product และ tb_product_image โดยกรองตาม product_id
+        # ทำการ query และ join ข้อมูลจาก tb_product และ tb_product_image โดยกรองตาม product_id และ filter status ของสินค้า
         product = session.query(ProductSchema).join(
             ProductImageSchema, ProductImageSchema.product_id == ProductSchema.id, isouter=True
         ).filter(ProductSchema.id == product_id).first()
 
-        if not product:
-            raise HTTPException(status_code=404, detail="ไม่พบข้อมูลสินค้าตาม ID ที่ระบุ")
-
-        # ดึงข้อมูลรูปภาพทั้งหมดที่เกี่ยวข้องกับ product_id
-        product_images = session.query(ProductImageSchema).filter(ProductImageSchema.product_id == product.id).all()
+        # ดึงข้อมูลรูปภาพทั้งหมดที่เกี่ยวข้องกับ product_id และ filter status เป็น 'active'
+        product_images = session.query(ProductImageSchema).filter(
+            ProductImageSchema.product_id == product.id,ProductImageSchema.status == 'active').all()
 
         # สร้างรายการรูปภาพที่เกี่ยวข้อง
         image_paths = [image.path for image in product_images]
@@ -82,7 +80,7 @@ def get_product_by_id(product_id: int):
                 "code": product.code,
                 "name": product.name,
                 "cost": product.cost,
-                "sell": product.sell,
+                "price": product.price,
                 "status": product.status,
                 "type": product.type,
                 "detail": product.detail,
@@ -91,7 +89,8 @@ def get_product_by_id(product_id: int):
         }
 
     finally:
-        session.close()  
+        session.close()
+
 
 #ฟังก์ชันที่ใช้แปลง base64 string เป็นไฟล์รูปภาพ
 def save_image_from_base64(base64_str: str, folder: str ) -> str:
@@ -126,8 +125,8 @@ def save_image_from_base64(base64_str: str, folder: str ) -> str:
         raise HTTPException(status_code=400, detail="ไม่สามารถบันทึกรูปภาพได้")
 
 # API สำหรับเพิ่มข้อมูลสินค้า เเละรูปภาพ
-@router.post("/add_data_product")
-async def add_data_product(product: ProductModel, product_images: list[str] = []):
+@router.post("/add_product")
+async def add_data_product(product: ProductModel,product_images: list[str] = []):
     session = SessionLocal()
     try:
         # 1. เพิ่มข้อมูลสินค้าใหม่
@@ -135,11 +134,10 @@ async def add_data_product(product: ProductModel, product_images: list[str] = []
             code=product.code,
             name=product.name,
             cost=product.cost,
-            sell=product.sell,
+            price=product.price,
             status=product.status,
             type=product.type,
             detail=product.detail,
-            record_status="Active"
         )
         session.add(new_product)
         session.commit()  # commit เพื่อบันทึกสินค้าใหม่
@@ -160,7 +158,8 @@ async def add_data_product(product: ProductModel, product_images: list[str] = []
             # บันทึกภาพในฐานข้อมูล พร้อมกับ product_id ที่เชื่อมโยงกับสินค้าใหม่
             db_image = ProductImageSchema(
                 path=filename,
-                product_id=new_product.id  # เชื่อมโยงกับสินค้า
+                product_id=new_product.id ,
+                status="active"
             )
             session.add(db_image)
             session.commit()
@@ -171,13 +170,13 @@ async def add_data_product(product: ProductModel, product_images: list[str] = []
         return {
             "success": True,
             "message": "บันทึกข้อมูลสินค้าสำเร็จ",
-            "updated_data": new_product  
+            "updated_data": new_product
         }
     finally:
         session.close()
 
 # API สำหรับอัปเดทข้อมูลสินค้า
-@router.put("/update_data_product/{product_id}")
+@router.put("/update_product/{product_id}")
 def update_product(product_id: int, product: ProductModel, product_images: list[str] = []):
     session: Session = SessionLocal()
     try:
@@ -189,16 +188,14 @@ def update_product(product_id: int, product: ProductModel, product_images: list[
             existing_member.name = product.name
         if product.cost is not None:
             existing_member.cost = product.cost
-        if product.sell is not None:
-            existing_member.sell = product.sell
+        if product.price is not None:
+            existing_member.price = product.price
         if product.status is not None:
             existing_member.status = product.status
         if product.type is not None: 
             existing_member.type = product.type
         if product.detail is not None: 
             existing_member.detail = product.detail    
-
-        existing_member.record_status = "Active"    
 
         updated_fields = {} 
         updated_fields = existing_member
@@ -219,7 +216,7 @@ def update_product(product_id: int, product: ProductModel, product_images: list[
             # บันทึกภาพในฐานข้อมูล พร้อมกับ product_id ที่เชื่อมโยงกับสินค้าใหม่
             db_image = ProductImageSchema(
                 path=filename,
-                product_id=product_id  # เชื่อมโยงกับสินค้า
+                product_id=product_id # เชื่อมโยงกับสินค้า
             )
             session.add(db_image)
             session.commit()
@@ -234,7 +231,8 @@ def update_product(product_id: int, product: ProductModel, product_images: list[
         }
     finally:
         session.close()
-@router.put("/inactive_data_product/{product_id}")
+        
+@router.put("/remove_product/{product_id}")
 def update_product(product_id: int):
     session: Session = SessionLocal()  # สร้าง session ใหม่
 
@@ -243,7 +241,7 @@ def update_product(product_id: int):
         existing_product = session.query(ProductSchema).filter(ProductSchema.id == product_id).first()
 
         # เปลี่ยนสถานะสินค้าเป็น Inactive
-        existing_product.record_status = "Inactive"
+        existing_product.status = "remove"
 
         # บันทึกการเปลี่ยนแปลง
         session.commit()
