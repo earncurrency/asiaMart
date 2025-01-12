@@ -71,7 +71,7 @@ def get_product_by_id(product_id: int):
             ProductImageSchema.product_id == product.id,ProductImageSchema.status == 'active').all()
 
         # สร้างรายการรูปภาพที่เกี่ยวข้อง
-        image_paths = [image.path for image in product_images]
+        image_data = [{"id": image.id, "path": image.path} for image in product_images]
 
         return {
             "message": "Get product by product_id",
@@ -84,7 +84,7 @@ def get_product_by_id(product_id: int):
                 "status": product.status,
                 "type": product.type,
                 "detail": product.detail,
-                "images": image_paths  # ส่งข้อมูลภาพทั้งหมดที่เกี่ยวข้องกับสินค้า
+                "images": image_data  # ส่งข้อมูลภาพทั้งหมดที่เกี่ยวข้องกับสินค้า
             }
         }
 
@@ -233,14 +233,14 @@ def update_product(product_id: int, product: ProductModel, product_images: list[
         session.close()
         
 @router.put("/remove_product/{product_id}")
-def update_product(product_id: int):
+def remove_product(product_id: int):
     session: Session = SessionLocal()  # สร้าง session ใหม่
 
     try:
         # ค้นหาสินค้าจาก product_id
         existing_product = session.query(ProductSchema).filter(ProductSchema.id == product_id).first()
 
-        # เปลี่ยนสถานะสินค้าเป็น Inactive
+        # เปลี่ยนสถานะสินค้าเป็น remove
         existing_product.status = "remove"
 
         # บันทึกการเปลี่ยนแปลง
@@ -251,9 +251,36 @@ def update_product(product_id: int):
 
         return {
             "success": True,
-            "message": "อัปเดตสถานะสินค้าเป็น Inactive สำเร็จ",
+            "message": "อัปเดตสถานะสินค้าเป็น remove สำเร็จ",
             "updated_data": existing_product
         }
 
     finally:
         session.close()  # ปิด session
+@router.put("/remove_image_product/{image_id}")
+def remove_product(image_id: int):
+    session: Session = SessionLocal()  # สร้าง session ใหม่
+
+    try:
+        # ค้นหาสินค้าจาก image_id
+        existing_image = session.query(ProductImageSchema).filter(ProductImageSchema.id == image_id).first()
+
+        # เปลี่ยนสถานะสินค้าเป็น remove
+        existing_image.status = "remove"
+
+        # บันทึกการเปลี่ยนแปลง
+        session.commit()
+
+        # อัปเดตข้อมูลสินค้าและส่งกลับ
+        session.refresh(existing_image)
+
+        return {
+            "success": True,
+            "message": "อัปเดตสถานะรูปภาพสินค้าเป็น remove สำเร็จ",
+            "updated_data": existing_image
+        }
+
+    finally:
+        session.close()  # ปิด session
+
+

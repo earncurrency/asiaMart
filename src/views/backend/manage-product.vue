@@ -440,7 +440,7 @@ import axios from "axios";
                   />
                   <!-- ปุ่มลบภาพ -->
                   <button
-                    @click="removeImage(imageIndex)"
+                    @click="delImage(imageIndex)"
                     class="absolute text-white bg-red-500 font-medium rounded-lg text-md text-center inline-flex items-center -top-2 -right-3 px-4 py-2.5"
                   >
                     <i class="fa-solid fa-trash-can"></i>
@@ -638,7 +638,7 @@ import axios from "axios";
                   />
                   <!-- ปุ่มลบภาพ -->
                   <button
-                    @click="removeImage(imageIndex)"
+                    @click="delImage(imageIndex)"
                     class="absolute text-white bg-red-500 font-medium rounded-lg text-md text-center inline-flex items-center -top-2 -right-3 px-4 py-2.5"
                   >
                     <i class="fa-solid fa-trash-can"></i>
@@ -661,13 +661,13 @@ import axios from "axios";
                   <img
                     :src="`${baseUrl}/api/uploads/${Math.ceil(
                       product.id / 100
-                    )}/${image}`"
+                    )}/${image.path}`"
                     alt="Product Image Preview"
                     class="w-32 h-32 lg:w-64 lg:h-48 object-cover rounded-md"
                   />
                   <!-- ปุ่มลบภาพ -->
                   <button
-                    @click="removeImage(imageIndex)"
+                    @click="btnRemoveImage(image.id)"
                     class="absolute text-white bg-red-500 font-medium rounded-lg text-md text-center inline-flex items-center -top-2 -right-3 px-4 py-2.5"
                   >
                     <i class="fa-solid fa-trash-can"></i>
@@ -711,7 +711,7 @@ export default {
 
       productId: "",
       product: {
-        id:"",
+        id: "",
         code: "",
         name: "",
         cost: "",
@@ -869,7 +869,7 @@ export default {
             `${this.apiUrl}products/add_product`,
             {
               product: dataProduct,
-              product_images: this.previewImages
+              product_images: this.previewImages,
             }
           );
 
@@ -970,12 +970,11 @@ export default {
       console.log(this.previewImages);
     },
     //ลบภาพจาก array previewImages
-    removeImage(imageIndex) {
+    delImage(imageIndex) {
       this.previewImages.splice(imageIndex, 1);
     },
 
     btnDelete(productId) {
-
       // เรียกใช้งาน modal เพื่อแสดงคำเตือน
       this.$refs.modal.showDeleteModal({
         swlIcon: "warning",
@@ -1001,7 +1000,53 @@ export default {
                   // เมื่อกดปุ่ม "ยืนยัน" ใน swal ที่สอง
                   this.showFormTable();
                 });
-            }).catch((error) => {
+            })
+            .catch((error) => {
+              console.error("Error updating product status:", error);
+              this.$swal.fire({
+                title: "เกิดข้อผิดพลาด",
+                text: "ไม่สามารถอัปเดตสถานะสินค้าได้",
+                icon: "error",
+                confirmButtonText: "ยืนยัน",
+                customClass: {
+                  confirmButton:
+                    "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400",
+                },
+              });
+            });
+        },
+      });
+    },
+
+    btnRemoveImage(imageId) {
+      // เรียกใช้งาน modal เพื่อแสดงคำเตือน
+      console.log("imageId :",imageId)
+      this.$refs.modal.showDeleteModal({
+        swlIcon: "warning",
+        swlTitle: "แจ้งเตือน",
+        swlText: "คุณต้องการลบรูปสินค้านี้หรือไม่!",
+        onConfirm: () => {
+          // เมื่อผู้ใช้กด "ยืนยัน" ใน modal
+          axios
+            .put(`${this.apiUrl}products/remove_image_product/${imageId}`)
+            .then((response) => {
+              // แสดงข้อความว่า "ลบสำเร็จ"
+              this.$swal
+                .fire({
+                  title: "ลบสำเร็จ",
+                  icon: "success",
+                  confirmButtonText: "ยืนยัน",
+                  customClass: {
+                    confirmButton:
+                      "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400",
+                  },
+                })
+                .then(() => {
+                  // เมื่อกดปุ่ม "ยืนยัน" ใน swal ที่สอง
+                  this.showFormTable();
+                });
+            })
+            .catch((error) => {
               console.error("Error updating product status:", error);
               this.$swal.fire({
                 title: "เกิดข้อผิดพลาด",
