@@ -15,6 +15,7 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
     >
       <div class="mt-2 mb-2">
         <div class="lg:p-4 w-full rounded-md text-gray-600">
+
           <div v-if="formTable">
             <!-- title -->
             <div class="flex justify-between items-center mb-2">
@@ -212,7 +213,7 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
                     </td>
                     <td class="px-6 py-4">
                       <button
-                        @click.stop="btnDelete"
+                        @click.stop="btnDelete(product_type.id)"
                         class="bg-red-500 text-white px-4 py-2 rounded-md"
                       >
                         <i class="fa-solid fa-trash-can"></i>
@@ -234,16 +235,32 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
                 <div class="w-full">
                   <input
                     type="text"
-                    v-model="type.name"
+                    v-model="product_type.name"
                     ref="inputNameProductType"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !type.name,
+                        !product_type.name,
                     }"
                     placeholder="ใส่ชื่อหมวดหมู่สินค้า"
                     required
                   />
+                </div>
+                <div class="lg:w-1/2 w-full">
+                  <select
+                    v-model="product_type.status"
+                    ref="inputStatusProductType"
+                    :class="{
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
+                        !product_type.status,
+                    }"
+                    required
+                  >
+                    <option value="" disabled selected>สถานะ</option>
+                    <option value="active">เเสดง</option>
+                    <option value="inactive">ไม่เเสดง</option>
+                  </select>
                 </div>
               </div>
 
@@ -269,7 +286,7 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
             <div class="flex justify-between items-center mb-2">
               <p class="text-3xl font-semibold">เเก้ไขหมวดหมู่สินค้า</p>
               <button
-                @click.stop="btnDelete"
+                @click.stop="btnDelete(product_type.id)"
                 class="bg-red-500 text-white px-4 py-1.5 rounded-md"
               >
                 <i class="fa-solid fa-trash-can"></i>
@@ -295,7 +312,7 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
                 <div class="lg:w-1/2 w-full">
                   <select
                     v-model="product_type.status"
-                    ref="inputStatusProduct"
+                    ref="inputStatusProductType"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
@@ -369,8 +386,8 @@ export default {
       this.formAdd = true;
       this.formEdit = false;
 
-      this.type.name = "";
-      this.type.status = "";
+      this.product_type.name = "";
+      this.product_type.status = "";
     },
 
     showFormTable() {
@@ -384,7 +401,7 @@ export default {
     //เเสดงข้อมูลประเภทสินค้าบนตาราง
     async getListProductTypes() {
       await axios
-        .get(`${this.apiUrl}product_type`)
+        .get(`${this.apiUrl}product_type/get_product_type_not_remove`)
         .then((response) => {
           const data = response.data;
           this.product_types = data.rows;
@@ -443,35 +460,117 @@ export default {
       }
     },
 
-    btnAdd() {
-      if (!this.type.name) {
+    async btnAdd() {
+      if (!this.product_type.name) {
+        this.isFocus = true;
+        this.$refs.inputNameProductType.focus();
+      } else if (!this.product_type.status) {
+        this.isFocus = true;
+        this.$refs.inputStatusProductType.focus();
+      } else {
+        try {
+          const dataProductType = {
+            name: this.product_type.name,
+            status: this.product_type.status,
+          };
+
+          const response = await axios.post(
+            `${this.apiUrl}product_type/add_product_type`,
+            dataProductType
+          );
+
+          if (response.status === 200) {
+            this.$refs.modal.showAlertModal({
+              swlIcon: "success",
+              swlTitle: "สำเร็จ",
+              swlText: response.data.message,
+            });
+          }
+        } catch (error) {
+          this.$refs.modal.showAlertModal({
+            swlIcon: "error",
+            swlTitle: "เกิดข้อผิดพลาด",
+            swlText: error,
+          });
+        }
+      }
+    },
+
+    async btnEdit() {
+      if (!this.product_type.name) {
         this.isFocus = true;
         this.$refs.inputNameProductType.focus();
       } else {
-        this.$refs.modal.showAlertModal({
-          swlIcon: "success",
-          swlTitle: "สำเร็จ",
-          swlText: "เพิ่มหมวดหมู่สินค้าสำเร็จ!",
-        });
+        try {
+          const dataProductType = {
+            name: this.product_type.name,
+            status: this.product_type.status,
+          };
+
+          const response = await axios.put(
+            `${this.apiUrl}product_type/update_product_type/${this.product_type.id}`,
+            dataProductType
+          );
+
+          if (response.status === 200) {
+            this.$refs.modal.showAlertModal({
+              swlIcon: "success",
+              swlTitle: "สำเร็จ",
+              swlText: response.data.message,
+            });
+          }
+        } catch (error) {
+          this.$refs.modal.showAlertModal({
+            swlIcon: "error",
+            swlTitle: "เกิดข้อผิดพลาด",
+            swlText: error,
+          });
+        }
       }
     },
-    btnEdit() {
-      if (!this.type.name) {
-        this.isFocus = true;
-        this.$refs.inputNameProductType.focus();
-      } else {
-        this.$refs.modal.showAlertModal({
-          swlIcon: "success",
-          swlTitle: "สำเร็จ",
-          swlText: "เเก้ไขชื่อหมวดหมู่สินค้าสำเร็จ!",
-        });
-      }
-    },
-    btnDelete() {
+
+    btnDelete(productTypeId) {
+      console.log(productTypeId)
+      // เรียกใช้งาน modal เพื่อแสดงคำเตือน
       this.$refs.modal.showDeleteModal({
         swlIcon: "warning",
-        swlTitle: "เเจ้งเตือน",
-        swlText: "คุณต้องการลบหมวดหมู่สินค้านี้หรือไม่!",
+        swlTitle: "แจ้งเตือน",
+        swlText: "คุณต้องการลบประเภทสินค้านี้หรือไม่!",
+        onConfirm: () => {
+          // เมื่อผู้ใช้กด "ยืนยัน" ใน modal
+          axios
+            .put(`${this.apiUrl}product_type/remove_product_type/${productTypeId}`)
+            .then((response) => {
+              // แสดงข้อความว่า "ลบสำเร็จ"
+              this.$swal
+                .fire({
+                  title: "ลบสำเร็จ",
+                  icon: "success",
+                  confirmButtonText: "ยืนยัน",
+                  customClass: {
+                    confirmButton:
+                      "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400",
+                  },
+                })
+                .then(() => {
+                  // เมื่อกดปุ่ม "ยืนยัน" ใน swal ที่สอง
+                  this.showFormTable();
+                });
+            })
+            .catch((error) => {
+              console.error("Error updating product status:", error);
+              this.$swal.fire({
+                title: "เกิดข้อผิดพลาด",
+                text: "ไม่สามารถอัปเดตสถานะสินค้าได้",
+                icon: "error",
+                confirmButtonText: "ยืนยัน",
+                customClass: {
+                  confirmButton:
+                    "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400",
+                },
+              });
+            });
+        },
       });
     },
 

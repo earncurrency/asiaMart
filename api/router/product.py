@@ -258,6 +258,7 @@ def remove_product(product_id: int):
 
     finally:
         session.close()  # ปิด session
+
 @router.put("/remove_image_product/{image_id}")
 def remove_image_product(image_id: int):
     session: Session = SessionLocal()  # สร้าง session ใหม่

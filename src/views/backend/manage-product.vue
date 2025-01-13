@@ -560,11 +560,12 @@ import axios from "axios";
                     required
                   >
                     <option value="" disabled selected>ประเภท</option>
-                    <option value="อาหาร">อาหาร</option>
-                    <option value="เครื่องดื่ม">เครื่องดื่ม</option>
-                    <option value="ของทานเล่น">ของทานเล่น</option>
-                    <option value="ของใช้ทั่วไป">ของใช้ทั่วไป</option>
+                    <option v-for="type in product_types" :value="type.name">
+                      {{ type.name }}
+                    </option>
+                    
                   </select>
+                  
                 </div>
 
                 <div class="lg:w-1/2 w-full">
@@ -725,6 +726,7 @@ export default {
         detail: "",
         images: [],
       },
+      product_types: [],
       previewImages: [],
 
       formTable: true,
@@ -788,6 +790,8 @@ export default {
       this.formEdit = true;
       this.previewImages = [];
 
+      this.getListProductTypes();
+
       // Set loading state to true
       this.loading = true;
 
@@ -832,6 +836,20 @@ export default {
         // Set loading state to false
         this.loading = false;
       }
+    },
+
+    //เเสดงข้อมูลประเภทสินค้าบนตาราง
+    async getListProductTypes() {
+      await axios
+        .get(`${this.apiUrl}product_type/get_product_type_active`)
+        .then((response) => {
+          const data = response.data;
+          this.product_types = data.rows;
+          console.log(this.product_types);
+        })
+        .catch((error) => {
+          console.error("There was an error fetching the data:", error);
+        });
     },
 
     async btnAdd() {
