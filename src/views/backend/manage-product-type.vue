@@ -292,6 +292,22 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
                     required
                   />
                 </div>
+                <div class="lg:w-1/2 w-full">
+                  <select
+                    v-model="product_type.status"
+                    ref="inputStatusProduct"
+                    :class="{
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
+                        !product_type.status,
+                    }"
+                    required
+                  >
+                    <option value="" disabled selected>สถานะ</option>
+                    <option value="active">เเสดง</option>
+                    <option value="inactive">ไม่เเสดง</option>
+                  </select>
+                </div>
               </div>
 
               <div class="flex gap-2 justify-center mt-4 md:mt-0">
@@ -390,7 +406,9 @@ export default {
 
       try {
         // เรียก API เพื่อดึงข้อมูลสินค้าที่ระบุ
-        const response = await axios.get(`${this.apiUrl}product_type/${productTypeId}`);
+        const response = await axios.get(
+          `${this.apiUrl}product_type/${productTypeId}`
+        );
 
         // ตรวจสอบว่าข้อมูลของสินค้าได้รับมาอย่างถูกต้อง
         if (response.status === 200) {
