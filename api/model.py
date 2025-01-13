@@ -24,6 +24,10 @@ class ProductImageModel(BaseModel):
     path: Optional[str] = None
     status: Optional[str] = None
 
+# โมเดล Pydantic สำหรับประเภทสินค้า
+class ProductTypeModel(BaseModel):
+    name : Optional[str] = None
+    status : Optional[str] = None
 
 class Config:
     orm_mode = True

@@ -1,7 +1,7 @@
 <script setup>
 import backend_navbar from "@/components/backend/navbar.vue";
 import Modal from "@/components/backend/modal.vue";
-import axios from "axios";
+ 
 </script>
 
 <template class="">
@@ -14,6 +14,7 @@ import axios from "axios";
     >
       <div class="mt-2 mb-2">
         <div class="lg:p-4 w-full rounded-md text-gray-600">
+          
           <div v-if="formTable">
             <!-- title -->
             <div class="flex justify-between items-center mb-2">

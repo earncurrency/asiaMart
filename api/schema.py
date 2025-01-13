@@ -39,6 +39,16 @@ class ProductImageSchema(Base):
     path = Column(String(255))  
     status = Column(String(15))
 
+#สร้าง โครงสร้างของตาราง tb_prodyct_type
+class ProductTypeSchema(Base):
+
+    __tablename__ = "tb_product_type"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(15))
+    status = Column(String(15))    
+
+
     
 # สร้างตารางในฐานข้อมูล (หากยังไม่มี)
 Base.metadata.create_all(bind=engine)

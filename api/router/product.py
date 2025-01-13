@@ -2,6 +2,7 @@
 from fastapi import APIRouter, HTTPException
 from sqlalchemy.orm import Session ,aliased
 from sqlalchemy import asc, desc
+
 import os ,base64 ,uuid, math
 from typing import List
 
@@ -58,7 +59,7 @@ def get_products():
     
 #ดึงข้อมูลสินค้าตามไอดีจากตาราง tb_product
 @router.get("/{product_id}")
-def get_product_by_id(product_id: int):
+def get_product(product_id: int):
     session = SessionLocal()
     try:
         # ทำการ query และ join ข้อมูลจาก tb_product และ tb_product_image โดยกรองตาม product_id และ filter status ของสินค้า
@@ -258,7 +259,7 @@ def remove_product(product_id: int):
     finally:
         session.close()  # ปิด session
 @router.put("/remove_image_product/{image_id}")
-def remove_product(image_id: int):
+def remove_image_product(image_id: int):
     session: Session = SessionLocal()  # สร้าง session ใหม่
 
     try:
