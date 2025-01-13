@@ -12,8 +12,8 @@ class MemberModel(BaseModel):
 class ProductModel(BaseModel):
     code: Optional[str] = None
     name: Optional[str] = None
-    cost:Optional[str] = None
-    price:Optional[str] = None
+    cost:Optional[float] = None
+    price:Optional[float] = None
     status: Optional[str] = None
     type: Optional[str] = None
     detail: Optional[str] = None

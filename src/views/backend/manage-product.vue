@@ -319,13 +319,14 @@ import axios from "axios";
                   <input
                     type="text"
                     v-model="product.cost"
-                    ref="inputCostPriceProduct"
+                    ref="inputCostProduct"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !product.cost,
                     }"
                     placeholder="ราคาทุน"
+                    @input="validateNumberInput"
                     required
                   />
                 </div>
@@ -334,13 +335,14 @@ import axios from "axios";
                   <input
                     type="text"
                     v-model="product.price"
-                    ref="inputSellPriceProduct"
+                    ref="inputPriceProduct"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !product.price,
                     }"
                     placeholder="ราคาขาย"
+                    @input="validateNumberInput"
                     required
                   />
                 </div>
@@ -516,13 +518,14 @@ import axios from "axios";
                   <input
                     type="text"
                     v-model="product.cost"
-                    ref="inputCostPriceProduct"
+                    ref="inputCostProduct"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !product.cost,
                     }"
                     placeholder="ราคาทุน"
+                    @input="validateNumberInput"
                     required
                   />
                 </div>
@@ -531,13 +534,14 @@ import axios from "axios";
                   <input
                     type="text"
                     v-model="product.price"
-                    ref="inputSellPriceProduct"
+                    ref="inputPriceProduct"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !product.price,
                     }"
                     placeholder="ราคาขาย"
+                    @input="validateNumberInput"
                     required
                   />
                 </div>
@@ -754,6 +758,7 @@ export default {
       this.product.detail = "";
       this.previewImages = [];
     },
+
     showFormTable() {
       this.formTable = true;
       this.formAdd = false;
@@ -761,6 +766,7 @@ export default {
 
       this.getListProduct();
     },
+
     //เเสดงข้อมูลสินค้าบนตาราง
     async getListProduct() {
       await axios
@@ -838,10 +844,10 @@ export default {
         this.$refs.inputNameProduct.focus();
       } else if (!this.product.cost) {
         this.isFocus = true;
-        this.$refs.inputCostPriceProduct.focus();
+        this.$refs.inputCostProduct.focus();
       } else if (!this.product.price) {
         this.isFocus = true;
-        this.$refs.inputSellPriceProduct.focus();
+        this.$refs.inputPriceProduct.focus();
       } else if (!this.product.type) {
         this.isFocus = true;
         this.$refs.inputTypeProduct.focus();
@@ -901,10 +907,10 @@ export default {
         this.$refs.inputNameProduct.focus();
       } else if (!this.product.cost) {
         this.isFocus = true;
-        this.$refs.inputCostPriceProduct.focus();
+        this.$refs.inputCostProduct.focus();
       } else if (!this.product.price) {
         this.isFocus = true;
-        this.$refs.inputSellPriceProduct.focus();
+        this.$refs.inputPriceProduct.focus();
       } else if (!this.product.type) {
         this.isFocus = true;
         this.$refs.inputTypeProduct.focus();
@@ -1020,7 +1026,7 @@ export default {
 
     btnRemoveImage(imageId) {
       // เรียกใช้งาน modal เพื่อแสดงคำเตือน
-      console.log("imageId :",imageId)
+      console.log("imageId :", imageId);
       this.$refs.modal.showDeleteModal({
         swlIcon: "warning",
         swlTitle: "แจ้งเตือน",
@@ -1061,6 +1067,18 @@ export default {
             });
         },
       });
+    },
+
+    validateNumberInput(event) {
+      // กรองค่าให้เป็นตัวเลขและทศนิยม
+      let value = event.target.value;
+      value = value.replace(/[^0-9.]/g, ""); // เอาตัวอักษรที่ไม่ใช่ตัวเลขและจุดทศนิยมออก
+      const decimalCount = (value.match(/\./g) || []).length;
+      if (decimalCount > 1) {
+        value = value.slice(0, value.lastIndexOf("."));
+      }
+      event.target.value = value; // อัพเดตค่าใน input element
+      this.product[event.target.name] = value; // อัพเดตข้อมูลใน model (product.cost หรือ product.price)
     },
 
     DropdownStatus(statusName) {
