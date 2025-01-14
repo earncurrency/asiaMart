@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String , Float
 from sqlalchemy.ext.declarative import declarative_base
 from database import engine
 
@@ -23,10 +23,10 @@ class ProductSchema(Base):
     id = Column(Integer, primary_key=True, index=True)
     code = Column(String(15))
     name = Column(String(50))
-    cost = Column(String(15))
-    price = Column(String(15))
+    cost = Column(Float(15))
+    price = Column(Float(15))
     status = Column(String(15))
-    category_id = Column(String(15))
+    category_id = Column(Integer)
     detail = Column(String(255))
 
 #สร้าง โครงสร้างของตาราง tb_product_image
