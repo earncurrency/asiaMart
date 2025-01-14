@@ -29,5 +29,11 @@ class CategoryModel(BaseModel):
     name : Optional[str] = None
     status : Optional[str] = None
 
+# โมเดล Pydantic สำหรับตระกร้าสินค้า
+class CategoryModel(BaseModel):
+    product_id : Optional[int] = None
+    member_id : Optional[int] = None
+    quantity : Optional[int] = None
+
 class Config:
     orm_mode = True
