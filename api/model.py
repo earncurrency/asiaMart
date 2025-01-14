@@ -15,7 +15,7 @@ class ProductModel(BaseModel):
     cost:Optional[float] = None
     price:Optional[float] = None
     status: Optional[str] = None
-    type: Optional[str] = None
+    category_id: Optional[int] = None
     detail: Optional[str] = None
 
 # โมเดล Pydantic สำหรับข้อมูลรูปภาพสินค้า
@@ -25,7 +25,7 @@ class ProductImageModel(BaseModel):
     status: Optional[str] = None
 
 # โมเดล Pydantic สำหรับประเภทสินค้า
-class ProductTypeModel(BaseModel):
+class CategoryModel(BaseModel):
     name : Optional[str] = None
     status : Optional[str] = None
 

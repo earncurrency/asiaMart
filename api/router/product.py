@@ -17,7 +17,7 @@ router = APIRouter(
 )
 
 # ดึงข้อมูลทั้งหมดจากตาราง tb_product
-@router.get("/")
+@router.get("/get_products")
 def get_products():
     session = SessionLocal()
     try:
@@ -42,7 +42,7 @@ def get_products():
                 "cost": product.cost,
                 "price": product.price,
                 "status": product.status,
-                "type": product.type,
+                "category_id": product.category_id,
                 "detail": product.detail,
                 "images": image_paths  # ส่งข้อมูลภาพทั้งหมดที่เกี่ยวข้องกับสินค้า
             })
@@ -58,7 +58,7 @@ def get_products():
 
     
 #ดึงข้อมูลสินค้าตามไอดีจากตาราง tb_product
-@router.get("/{product_id}")
+@router.get("/get_product/{product_id}")
 def get_product(product_id: int):
     session = SessionLocal()
     try:
@@ -83,7 +83,7 @@ def get_product(product_id: int):
                 "cost": product.cost,
                 "price": product.price,
                 "status": product.status,
-                "type": product.type,
+                "category_id": product.category_id,
                 "detail": product.detail,
                 "images": image_data  # ส่งข้อมูลภาพทั้งหมดที่เกี่ยวข้องกับสินค้า
             }
@@ -137,7 +137,7 @@ async def add_data_product(product: ProductModel,product_images: list[str] = [])
             cost=product.cost,
             price=product.price,
             status=product.status,
-            type=product.type,
+            category_id=product.category_id,
             detail=product.detail,
         )
         session.add(new_product)
@@ -193,8 +193,8 @@ def update_product(product_id: int, product: ProductModel, product_images: list[
             existing_member.price = product.price
         if product.status is not None:
             existing_member.status = product.status
-        if product.type is not None: 
-            existing_member.type = product.type
+        if product.category_id is not None: 
+            existing_member.category_id = product.category_id
         if product.detail is not None: 
             existing_member.detail = product.detail    
 

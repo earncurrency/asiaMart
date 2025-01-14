@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from router import member
 from router import product
-from router import product_type
+from router import category
 # from router import product_image
 
 # สร้างแอปพลิเคชัน FastAPI
@@ -28,5 +28,5 @@ app.add_middleware(
 # รวม Router สำหรับสมาชิก
 app.include_router(member.router)
 app.include_router(product.router)
-app.include_router(product_type.router)
+app.include_router(category.router)
 # app.include_router(product_image.router)

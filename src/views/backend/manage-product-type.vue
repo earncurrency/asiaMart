@@ -186,20 +186,20 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
                 </thead>
                 <tbody>
                   <tr
-                    v-for="(product_type, index) in product_types"
+                    v-for="(category, index) in categorys"
                     :key="index"
-                    @click="showFormEdit(product_type.id)"
+                    @click="showFormEdit(category.id)"
                     class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 cursor-pointer hover:bg-gray-100 transition"
                   >
                     <th
                       scope="row"
                       class="px-6 py-4 font-medium whitespace-nowrap"
                     >
-                      <span class="font-semibold">{{ product_type.name }}</span>
+                      <span class="font-semibold">{{ category.name }}</span>
                     </th>
                     <td class="px-6 py-4 whitespace-nowrap">
                       <span
-                        v-if="product_type.status === 'active'"
+                        v-if="category.status === 'active'"
                         class="font-semibold text-green-500 p-1 bg-green-100 rounded-md"
                       >
                         แสดง
@@ -213,7 +213,7 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
                     </td>
                     <td class="px-6 py-4">
                       <button
-                        @click.stop="btnDelete(product_type.id)"
+                        @click.stop="btnDelete(category.id)"
                         class="bg-red-500 text-white px-4 py-2 rounded-md"
                       >
                         <i class="fa-solid fa-trash-can"></i>
@@ -235,12 +235,12 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
                 <div class="w-full">
                   <input
                     type="text"
-                    v-model="product_type.name"
+                    v-model="category.name"
                     ref="inputNameProductType"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !product_type.name,
+                        !category.name,
                     }"
                     placeholder="ใส่ชื่อหมวดหมู่สินค้า"
                     required
@@ -248,12 +248,12 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
                 </div>
                 <div class="lg:w-1/2 w-full">
                   <select
-                    v-model="product_type.status"
+                    v-model="category.status"
                     ref="inputStatusProductType"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !product_type.status,
+                        !category.status,
                     }"
                     required
                   >
@@ -286,7 +286,7 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
             <div class="flex justify-between items-center mb-2">
               <p class="text-3xl font-semibold">เเก้ไขหมวดหมู่สินค้า</p>
               <button
-                @click.stop="btnDelete(product_type.id)"
+                @click.stop="btnDelete(category.id)"
                 class="bg-red-500 text-white px-4 py-1.5 rounded-md"
               >
                 <i class="fa-solid fa-trash-can"></i>
@@ -298,12 +298,12 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
                 <div class="w-full">
                   <input
                     type="text"
-                    v-model="product_type.name"
+                    v-model="category.name"
                     ref="inputNameProductType"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !product_type.name,
+                        !category.name,
                     }"
                     placeholder="ใส่ชื่อหมวดหมู่สินค้า"
                     required
@@ -311,12 +311,12 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
                 </div>
                 <div class="lg:w-1/2 w-full">
                   <select
-                    v-model="product_type.status"
+                    v-model="category.status"
                     ref="inputStatusProductType"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !product_type.status,
+                        !category.status,
                     }"
                     required
                   >
@@ -355,9 +355,9 @@ export default {
     return {
       apiUrl: "http://127.0.0.1:8000/",
 
-      product_types: [],
+      categorys: [],
 
-      product_type: {
+      category: {
         id: "",
         name: "",
         status: "",
@@ -374,7 +374,7 @@ export default {
     };
   },
   mounted() {
-    this.getListProductTypes();
+    this.getListCategory();
 
     document.addEventListener("click", this.closeDropdownStatus);
     document.addEventListener("click", this.closeDropdown);
@@ -386,8 +386,8 @@ export default {
       this.formAdd = true;
       this.formEdit = false;
 
-      this.product_type.name = "";
-      this.product_type.status = "";
+      this.category.name = "";
+      this.category.status = "";
     },
 
     showFormTable() {
@@ -395,17 +395,17 @@ export default {
       this.formAdd = false;
       this.formEdit = false;
 
-      this.getListProductTypes();
+      this.getListCategory();
     },
 
     //เเสดงข้อมูลประเภทสินค้าบนตาราง
-    async getListProductTypes() {
+    async getListCategory() {
       await axios
-        .get(`${this.apiUrl}product_type/get_product_type_not_remove`)
+        .get(`${this.apiUrl}category/get_category_not_remove`)
         .then((response) => {
           const data = response.data;
-          this.product_types = data.rows;
-          console.log(this.product_types);
+          this.categorys = data.rows;
+          console.log(this.categorys);
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error);
@@ -424,20 +424,20 @@ export default {
       try {
         // เรียก API เพื่อดึงข้อมูลสินค้าที่ระบุ
         const response = await axios.get(
-          `${this.apiUrl}product_type/${productTypeId}`
+          `${this.apiUrl}category/${productTypeId}`
         );
 
         // ตรวจสอบว่าข้อมูลของสินค้าได้รับมาอย่างถูกต้อง
         if (response.status === 200) {
-          const product_type = response.data.row;
+          const category = response.data.row;
 
-          if (product_type) {
-            this.product_type.id = productTypeId;
-            this.product_type.name = product_type.name;
-            this.product_type.status = product_type.status;
+          if (category) {
+            this.category.id = productTypeId;
+            this.category.name = category.name;
+            this.category.status = category.status;
 
             // แสดงข้อมูลสินค้าใน console
-            console.log("Product Data:", product_type);
+            console.log("Product Data:", category);
           } else {
             alert("ไม่พบข้อมูลประเภทสินค้าที่ต้องการแก้ไข");
           }
@@ -446,7 +446,7 @@ export default {
         }
       } catch (error) {
         console.error(
-          `Error fetching product type ${productTypeId} from ${this.apiUrl}product_type/${productTypeId}:`,
+          `Error fetching product type ${productTypeId} from ${this.apiUrl}category/${productTypeId}:`,
           error.response?.data?.detail || error.message
         );
         this.$refs.modal.showAlertModal({
@@ -461,21 +461,21 @@ export default {
     },
 
     async btnAdd() {
-      if (!this.product_type.name) {
+      if (!this.category.name) {
         this.isFocus = true;
         this.$refs.inputNameProductType.focus();
-      } else if (!this.product_type.status) {
+      } else if (!this.category.status) {
         this.isFocus = true;
         this.$refs.inputStatusProductType.focus();
       } else {
         try {
           const dataProductType = {
-            name: this.product_type.name,
-            status: this.product_type.status,
+            name: this.category.name,
+            status: this.category.status,
           };
 
           const response = await axios.post(
-            `${this.apiUrl}product_type/add_product_type`,
+            `${this.apiUrl}category/add_category`,
             dataProductType
           );
 
@@ -497,18 +497,18 @@ export default {
     },
 
     async btnEdit() {
-      if (!this.product_type.name) {
+      if (!this.category.name) {
         this.isFocus = true;
         this.$refs.inputNameProductType.focus();
       } else {
         try {
           const dataProductType = {
-            name: this.product_type.name,
-            status: this.product_type.status,
+            name: this.category.name,
+            status: this.category.status,
           };
 
           const response = await axios.put(
-            `${this.apiUrl}product_type/update_product_type/${this.product_type.id}`,
+            `${this.apiUrl}category/update_category/${this.category.id}`,
             dataProductType
           );
 
@@ -539,7 +539,7 @@ export default {
         onConfirm: () => {
           // เมื่อผู้ใช้กด "ยืนยัน" ใน modal
           axios
-            .put(`${this.apiUrl}product_type/remove_product_type/${productTypeId}`)
+            .put(`${this.apiUrl}category/remove_category/${productTypeId}`)
             .then((response) => {
               // แสดงข้อความว่า "ลบสำเร็จ"
               this.$swal

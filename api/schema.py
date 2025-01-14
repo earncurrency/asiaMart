@@ -26,7 +26,7 @@ class ProductSchema(Base):
     cost = Column(String(15))
     price = Column(String(15))
     status = Column(String(15))
-    type = Column(String(15))
+    category_id = Column(String(15))
     detail = Column(String(255))
 
 #สร้าง โครงสร้างของตาราง tb_product_image
@@ -39,10 +39,10 @@ class ProductImageSchema(Base):
     path = Column(String(255))  
     status = Column(String(15))
 
-#สร้าง โครงสร้างของตาราง tb_prodyct_type
-class ProductTypeSchema(Base):
+#สร้าง โครงสร้างของตาราง tb_category
+class CategorySchema(Base):
 
-    __tablename__ = "tb_product_type"
+    __tablename__ = "tb_category"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(15))

@@ -351,20 +351,23 @@ import axios from "axios";
               <div class="flex gap-2 w-full pt-1 mt-4 lg:pt-0 lg:mt-0">
                 <div class="lg:w-1/2 w-full">
                   <select
-                    v-model="product.type"
+                    v-model="product.category_id"
                     ref="inputTypeProduct"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !product.type,
+                        !product.category_id,
                     }"
                     required
                   >
-                    <option value="" disabled selected>ประเภท</option>
-                    <option value="อาหาร">อาหาร</option>
-                    <option value="เครื่องดื่ม">เครื่องดื่ม</option>
-                    <option value="ของทานเล่น">ของทานเล่น</option>
-                    <option value="ของใช้ทั่วไป">ของใช้ทั่วไป</option>
+                    <option value="" disabled :selected="!product.category_id">
+                      หมวดหมู่สินค้า
+                    </option>
+                    <option value="-">-</option>
+                    <!-- เพิ่มตัวเลือกนี้ -->
+                    <option v-for="category in categorys" :value="category.id">
+                      {{ category.name }}
+                    </option>
                   </select>
                 </div>
 
@@ -550,22 +553,20 @@ import axios from "axios";
               <div class="flex gap-2 w-full pt-1 mt-4 lg:pt-0 lg:mt-0">
                 <div class="lg:w-1/2 w-full">
                   <select
-                    v-model="product.type"
+                    v-model="product.category_id"
                     ref="inputTypeProduct"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !product.type,
+                        !product.category_id,
                     }"
                     required
                   >
-                    <option value="" disabled selected>ประเภท</option>
-                    <option v-for="type in product_types" :value="type.name">
-                      {{ type.name }}
+                    <option value="" disabled selected>หมวดหมู่สินค้า</option>
+                    <option v-for="category in categorys" :value="category.id">
+                      {{ category.name }}
                     </option>
-                    
                   </select>
-                  
                 </div>
 
                 <div class="lg:w-1/2 w-full">
@@ -721,12 +722,12 @@ export default {
         name: "",
         cost: "",
         price: "",
-        type: "",
+        category_id: "",
         status: "",
         detail: "",
         images: [],
       },
-      product_types: [],
+      categorys: [],
       previewImages: [],
 
       formTable: true,
@@ -749,13 +750,14 @@ export default {
       this.formTable = false;
       this.formAdd = true;
       this.formEdit = false;
+      this.getListCategory();
 
       this.productId = "";
       this.product.code = "";
       this.product.name = "";
       this.product.cost = "";
       this.product.price = "";
-      this.product.type = "";
+      this.product.category_id = "";
       this.product.status = "";
       this.product.detail = "";
       this.previewImages = [];
@@ -772,7 +774,7 @@ export default {
     //เเสดงข้อมูลสินค้าบนตาราง
     async getListProduct() {
       await axios
-        .get(`${this.apiUrl}products`)
+        .get(`${this.apiUrl}products/get_products`)
         .then((response) => {
           const data = response.data;
           this.products = data.rows;
@@ -789,15 +791,16 @@ export default {
       this.formAdd = false;
       this.formEdit = true;
       this.previewImages = [];
-
-      this.getListProductTypes();
+      this.getListCategory();
 
       // Set loading state to true
       this.loading = true;
 
       try {
         // เรียก API เพื่อดึงข้อมูลสินค้าที่ระบุ
-        const response = await axios.get(`${this.apiUrl}products/${productId}`);
+        const response = await axios.get(
+          `${this.apiUrl}products/get_product/${productId}`
+        );
 
         // ตรวจสอบว่าข้อมูลของสินค้าได้รับมาอย่างถูกต้อง
         if (response.status === 200) {
@@ -809,7 +812,7 @@ export default {
             this.product.name = product.name;
             this.product.cost = product.cost;
             this.product.price = product.price;
-            this.product.type = product.type;
+            this.product.category_id = product.category_id;
             this.product.status = product.status;
             this.product.detail = product.detail;
             this.product.images = product.images;
@@ -824,7 +827,7 @@ export default {
         }
       } catch (error) {
         console.error(
-          `Error fetching product ${productId} from ${this.apiUrl}products/${productId}:`,
+          `Error fetching product ${productId} from ${this.apiUrl}products/get_product/${productId}:`,
           error.response?.data?.detail || error.message
         );
         this.$refs.modal.showAlertModal({
@@ -838,14 +841,15 @@ export default {
       }
     },
 
-    //เเสดงข้อมูลประเภทสินค้าบนตาราง
-    async getListProductTypes() {
+    //เเสดงข้อมูลหมวดหมู่สินค้า
+    async getListCategory() {
       await axios
-        .get(`${this.apiUrl}product_type/get_product_type_active`)
+        .get(`${this.apiUrl}category/get_category_not_remove`)
         .then((response) => {
           const data = response.data;
-          this.product_types = data.rows;
-          console.log(this.product_types);
+          this.categorys = data.rows;
+
+          console.log(this.categorys);
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error);
@@ -866,7 +870,7 @@ export default {
       } else if (!this.product.price) {
         this.isFocus = true;
         this.$refs.inputPriceProduct.focus();
-      } else if (!this.product.type) {
+      } else if (!this.product.category_id) {
         this.isFocus = true;
         this.$refs.inputTypeProduct.focus();
       } else if (!this.product.status) {
@@ -884,7 +888,7 @@ export default {
             cost: this.product.cost,
             price: this.product.price,
             status: this.product.status,
-            type: this.product.type,
+            category_id: this.product.category_id,
             detail: this.product.detail,
           };
 
@@ -929,7 +933,7 @@ export default {
       } else if (!this.product.price) {
         this.isFocus = true;
         this.$refs.inputPriceProduct.focus();
-      } else if (!this.product.type) {
+      } else if (!this.product.category_id) {
         this.isFocus = true;
         this.$refs.inputTypeProduct.focus();
       } else if (!this.product.status) {
@@ -946,7 +950,7 @@ export default {
             cost: this.product.cost,
             price: this.product.price,
             status: this.product.status,
-            type: this.product.type,
+            category_id: this.product.category_id,
             detail: this.product.detail,
           };
 
