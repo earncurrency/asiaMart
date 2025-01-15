@@ -1,5 +1,6 @@
 <script setup>
     import frontend_navbar from '../../components/frontend/navbar.vue';
+    import axios from "axios";
 </script>
 
 
@@ -31,7 +32,6 @@
                         </div>
                         <!-- <p class="text-xl">กลับ</p> -->
                     </div>
-
 
                 </div>
 

@@ -46,9 +46,9 @@ const router = createRouter({
             component: () => import('../views/frontend/product-detail.vue'),
         },
         {
-            path: '/product-type/:typeName',
-            name: 'product-type',
-            component: () => import('../views/frontend/product-type.vue'),
+            path: '/category/:category',
+            name: 'category',
+            component: () => import('../views/frontend/category.vue'),
             props: true,
         },
         {
@@ -64,9 +64,9 @@ const router = createRouter({
             component: () => import('../views/backend/dashboard.vue'),
         },
         {
-            path: '/backend/manage-product-type',
-            name: 'backend/manage-product-type',
-            component: () => import('../views/backend/manage-product-type.vue'),
+            path: '/backend/manage-category',
+            name: 'backend/manage-category',
+            component: () => import('../views/backend/manage-category.vue'),
         },
         {
             path: '/backend/manage-product',

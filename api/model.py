@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
+from datetime import datetime
 
 # โมเดล Pydantic สำหรับข้อมูลสมาชิก
 class MemberModel(BaseModel):
@@ -28,6 +29,18 @@ class ProductImageModel(BaseModel):
 class CategoryModel(BaseModel):
     name : Optional[str] = None
     status : Optional[str] = None
+
+class OrderModel(BaseModel):
+    code : Optional[str] = None
+    date : Optional[datetime] = None
+    member_id : Optional[int] = None
+    address : Optional[str] = None
+    total : Optional[float] = None
+    status : Optional[str] = None
+
+class OrderDetailModel(BaseModel):
+    order_id: Optional[int] = None
+    product_id: Optional[int] = None
 
 class Config:
     orm_mode = True

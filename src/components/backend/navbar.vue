@@ -84,7 +84,7 @@ import { RouterLink, RouterView } from 'vue-router'
                     </RouterLink>
                 </li>
                 <li @click="showFormTable">
-                    <RouterLink to="/backend/manage-product-type">
+                    <RouterLink to="/backend/manage-category">
                         <a href="#" class="flex items-center p-2 text-white rounded-lg group">
                             <div class="text-xl text-white">
                                 <i class="fa-solid fa-table-list"></i>

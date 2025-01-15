@@ -2,7 +2,7 @@
 
 import frontend_navbar from '@/components/frontend/navbar.vue';
 import imageBanner from '@/components/frontend/image-banner.vue';
-import tabsProductType from '@/components/frontend/tabs-product-type.vue';
+import tabsCategory from '@/components/frontend/tabs-category.vue';
 import productList from '@/components/frontend/product-list.vue';
 import promotion from '@/components/frontend/promotion.vue';
 
@@ -24,7 +24,7 @@ import promotion from '@/components/frontend/promotion.vue';
                     </div>
 
                     <!-- tabs menu -->
-                    <tabsProductType />
+                    <tabsCategory />
 
                 </div>
 

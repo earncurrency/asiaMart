@@ -2,7 +2,7 @@
 import { useRoute } from 'vue-router';
 import frontend_navbar from '../../components/frontend/navbar.vue';
 import productList from '../../components/frontend/product-list.vue';
-import tabsProductType from '../../components/frontend/tabs-product-type.vue';
+import tabsCategory from '../../components/frontend/tabs-category.vue';
 
 </script>
 
@@ -31,11 +31,11 @@ import tabsProductType from '../../components/frontend/tabs-product-type.vue';
                             </RouterLink>
                         </div>
                         <!-- แสดงชื่อผลิตภัณฑ์ที่ดึงมาจาก URL -->
-                        <p class="text-3xl font-semibold ">{{ typeName }}</p> <!-- แสดงชื่อผลิตภัณฑ์ -->
+                        <p class="text-3xl font-semibold ">{{ category }}</p> <!-- แสดงชื่อผลิตภัณฑ์ -->
                     </div>
 
                     <!-- tabs menu -->
-                    <tabsProductType />
+                    <tabsCategory />
                 </div>
 
                 <hr class="my-2 text-gray-600">
@@ -50,7 +50,7 @@ import tabsProductType from '../../components/frontend/tabs-product-type.vue';
 <script>
 export default {
     props: {
-        typeName: {
+        category: {
             required: false,
         },
     }, 
