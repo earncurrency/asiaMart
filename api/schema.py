@@ -6,7 +6,7 @@ Base = declarative_base()
 
 # สร้าง โครงสร้างของตาราง tb_member
 class MemberSchema(Base):
-    
+
     __tablename__ = "tb_member"
 
     id = Column(Integer, primary_key=True, index=True)
