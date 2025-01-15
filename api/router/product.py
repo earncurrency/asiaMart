@@ -215,7 +215,8 @@ def update_product(product_id: int, product: ProductModel, product_images: list[
             # บันทึกภาพในฐานข้อมูล พร้อมกับ product_id ที่เชื่อมโยงกับสินค้าใหม่
             db_image = ProductImageSchema(
                 path=filename,
-                product_id=product_id # เชื่อมโยงกับสินค้า
+                product_id=product_id,
+                status="active"
             )
             session.add(db_image)
             session.commit()

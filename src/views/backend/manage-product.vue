@@ -218,19 +218,20 @@ import axios from "axios";
                   >
                     <th scope="row" class="px-6 py-4">
                       <div
-                        v-if="product.images.length > 0"
+                        v-if="product.images.length > 0 && product.images[0]"
                         class="w-24 h-24 lg:w-24 lg:h-24"
                       >
-                        <!-- <img
-                          class="w-full h-full rounded-md object-cover ring-4 ring-gray-300 shadow-md"
-                            :src="`${baseUrl}/api/uploads/1/${product.images}`"
-                        /> -->
-
                         <img
                           class="w-full h-full rounded-md object-cover ring-4 ring-gray-300 shadow-md"
                           :src="`${baseUrl}/api/uploads/${Math.ceil(
                             product.id / 100
                           )}/${product.images[0]}`"
+                        />
+                      </div>
+                      <div v-else class="w-24 h-24 lg:w-24 lg:h-24">
+                        <img
+                          class="w-full h-full rounded-md object-cover ring-4 ring-gray-300 shadow-md"
+                          :src="`${baseUrl}/src/assets/image/system/product.png`"
                         />
                       </div>
                     </th>
@@ -360,11 +361,7 @@ import axios from "axios";
                     }"
                     required
                   >
-                    <option value="" disabled :selected="!product.category_id">
-                      หมวดหมู่สินค้า
-                    </option>
-                    <option value="-">-</option>
-                    <!-- เพิ่มตัวเลือกนี้ -->
+                    <option value="" disabled selected>หมวดหมู่สินค้า</option>
                     <option v-for="category in categorys" :value="category.id">
                       {{ category.name }}
                     </option>
@@ -816,6 +813,14 @@ export default {
             this.product.status = product.status;
             this.product.detail = product.detail;
             this.product.images = product.images;
+
+            // ตรวจสอบว่า category_id ของสินค้าไม่ตรงกับ id ใน categorys
+            const isCategoryValid = this.categorys.some(
+              (category) => category.id === this.product.category_id
+            );
+            if (!isCategoryValid) {
+              this.product.category_id = ""; // ถ้าไม่ตรงกัน ให้ category_id เป็น ""
+            }
 
             // แสดงข้อมูลสินค้าใน console
             console.log("Product Data:", product);
