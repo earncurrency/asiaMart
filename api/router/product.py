@@ -56,7 +56,6 @@ def get_products():
     finally:
         session.close()
 
-    
 #ดึงข้อมูลสินค้าตามไอดีจากตาราง tb_product
 @router.get("/get_product/{product_id}")
 def get_product(product_id: int):
@@ -91,7 +90,6 @@ def get_product(product_id: int):
 
     finally:
         session.close()
-
 
 #ฟังก์ชันที่ใช้แปลง base64 string เป็นไฟล์รูปภาพ
 def save_image_from_base64(base64_str: str, folder: str ) -> str:
@@ -232,7 +230,7 @@ def update_product(product_id: int, product: ProductModel, product_images: list[
         }
     finally:
         session.close()
-        
+
 @router.put("/remove_product/{product_id}")
 def remove_product(product_id: int):
     session: Session = SessionLocal()  # สร้าง session ใหม่

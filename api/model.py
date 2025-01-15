@@ -29,6 +29,5 @@ class CategoryModel(BaseModel):
     name : Optional[str] = None
     status : Optional[str] = None
 
-
 class Config:
     orm_mode = True

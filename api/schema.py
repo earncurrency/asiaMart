@@ -47,8 +47,6 @@ class CategorySchema(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(15))
     status = Column(String(15))    
-
-
     
 # สร้างตารางในฐานข้อมูล (หากยังไม่มี)
 Base.metadata.create_all(bind=engine)

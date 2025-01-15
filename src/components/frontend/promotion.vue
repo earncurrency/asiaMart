@@ -36,10 +36,7 @@
         </div>
     </div>
 
-
-
 </template>
-
 
 <style scoped>
 /* ใช้สำหรับซ่อนแถบเลื่อน */

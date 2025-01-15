@@ -43,7 +43,6 @@ def get_member(member_id: int):
     finally:
         session.close()
 
-
 # เพิ่มข้อมูลสมาชิก
 @router.post("/")
 def add_member(member: MemberModel):
