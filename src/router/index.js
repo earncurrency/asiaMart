@@ -41,12 +41,12 @@ const router = createRouter({
             component: () => import('../views/frontend/order-detail.vue'),
         },
         {
-            path: '/product-detail',
+            path: '/product-detail/:productId',
             name: 'product-detail',
             component: () => import('../views/frontend/product-detail.vue'),
         },
         {
-            path: '/category/:category',
+            path: '/category/:categoryId/:categoryName',
             name: 'category',
             component: () => import('../views/frontend/category.vue'),
             props: true,

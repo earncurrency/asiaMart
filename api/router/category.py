@@ -44,7 +44,7 @@ def get_category_active(limit: int = 10, offset: int = 0):
         session.close() 
 
 # ดึงข้อมูลตามไอดีจากตาราง tb_category
-@router.get("/{category_id}")
+@router.get("/get_category/{category_id}")
 def get_category(category_id: int):
     session = SessionLocal()
     try:

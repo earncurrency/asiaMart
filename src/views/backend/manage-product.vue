@@ -796,7 +796,7 @@ export default {
       try {
         // เรียก API เพื่อดึงข้อมูลสินค้าที่ระบุ
         const response = await axios.get(
-          `${this.apiUrl}products/get_product/${productId}`
+          `${this.apiUrl}products/get_product_by_product_id/${productId}`
         );
 
         // ตรวจสอบว่าข้อมูลของสินค้าได้รับมาอย่างถูกต้อง
@@ -814,14 +814,6 @@ export default {
             this.product.detail = product.detail;
             this.product.images = product.images;
 
-            // ตรวจสอบว่า category_id ของสินค้าไม่ตรงกับ id ใน categorys
-            const isCategoryValid = this.categorys.some(
-              (category) => category.id === this.product.category_id
-            );
-            if (!isCategoryValid) {
-              this.product.category_id = ""; // ถ้าไม่ตรงกัน ให้ category_id เป็น ""
-            }
-
             // แสดงข้อมูลสินค้าใน console
             console.log("Product Data:", product);
           } else {
@@ -832,7 +824,7 @@ export default {
         }
       } catch (error) {
         console.error(
-          `Error fetching product ${productId} from ${this.apiUrl}products/get_product/${productId}:`,
+          `Error fetching product ${productId} from ${this.apiUrl}products/get_product_by_product_id/${productId}:`,
           error.response?.data?.detail || error.message
         );
         this.$refs.modal.showAlertModal({
@@ -854,7 +846,13 @@ export default {
           const data = response.data;
           this.categorys = data.rows;
 
-          console.log(this.categorys);
+          // ตรวจสอบว่า category_id ของสินค้าไม่ตรงกับ id ใน categorys
+          const isCategoryValid = this.categorys.some(
+            (category) => category.id === this.product.category_id
+          );
+          if (!isCategoryValid) {
+            this.product.category_id = ""; // ถ้าไม่ตรงกัน ให้ category_id เป็น ""
+          } 
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error);

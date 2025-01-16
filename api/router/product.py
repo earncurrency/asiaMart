@@ -8,7 +8,7 @@ from typing import List
 
 from database import SessionLocal, engine
 from model import ProductModel ,ProductImageModel
-from schema import ProductSchema ,ProductImageSchema
+from schema import ProductSchema ,ProductImageSchema, CategorySchema
 
 # สร้าง APIRouter สำหรับสมาชิก
 router = APIRouter(
@@ -30,7 +30,7 @@ def get_products():
         result = []
         for product in products:
             # ดึงข้อมูลภาพ (ถ้ามี)
-            product_images = session.query(ProductImageSchema).filter(ProductImageSchema.product_id == product.id).all()
+            product_images = session.query(ProductImageSchema).filter(ProductImageSchema.product_id == product.id, ProductImageSchema.status == 'active').all()
 
             # สร้างรายการรูปภาพที่เกี่ยวข้อง
             image_paths = [image.path for image in product_images]
@@ -57,7 +57,7 @@ def get_products():
         session.close()
 
 #ดึงข้อมูลสินค้าตามไอดีจากตาราง tb_product
-@router.get("/get_product/{product_id}")
+@router.get("/get_product_by_product_id/{product_id}")
 def get_product(product_id: int):
     session = SessionLocal()
     try:
@@ -86,6 +86,50 @@ def get_product(product_id: int):
                 "detail": product.detail,
                 "images": image_data  # ส่งข้อมูลภาพทั้งหมดที่เกี่ยวข้องกับสินค้า
             }
+        }
+
+    finally:
+        session.close()
+
+@router.get("/get_products_by_category_id/{category_id}")
+def get_products_by_category_id(category_id: int):
+    session = SessionLocal()
+    try:
+        # ทำการ query และ join ข้อมูลจาก tb_product, tb_product_image และ tb_category โดยกรองเฉพาะสินค้าที่มี status เป็น 'active' และ category_id ตรงกับที่ส่งเข้ามา
+        products = session.query(ProductSchema).join(
+            ProductImageSchema, ProductImageSchema.product_id == ProductSchema.id, isouter=True
+        ).join(
+            CategorySchema, CategorySchema.id == ProductSchema.category_id
+        ).filter(
+            ProductSchema.status != 'remove', 
+            ProductSchema.category_id == category_id
+        ).order_by(desc(ProductSchema.id)).all()
+
+        # สร้างผลลัพธ์ที่จะส่งกลับ
+        result = []
+        for product in products:
+            # ดึงข้อมูลภาพ (ถ้ามี)
+            product_images = session.query(ProductImageSchema).filter(ProductImageSchema.product_id == product.id, ProductImageSchema.status == 'active').all()
+
+            # สร้างรายการรูปภาพที่เกี่ยวข้อง
+            image_paths = [image.path for image in product_images]
+
+            result.append({
+                "id": product.id,
+                "code": product.code,
+                "name": product.name,
+                "cost": product.cost,
+                "price": product.price,
+                "status": product.status,
+                "category_id": product.category_id,
+                "detail": product.detail,
+                "images": image_paths  # ส่งข้อมูลภาพทั้งหมดที่เกี่ยวข้องกับสินค้า
+            })
+
+        return {
+            "message": "Get active products by category",
+            "rows": result,
+            "total": len(result)
         }
 
     finally:

@@ -424,7 +424,7 @@ export default {
       try {
         // เรียก API เพื่อดึงข้อมูลสินค้าที่ระบุ
         const response = await axios.get(
-          `${this.apiUrl}category/${productTypeId}`
+          `${this.apiUrl}category/get_category/${productTypeId}`
         );
 
         // ตรวจสอบว่าข้อมูลของสินค้าได้รับมาอย่างถูกต้อง

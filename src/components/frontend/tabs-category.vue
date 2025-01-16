@@ -6,9 +6,8 @@ import axios from "axios";
   <ul
     class="flex flex-wrap justify-center text-md font-medium text-center mt-4 lg:mt-0 text-gray-500 dark:text-gray-400"
   >
-    <!-- ใช้ v-for กับ <li> โดยที่ RouterLink จะครอบ <li> -->
     <li v-for="(category, index) in categorys" :key="index" class="me-2">
-      <RouterLink :to="`/category/${category.name}`">
+      <RouterLink :to="`/category/${category.id}/${category.name}`">
         <a
           href="#"
           class="inline-block px-4 py-3 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white"
@@ -37,6 +36,7 @@ export default {
 
   },
   methods: {
+    
     async getListCategory() {
       await axios
         .get(`${this.apiUrl}category/get_category_active`)
