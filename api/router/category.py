@@ -33,7 +33,7 @@ def get_category_not_remove(limit: int = 10, offset: int = 0):
 def get_category_active(limit: int = 10, offset: int = 0):
     session = SessionLocal()
     try:
-        categorys = session.query(CategorySchema).filter(CategorySchema.status == 'active').order_by(desc(CategorySchema.id)).limit(limit).offset(offset).all()
+        categorys = session.query(CategorySchema).filter(CategorySchema.status == 'active').order_by(asc(CategorySchema.id)).limit(limit).offset(offset).all()
         total_category = session.query(CategorySchema).count()
         return {
             "message": "Get all category",
