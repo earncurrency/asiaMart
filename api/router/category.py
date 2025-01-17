@@ -13,24 +13,9 @@ router = APIRouter(
     tags = ["category"],
 )
 
-# ดึงข้อมูลทั้งหมดจากตาราง tb_category ยกเว้นที่ status remove
-@router.get("/get_category_not_remove")
-def get_category_not_remove(limit: int = 10, offset: int = 0):
-    session = SessionLocal()
-    try:
-        categorys = session.query(CategorySchema).filter(CategorySchema.status != 'remove').order_by(desc(CategorySchema.id)).limit(limit).offset(offset).all()
-        total_category = session.query(CategorySchema).count()
-        return {
-            "message": "Get all category",
-            "rows": [{"id": category.id, "name": category.name, "status": category.status} for category in categorys],
-            "total": total_category
-        }
-    finally:
-        session.close()
-
 # ดึงข้อมูลทั้งหมดจากตาราง tb_category ที่ status active
-@router.get("/get_category_active")
-def get_category_active(limit: int = 10, offset: int = 0):
+@router.get("/")
+def list_category(limit: int = 10, offset: int = 0):
     session = SessionLocal()
     try:
         categorys = session.query(CategorySchema).filter(CategorySchema.status == 'active').order_by(asc(CategorySchema.id)).limit(limit).offset(offset).all()
@@ -44,7 +29,7 @@ def get_category_active(limit: int = 10, offset: int = 0):
         session.close() 
 
 # ดึงข้อมูลตามไอดีจากตาราง tb_category
-@router.get("/get_category/{category_id}")
+@router.get("/{category_id}")
 def get_category(category_id: int):
     session = SessionLocal()
     try:
@@ -59,7 +44,7 @@ def get_category(category_id: int):
         session.close()
 
 # API สำหรับเพิ่มข้อมูลหมวดหมู่สินค้า
-@router.post("/add_category")
+@router.post("/")
 async def add_category(category: CategoryModel):
     session = SessionLocal()
     try:
@@ -81,7 +66,7 @@ async def add_category(category: CategoryModel):
         session.close()
 
 # API สำหรับอัปเดทข้อมูลหมวดหมู่สินค้า
-@router.put("/update_category/{category_id}")
+@router.put("/{category_id}")
 def update_category(category_id: int, category: CategoryModel):
     session: Session = SessionLocal()
     try:
@@ -108,7 +93,7 @@ def update_category(category_id: int, category: CategoryModel):
     finally:
         session.close()
 
-@router.put("/remove_category/{category_id}")
+@router.put("/remove/{category_id}")
 def remove_category(category_id: int):
     session: Session = SessionLocal()  # สร้าง session ใหม่
 

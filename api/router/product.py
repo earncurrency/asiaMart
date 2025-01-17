@@ -17,8 +17,8 @@ router = APIRouter(
 )
 
 # ดึงข้อมูลทั้งหมดจากตาราง tb_product
-@router.get("/get_products")
-def get_products():
+@router.get("/")
+def list_products():
     session = SessionLocal()
     try:
         # ทำการ query และ join ข้อมูลจาก tb_product และ tb_product_image โดยกรองเฉพาะสินค้าที่มี status เป็น 'active'
@@ -57,7 +57,7 @@ def get_products():
         session.close()
 
 #ดึงข้อมูลสินค้าตามไอดีจากตาราง tb_product
-@router.get("/get_product_by_product_id/{product_id}")
+@router.get("/{product_id}")
 def get_product(product_id: int):
     session = SessionLocal()
     try:
@@ -91,85 +91,9 @@ def get_product(product_id: int):
     finally:
         session.close()
 
-@router.get("/get_products_by_category_id/{category_id}")
-def get_products_by_category_id(category_id: int):
-    session = SessionLocal()
-    try:
-        # ทำการ query และ join ข้อมูลจาก tb_product, tb_product_image และ tb_category โดยกรองเฉพาะสินค้าที่มี status เป็น 'active' และ category_id ตรงกับที่ส่งเข้ามา
-        products = session.query(ProductSchema).join(
-            ProductImageSchema, ProductImageSchema.product_id == ProductSchema.id, isouter=True
-        ).join(
-            CategorySchema, CategorySchema.id == ProductSchema.category_id
-        ).filter(
-            ProductSchema.status != 'remove', 
-            ProductSchema.category_id == category_id
-        ).order_by(desc(ProductSchema.id)).all()
-
-        # สร้างผลลัพธ์ที่จะส่งกลับ
-        result = []
-        for product in products:
-            # ดึงข้อมูลภาพ (ถ้ามี)
-            product_images = session.query(ProductImageSchema).filter(ProductImageSchema.product_id == product.id, ProductImageSchema.status == 'active').all()
-
-            # สร้างรายการรูปภาพที่เกี่ยวข้อง
-            image_paths = [image.path for image in product_images]
-
-            result.append({
-                "id": product.id,
-                "code": product.code,
-                "name": product.name,
-                "cost": product.cost,
-                "price": product.price,
-                "status": product.status,
-                "category_id": product.category_id,
-                "detail": product.detail,
-                "images": image_paths  # ส่งข้อมูลภาพทั้งหมดที่เกี่ยวข้องกับสินค้า
-            })
-
-        return {
-            "message": "Get active products by category",
-            "rows": result,
-            "total": len(result)
-        }
-
-    finally:
-        session.close()
-
-#ฟังก์ชันที่ใช้แปลง base64 string เป็นไฟล์รูปภาพ
-def save_image_from_base64(base64_str: str, folder: str ) -> str:
-    """
-    ฟังก์ชันที่ใช้แปลง base64 string เป็นไฟล์รูปภาพ และบันทึกในโฟลเดอร์ที่กำหนด
-    """
-    try:
-        # ตัด "data:image/png;base64," หรือ "data:image/jpeg;base64," ออก
-        image_data = base64_str.split(",")[1]
-        image_bytes = base64.b64decode(image_data)
-
-        # กำหนดประเภทของไฟล์ตามชนิดใน Base64 (เช่น .jpeg, .png)
-        file_extension = "png"  # กำหนดค่าเริ่มต้นเป็น png
-        if base64_str.startswith("data:image/jpeg"):
-            file_extension = "jpeg"
-        elif base64_str.startswith("data:image/gif"):
-            file_extension = "gif"
-        
-        # สร้างชื่อไฟล์ด้วย UUID
-        filename = f"{uuid.uuid4()}.{file_extension}"
-        file_path = os.path.join(folder, filename)
-        
-        # สร้างโฟลเดอร์ถ้ายังไม่มี
-        os.makedirs(folder, exist_ok=True)
-
-        # บันทึกไฟล์ลงในระบบ
-        with open(file_path, "wb") as f:
-            f.write(image_bytes)
-        
-        return file_path
-    except Exception as e:
-        raise HTTPException(status_code=400, detail="ไม่สามารถบันทึกรูปภาพได้")
-
 # API สำหรับเพิ่มข้อมูลสินค้า เเละรูปภาพ
-@router.post("/add_product")
-async def add_data_product(product: ProductModel,product_images: list[str] = []):
+@router.post("/add")
+async def add_product(product: ProductModel,product_images: list[str] = []):
     session = SessionLocal()
     try:
         # 1. เพิ่มข้อมูลสินค้าใหม่
@@ -219,7 +143,7 @@ async def add_data_product(product: ProductModel,product_images: list[str] = [])
         session.close()
 
 # API สำหรับอัปเดทข้อมูลสินค้า
-@router.put("/update_product/{product_id}")
+@router.put("/update/{product_id}")
 def update_product(product_id: int, product: ProductModel, product_images: list[str] = []):
     session: Session = SessionLocal()
     try:
@@ -276,7 +200,7 @@ def update_product(product_id: int, product: ProductModel, product_images: list[
     finally:
         session.close()
 
-@router.put("/remove_product/{product_id}")
+@router.put("/remove/{product_id}")
 def remove_product(product_id: int):
     session: Session = SessionLocal()  # สร้าง session ใหม่
 
@@ -302,7 +226,7 @@ def remove_product(product_id: int):
     finally:
         session.close()  # ปิด session
 
-@router.put("/remove_image_product/{image_id}")
+@router.put("/remove_image/{image_id}")
 def remove_image_product(image_id: int):
     session: Session = SessionLocal()  # สร้าง session ใหม่
 
@@ -328,4 +252,78 @@ def remove_image_product(image_id: int):
     finally:
         session.close()  # ปิด session
 
+#ฟังก์ชันที่ใช้แปลง base64 string เป็นไฟล์รูปภาพ
+def save_image_from_base64(base64_str: str, folder: str ) -> str:
+    """
+    ฟังก์ชันที่ใช้แปลง base64 string เป็นไฟล์รูปภาพ และบันทึกในโฟลเดอร์ที่กำหนด
+    """
+    try:
+        # ตัด "data:image/png;base64," หรือ "data:image/jpeg;base64," ออก
+        image_data = base64_str.split(",")[1]
+        image_bytes = base64.b64decode(image_data)
 
+        # กำหนดประเภทของไฟล์ตามชนิดใน Base64 (เช่น .jpeg, .png)
+        file_extension = "png"  # กำหนดค่าเริ่มต้นเป็น png
+        if base64_str.startswith("data:image/jpeg"):
+            file_extension = "jpeg"
+        elif base64_str.startswith("data:image/gif"):
+            file_extension = "gif"
+        
+        # สร้างชื่อไฟล์ด้วย UUID
+        filename = f"{uuid.uuid4()}.{file_extension}"
+        file_path = os.path.join(folder, filename)
+        
+        # สร้างโฟลเดอร์ถ้ายังไม่มี
+        os.makedirs(folder, exist_ok=True)
+
+        # บันทึกไฟล์ลงในระบบ
+        with open(file_path, "wb") as f:
+            f.write(image_bytes)
+        
+        return file_path
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="ไม่สามารถบันทึกรูปภาพได้")
+
+@router.get("/cat/{category_id}")
+def get_products_by_category_id(category_id: int):
+    session = SessionLocal()
+    try:
+        # ทำการ query และ join ข้อมูลจาก tb_product, tb_product_image และ tb_category โดยกรองเฉพาะสินค้าที่มี status เป็น 'active' และ category_id ตรงกับที่ส่งเข้ามา
+        products = session.query(ProductSchema).join(
+            ProductImageSchema, ProductImageSchema.product_id == ProductSchema.id, isouter=True
+        ).join(
+            CategorySchema, CategorySchema.id == ProductSchema.category_id
+        ).filter(
+            ProductSchema.status != 'remove', 
+            ProductSchema.category_id == category_id
+        ).order_by(desc(ProductSchema.id)).all()
+
+        # สร้างผลลัพธ์ที่จะส่งกลับ
+        result = []
+        for product in products:
+            # ดึงข้อมูลภาพ (ถ้ามี)
+            product_images = session.query(ProductImageSchema).filter(ProductImageSchema.product_id == product.id, ProductImageSchema.status == 'active').all()
+
+            # สร้างรายการรูปภาพที่เกี่ยวข้อง
+            image_paths = [image.path for image in product_images]
+
+            result.append({
+                "id": product.id,
+                "code": product.code,
+                "name": product.name,
+                "cost": product.cost,
+                "price": product.price,
+                "status": product.status,
+                "category_id": product.category_id,
+                "detail": product.detail,
+                "images": image_paths  # ส่งข้อมูลภาพทั้งหมดที่เกี่ยวข้องกับสินค้า
+            })
+
+        return {
+            "message": "Get active products by category",
+            "rows": result,
+            "total": len(result)
+        }
+
+    finally:
+        session.close()
