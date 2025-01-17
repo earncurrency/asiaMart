@@ -13,12 +13,12 @@ router = APIRouter(
     tags = ["category"],
 )
 
-# ดึงข้อมูลทั้งหมดจากตาราง tb_category ที่ status active
+# ดึงข้อมูลทั้งหมดจากตาราง tb_category ที่ status ส่งมา
 @router.get("/")
-def list_category(limit: int = 10, offset: int = 0):
+def list_category(category_status: str, limit: int = 10, offset: int = 0):
     session = SessionLocal()
     try:
-        categorys = session.query(CategorySchema).filter(CategorySchema.status == 'active').order_by(asc(CategorySchema.id)).limit(limit).offset(offset).all()
+        categorys = session.query(CategorySchema).filter(CategorySchema.status == category_status ,CategorySchema.status != 'remove').order_by(asc(CategorySchema.id)).limit(limit).offset(offset).all()
         total_category = session.query(CategorySchema).count()
         return {
             "message": "Get all category",

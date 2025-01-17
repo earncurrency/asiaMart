@@ -356,7 +356,7 @@ export default {
       apiUrl: "http://127.0.0.1:8000/",
 
       categorys: [],
-
+      categoryStatus: "",
       category: {
         id: "",
         name: "",
@@ -400,8 +400,11 @@ export default {
 
     //เเสดงข้อมูลประเภทสินค้าบนตาราง
     async getListCategory() {
+
+      // this.categoryStatus = ''
+
       await axios
-        .get(`${this.apiUrl}category/get_category_not_remove`)
+        .get(`${this.apiUrl}category/`)
         .then((response) => {
           const data = response.data;
           this.categorys = data.rows;
