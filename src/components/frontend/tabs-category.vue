@@ -1,5 +1,5 @@
 <script setup>
-import Category from "@/views/frontend/category.vue";
+
 import axios from "axios";
 </script>
 <template>
@@ -7,7 +7,7 @@ import axios from "axios";
     class="flex flex-wrap justify-center text-md font-medium text-center mt-4 lg:mt-0 text-gray-500 dark:text-gray-400"
   >
     <li v-for="(category, index) in categorys" :key="index" class="me-2">
-      <RouterLink :to="`/category/${category.id}/${category.name}`">
+      <RouterLink :to="`/category/${category.id}`">
         <a
           href="#"
           class="inline-block px-4 py-3 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white"
@@ -38,15 +38,19 @@ export default {
   methods: {
     
     async getListCategory() {
+      this.categoryStatus = "active";
+
       await axios
-        .get(`${this.apiUrl}category/get_category_active`)
+        .get(`${this.apiUrl}category/`, {
+          params: { category_status: this.categoryStatus },
+        })
         .then((response) => {
           const data = response.data;
           this.categorys = data.rows;
           console.log(this.categorys);
         })
         .catch((error) => {
-          console.error("There was an error fetching the data:", error);
+          console.error("There was an error fetching the data:", error); // แสดงข้อผิดพลาด
         });
     },
   },

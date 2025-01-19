@@ -1,10 +1,19 @@
 <script setup>
 import { useRoute } from "vue-router";
+
 import axios from "axios";
 </script>
 
 <template>
   <div
+    v-if="products.length === 0"
+    class="text-center mt-24 mb-16 text-xl text-gray-600"
+  >
+    ไม่มีสินค้าในหมวดหมู่นี้เเสดงอยู่
+
+  </div>
+  <div
+    v-else
     class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 lg:gap-8 mt-8"
   >
     <div v-for="product in products" :key="product.id">
@@ -65,14 +74,12 @@ export default {
   watch: {
     categoryId(newCategoryId) {
       this.getListProduct(newCategoryId);
-    }
+    },
   },
   methods: {
     async getListProduct() {
       await axios
-        .get(
-          `${this.apiUrl}products/get_products_by_category_id/${this.categoryId}`
-        )
+        .get(`${this.apiUrl}products/cat/${this.categoryId}`)
         .then((response) => {
           const data = response.data;
           this.products = data.rows;

@@ -725,6 +725,7 @@ export default {
         images: [],
       },
       categorys: [],
+      categoryStatus:"",
       previewImages: [],
 
       formTable: true,
@@ -771,7 +772,7 @@ export default {
     //เเสดงข้อมูลสินค้าบนตาราง
     async getListProduct() {
       await axios
-        .get(`${this.apiUrl}products/get_products`)
+        .get(`${this.apiUrl}products/`)
         .then((response) => {
           const data = response.data;
           this.products = data.rows;
@@ -796,7 +797,7 @@ export default {
       try {
         // เรียก API เพื่อดึงข้อมูลสินค้าที่ระบุ
         const response = await axios.get(
-          `${this.apiUrl}products/get_product_by_product_id/${productId}`
+          `${this.apiUrl}products/${productId}`
         );
 
         // ตรวจสอบว่าข้อมูลของสินค้าได้รับมาอย่างถูกต้อง
@@ -824,7 +825,7 @@ export default {
         }
       } catch (error) {
         console.error(
-          `Error fetching product ${productId} from ${this.apiUrl}products/get_product_by_product_id/${productId}:`,
+          `Error fetching product ${productId} from ${this.apiUrl}products/${productId}:`,
           error.response?.data?.detail || error.message
         );
         this.$refs.modal.showAlertModal({
@@ -840,8 +841,13 @@ export default {
 
     //เเสดงข้อมูลหมวดหมู่สินค้า
     async getListCategory() {
+
+      this.categoryStatus = "active";
+
       await axios
-        .get(`${this.apiUrl}category/get_category_not_remove`)
+      .get(`${this.apiUrl}category/`, {
+          params: { category_status: this.categoryStatus },
+        })
         .then((response) => {
           const data = response.data;
           this.categorys = data.rows;
@@ -897,7 +903,7 @@ export default {
 
           // ส่งข้อมูลผลิตภัณฑ์และรูปภาพไปยัง API
           const productResponse = await axios.post(
-            `${this.apiUrl}products/add_product`,
+            `${this.apiUrl}products/add`,
             {
               product: dataProduct,
               product_images: this.previewImages,
@@ -958,7 +964,7 @@ export default {
           };
 
           const response = await axios.put(
-            `${this.apiUrl}products/update_product/${this.product.id}`,
+            `${this.apiUrl}products/update/${this.product.id}`,
             {
               product: dataProduct,
               product_images: this.previewImages,
@@ -1014,7 +1020,7 @@ export default {
         onConfirm: () => {
           // เมื่อผู้ใช้กด "ยืนยัน" ใน modal
           axios
-            .put(`${this.apiUrl}products/remove_product/${productId}`)
+            .put(`${this.apiUrl}products/remove/${productId}`)
             .then((response) => {
               // แสดงข้อความว่า "ลบสำเร็จ"
               this.$swal
@@ -1059,7 +1065,7 @@ export default {
         onConfirm: () => {
           // เมื่อผู้ใช้กด "ยืนยัน" ใน modal
           axios
-            .put(`${this.apiUrl}products/remove_image_product/${imageId}`)
+            .put(`${this.apiUrl}products/remove_image/${imageId}`)
             .then((response) => {
               // แสดงข้อความว่า "ลบสำเร็จ"
               this.$swal

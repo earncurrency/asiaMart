@@ -38,7 +38,7 @@ import tabsCategory from "../../components/frontend/tabs-category.vue";
               </RouterLink>
             </div>
             <!-- แสดงชื่อผลิตภัณฑ์ที่ดึงมาจาก URL -->
-            <p class="text-3xl font-semibold">{{ categoryName }}</p>
+            <!-- <p class="text-3xl font-semibold">{{ categoryName }}</p> -->
             <!-- แสดงชื่อผลิตภัณฑ์ -->
           </div>
 
@@ -58,10 +58,7 @@ import tabsCategory from "../../components/frontend/tabs-category.vue";
 <script>
 export default {
   props: {
-    categoryName: {
-      type: String,
-      required: true,
-    },
+
     categoryId: {
       type: String, 
       required: true,

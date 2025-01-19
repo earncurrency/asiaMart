@@ -27,7 +27,7 @@ import axios from "axios";
           <!-- เปุ่มนี้เสดงเมื่อจอใหญ่ -->
           <div class="flex justify-center gap-4">
             <div class="hidden lg:flex items-center gap-4">
-              <RouterLink to="/">
+              <RouterLink :to="`/category/${product.category_id}`">
                 <button
                   class="px-2 py-1 bg-gray-800 rounded-md text-white text-sm hover:bg-gray-600 transition"
                 >
@@ -58,58 +58,21 @@ import axios from "axios";
             <!-- กริดของภาพ -->
             <div class="grid grid-cols-4 gap-2 lg:gap-4 pt-2 lg:pt-4">
               <div
+                v-for="(image, imageIndex) in product.images"
                 class="w-full lg:h-28 h-20 cursor-pointer"
                 @click="
                   selectImage(
-                    'https://images.deliveryhero.io/image/fd-th/LH/ws9f-listing.jpg'
+                    `${baseUrl}/api/uploads/${Math.ceil(product.id / 100)}/${
+                      image.path
+                    }`
                   )
                 "
               >
                 <img
-                  src="https://images.deliveryhero.io/image/fd-th/LH/ws9f-listing.jpg"
-                  alt="Food 1"
-                  class="h-full w-full object-cover rounded-md"
-                />
-              </div>
-              <div
-                class="w-full lg:h-28 h-20 cursor-pointer"
-                @click="
-                  selectImage(
-                    'https://images.deliveryhero.io/image/fd-th/LH/e4gw-listing.jpg'
-                  )
-                "
-              >
-                <img
-                  src="https://images.deliveryhero.io/image/fd-th/LH/e4gw-listing.jpg"
-                  alt="Food 2"
-                  class="h-full w-full object-cover rounded-md"
-                />
-              </div>
-              <div
-                class="w-full lg:h-28 h-20 cursor-pointer"
-                @click="
-                  selectImage(
-                    'https://shopee.co.th/blog/wp-content/uploads/2020/10/%E0%B8%82%E0%B9%89%E0%B8%B2%E0%B8%A7%E0%B8%A1%E0%B8%B1%E0%B8%99%E0%B9%84%E0%B8%81%E0%B9%88.jpg'
-                  )
-                "
-              >
-                <img
-                  src="https://shopee.co.th/blog/wp-content/uploads/2020/10/%E0%B8%82%E0%B9%89%E0%B8%B2%E0%B8%A7%E0%B8%A1%E0%B8%B1%E0%B8%99%E0%B9%84%E0%B8%81%E0%B9%88.jpg"
-                  alt="Food 3"
-                  class="h-full w-full object-cover rounded-md"
-                />
-              </div>
-              <div
-                class="w-full lg:h-28 h-20 cursor-pointer"
-                @click="
-                  selectImage(
-                    'https://img-global.cpcdn.com/recipes/8d36694f728a8620/1200x630cq70/photo.jpg'
-                  )
-                "
-              >
-                <img
-                  src="https://img-global.cpcdn.com/recipes/8d36694f728a8620/1200x630cq70/photo.jpg"
-                  alt="Food 4"
+                  :src="`${baseUrl}/api/uploads/${Math.ceil(
+                    product.id / 100
+                  )}/${image.path}`"
+                  alt="image 1"
                   class="h-full w-full object-cover rounded-md"
                 />
               </div>
@@ -118,18 +81,18 @@ import axios from "axios";
 
           <div class="p-8 bg-gray-100 rounded-md text-gray-600">
             <p class="text-2xl lg:text-3xl font-semibold mb-2">
-              ข้าวกระเพราหมู+ไข่ดาว
+              {{ product.name }}
             </p>
             <p class="text-md">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nostrum,
-              sint. Itaque, quisquam aliquid. Optio cumque a, iure blanditiis
-              dolorem modi natus
+              {{ product.detail }}
             </p>
             <div
               class="flex gap-4 items-center mt-8 justify-center lg:justify-start"
             >
               <p class="text-2xl font-semibold">ราคา</p>
-              <p class="text-2xl font-semibold text-orange-500">45 บาท</p>
+              <p class="text-2xl font-semibold text-orange-500">
+                {{ product.price }} บาท
+              </p>
             </div>
             <div
               class="flex gap-4 items-center mt-4 justify-center lg:justify-start"
@@ -160,6 +123,7 @@ import axios from "axios";
 
             <div class="flex justify-center lg:justify-start">
               <button
+                @click="addToCart(product)"
                 class="p-2 pr-4 pl-4 rounded-lg bg-gray-800 text-white mt-6 hover:bg-gray-600 transition"
               >
                 <i class="fa-solid fa-cart-plus text-md"></i> เพิ่มลงตระกร้า
@@ -181,15 +145,69 @@ export default {
   },
   data() {
     return {
+      apiUrl: "http://127.0.0.1:8000/",
+      baseUrl: __BASE_URL__,
+      product: {
+        id: "",
+        code: "",
+        name: "",
+        cost: "",
+        price: "",
+        category_id: "",
+        status: "",
+        detail: "",
+        images: [],
+      },
+
       // กำหนดภาพเริ่มต้นที่จะแสดง
-      selectedImage:
-        "https://images.deliveryhero.io/image/fd-th/LH/ws9f-listing.jpg",
+      selectedImage: "",
     };
   },
+  mounted() {
+    this.getProduct();
+  },
+
   methods: {
     // ฟังก์ชันในการเปลี่ยนภาพเมื่อคลิก
     selectImage(imageUrl) {
       this.selectedImage = imageUrl;
+    },
+
+    async getProduct() {
+      try {
+        const response = await axios.get(
+          `${this.apiUrl}products/${this.productId}`
+        );
+        this.product = response.data.row;
+        console.log(this.product);
+
+        this.selectedImage = `${this.baseUrl}/api/uploads/${Math.ceil(
+          this.productId / 100
+        )}/${this.product.images[0].path}`;
+      } catch (error) {
+        console.error("Error fetching product:", error);
+      }
+    },
+    addToCart(product) {
+      // ดึงข้อมูลที่มีอยู่ใน localStorage มาเก็บไว้ในตัวแปร carts (array)
+      let carts = JSON.parse(localStorage.getItem("carts")) || [];
+
+      // เพิ่มข้อมูลสินค้าลงใน carts
+      carts.push({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        // สามารถเพิ่มข้อมูลอื่นๆ ที่ต้องการเก็บได้ตามที่จำเป็น
+      });
+
+      // บันทึก carts กลับไปยัง localStorage
+      localStorage.setItem("carts", JSON.stringify(carts));
+
+      // แสดงข้อความแจ้งเตือนว่าเพิ่มสินค้าลงในตะกร้าเรียบร้อยแล้ว
+      alert(`เพิ่ม ${product.name} เข้าสู่ตะกร้าเรียบร้อยแล้ว`);
+
+      // แสดงข้อมูลใน localStorage ที่บันทึกอยู่ในคอนโซล
+      console.log("ข้อมูลใน localStorage (ตะกร้าสินค้า):", carts);
     },
   },
 };

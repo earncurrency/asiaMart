@@ -15,7 +15,6 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
     >
       <div class="mt-2 mb-2">
         <div class="lg:p-4 w-full rounded-md text-gray-600">
-
           <div v-if="formTable">
             <!-- title -->
             <div class="flex justify-between items-center mb-2">
@@ -400,18 +399,19 @@ export default {
 
     //เเสดงข้อมูลประเภทสินค้าบนตาราง
     async getListCategory() {
-
-      // this.categoryStatus = ''
+      this.categoryStatus = "";
 
       await axios
-        .get(`${this.apiUrl}category/`)
+        .get(`${this.apiUrl}category/`, {
+          params: { category_status: this.categoryStatus },
+        })
         .then((response) => {
           const data = response.data;
           this.categorys = data.rows;
           console.log(this.categorys);
         })
         .catch((error) => {
-          console.error("There was an error fetching the data:", error);
+          console.error("There was an error fetching the data:", error); // แสดงข้อผิดพลาด
         });
     },
 
@@ -427,7 +427,7 @@ export default {
       try {
         // เรียก API เพื่อดึงข้อมูลสินค้าที่ระบุ
         const response = await axios.get(
-          `${this.apiUrl}category/get_category/${productTypeId}`
+          `${this.apiUrl}category/${productTypeId}`
         );
 
         // ตรวจสอบว่าข้อมูลของสินค้าได้รับมาอย่างถูกต้อง
@@ -478,7 +478,7 @@ export default {
           };
 
           const response = await axios.post(
-            `${this.apiUrl}category/add_category`,
+            `${this.apiUrl}category/`,
             dataProductType
           );
 
@@ -511,7 +511,7 @@ export default {
           };
 
           const response = await axios.put(
-            `${this.apiUrl}category/update_category/${this.category.id}`,
+            `${this.apiUrl}category/${this.category.id}`,
             dataProductType
           );
 
@@ -533,7 +533,7 @@ export default {
     },
 
     btnDelete(productTypeId) {
-      console.log(productTypeId)
+      console.log(productTypeId);
       // เรียกใช้งาน modal เพื่อแสดงคำเตือน
       this.$refs.modal.showDeleteModal({
         swlIcon: "warning",
@@ -542,7 +542,7 @@ export default {
         onConfirm: () => {
           // เมื่อผู้ใช้กด "ยืนยัน" ใน modal
           axios
-            .put(`${this.apiUrl}category/remove_category/${productTypeId}`)
+            .put(`${this.apiUrl}category/remove/${productTypeId}`)
             .then((response) => {
               // แสดงข้อความว่า "ลบสำเร็จ"
               this.$swal
