@@ -99,7 +99,7 @@ def update_category(category_id: int, category: CategoryModel):
     finally:
         session.close()
 
-@router.put("/remove/{category_id}")
+@router.delete("/{category_id}")
 def remove_category(category_id: int):
     session: Session = SessionLocal()  # สร้าง session ใหม่
 

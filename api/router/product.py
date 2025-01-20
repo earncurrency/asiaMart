@@ -92,7 +92,7 @@ def get_product(product_id: int):
         session.close()
 
 # API สำหรับเพิ่มข้อมูลสินค้า เเละรูปภาพ
-@router.post("/add")
+@router.post("/")
 async def add_product(product: ProductModel,product_images: list[str] = []):
     session = SessionLocal()
     try:
@@ -143,7 +143,7 @@ async def add_product(product: ProductModel,product_images: list[str] = []):
         session.close()
 
 # API สำหรับอัปเดทข้อมูลสินค้า
-@router.put("/update/{product_id}")
+@router.put("/{product_id}")
 def update_product(product_id: int, product: ProductModel, product_images: list[str] = []):
     session: Session = SessionLocal()
     try:
@@ -200,7 +200,7 @@ def update_product(product_id: int, product: ProductModel, product_images: list[
     finally:
         session.close()
 
-@router.put("/remove/{product_id}")
+@router.delete("/{product_id}")
 def remove_product(product_id: int):
     session: Session = SessionLocal()  # สร้าง session ใหม่
 
@@ -226,7 +226,7 @@ def remove_product(product_id: int):
     finally:
         session.close()  # ปิด session
 
-@router.put("/remove_image/{image_id}")
+@router.delete("/image/{image_id}")
 def remove_image_product(image_id: int):
     session: Session = SessionLocal()  # สร้าง session ใหม่
 
