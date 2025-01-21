@@ -1,6 +1,5 @@
 <script setup>
 import backend_navbar from "@/components/backend/navbar.vue";
-import Modal from "@/components/backend/modal.vue";
 import axios from "axios";
 </script>
 
@@ -903,7 +902,7 @@ export default {
 
           // ส่งข้อมูลผลิตภัณฑ์และรูปภาพไปยัง API
           const productResponse = await axios.post(
-            `${this.apiUrl}products/add`,
+            `${this.apiUrl}products/`,
             {
               product: dataProduct,
               product_images: this.previewImages,
@@ -964,7 +963,7 @@ export default {
           };
 
           const response = await axios.put(
-            `${this.apiUrl}products/update/${this.product.id}`,
+            `${this.apiUrl}products/${this.product.id}`,
             {
               product: dataProduct,
               product_images: this.previewImages,
@@ -1020,7 +1019,7 @@ export default {
         onConfirm: () => {
           // เมื่อผู้ใช้กด "ยืนยัน" ใน modal
           axios
-            .put(`${this.apiUrl}products/remove/${productId}`)
+            .delete(`${this.apiUrl}products/${productId}`)
             .then((response) => {
               // แสดงข้อความว่า "ลบสำเร็จ"
               this.$swal
@@ -1065,7 +1064,7 @@ export default {
         onConfirm: () => {
           // เมื่อผู้ใช้กด "ยืนยัน" ใน modal
           axios
-            .put(`${this.apiUrl}products/remove_image/${imageId}`)
+            .delete(`${this.apiUrl}products/image/${imageId}`)
             .then((response) => {
               // แสดงข้อความว่า "ลบสำเร็จ"
               this.$swal

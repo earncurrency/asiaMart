@@ -542,7 +542,7 @@ export default {
         onConfirm: () => {
           // เมื่อผู้ใช้กด "ยืนยัน" ใน modal
           axios
-            .put(`${this.apiUrl}category/remove/${productTypeId}`)
+            .delete(`${this.apiUrl}category/${productTypeId}`)
             .then((response) => {
               // แสดงข้อความว่า "ลบสำเร็จ"
               this.$swal

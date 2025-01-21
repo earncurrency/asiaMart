@@ -7,7 +7,7 @@ import axios from "axios";
 <template>
   <div
     v-if="products.length === 0"
-    class="text-center mt-24 mb-16 text-xl text-gray-600"
+    class="text-center mt-24 mb-8 text-xl text-gray-600"
   >
     ไม่มีสินค้าในหมวดหมู่นี้เเสดงอยู่
 

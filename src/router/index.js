@@ -57,6 +57,11 @@ const router = createRouter({
             name: 'history',
             component: () => import('../views/frontend/history.vue'),
         },
+        {
+            path: '/login',
+            name: 'login',
+            component: () => import('../views/frontend/login.vue'),
+        },
 
         //////////////////////////////////backend/////////////////////////////////////////    
         {

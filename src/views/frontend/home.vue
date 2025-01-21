@@ -41,8 +41,8 @@ import promotion from '@/components/frontend/promotion.vue';
                     <p class="text-3xl font-semibold mt-8 mb-2">สินค้าเเนะนำ</p>
                 </div>
 
-
-                <productList />
+<!-- 
+                <productList /> -->
 
                 <div class="flex justify-center mt-8 mb-4">
                     <button class="bg-gray-400 text-gray-900 p-2 pl-6 pr-6 rounded-md">ดูเพิ่มเติม</button>

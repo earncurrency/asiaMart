@@ -109,7 +109,7 @@ import axios from "axios";
                 <input
                   type="text"
                   class="w-14 text-center border-none focus:outline-none p-2 pr-3 pl-3"
-                  value="1"
+                  v-model="quantity"
                 />
 
                 <!-- ปุ่มเพิ่มจำนวน -->
@@ -158,6 +158,7 @@ export default {
         detail: "",
         images: [],
       },
+      quantity: "1",
 
       // กำหนดภาพเริ่มต้นที่จะแสดง
       selectedImage: "",
@@ -192,19 +193,42 @@ export default {
       // ดึงข้อมูลที่มีอยู่ใน localStorage มาเก็บไว้ในตัวแปร carts (array)
       let carts = JSON.parse(localStorage.getItem("carts")) || [];
 
-      // เพิ่มข้อมูลสินค้าลงใน carts
-      carts.push({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        // สามารถเพิ่มข้อมูลอื่นๆ ที่ต้องการเก็บได้ตามที่จำเป็น
-      });
+      // ตรวจสอบว่าสินค้าที่ต้องการเพิ่มมีอยู่ใน carts อยู่แล้วหรือไม่
+      let existingItem = carts.find((item) => item.id === product.id);
+
+      if (existingItem) {
+        // หากมีอยู่แล้วให้เพิ่ม quantity ของสินค้านี้
+        existingItem.quantity += this.quantity;
+      } else {
+        // หากยังไม่มีให้เพิ่มรายการสินค้าใหม่
+        carts.push({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          quantity: this.quantity 
+        });
+      }
 
       // บันทึก carts กลับไปยัง localStorage
       localStorage.setItem("carts", JSON.stringify(carts));
 
       // แสดงข้อความแจ้งเตือนว่าเพิ่มสินค้าลงในตะกร้าเรียบร้อยแล้ว
-      alert(`เพิ่ม ${product.name} เข้าสู่ตะกร้าเรียบร้อยแล้ว`);
+      this.$swal
+        .fire({
+          title: "สำเร็จ",
+          text: "เพิ่มสินค้าเข้าสู่ตะกร้าเรียบร้อยแล้ว",
+          icon: "success",
+          confirmButtonText: "ยืนยัน",
+          customClass: {
+            confirmButton:
+              "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400",
+          },
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            // ทำอะไรต่อไปหลังจากกดยืนยัน (ถ้ามี)
+          }
+        });
 
       // แสดงข้อมูลใน localStorage ที่บันทึกอยู่ในคอนโซล
       console.log("ข้อมูลใน localStorage (ตะกร้าสินค้า):", carts);
