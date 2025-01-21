@@ -1,4 +1,5 @@
 <script setup>
+import { parse } from "vue/compiler-sfc";
 import frontend_navbar from "../../components/frontend/navbar.vue";
 import axios from "axios";
 </script>
@@ -101,6 +102,8 @@ import axios from "axios";
                 <!-- ปุ่มลดจำนวน -->
                 <button
                   class="bg-gray-300 text-gray-600 hover:bg-gray-200 p-2 pr-3 pl-3 focus:outline-none transition rounded-l-md"
+                  @click="decrementQuantity"
+                  :disabled="qty <= 1"
                 >
                   -
                 </button>
@@ -109,12 +112,14 @@ import axios from "axios";
                 <input
                   type="text"
                   class="w-14 text-center border-none focus:outline-none p-2 pr-3 pl-3"
-                  v-model="quantity"
+                  v-model.number="qty"
+                  min="1"
                 />
 
                 <!-- ปุ่มเพิ่มจำนวน -->
                 <button
                   class="bg-gray-300 text-gray-600 hover:bg-gray-200 p-2 pr-3 pl-3 focus:outline-none transition rounded-r-md"
+                  @click="incrementQuantity"
                 >
                   +
                 </button>
@@ -158,7 +163,7 @@ export default {
         detail: "",
         images: [],
       },
-      quantity: "1",
+      qty: 1,
 
       // กำหนดภาพเริ่มต้นที่จะแสดง
       selectedImage: "",
@@ -180,6 +185,7 @@ export default {
           `${this.apiUrl}products/${this.productId}`
         );
         this.product = response.data.row;
+
         console.log(this.product);
 
         this.selectedImage = `${this.baseUrl}/api/uploads/${Math.ceil(
@@ -190,6 +196,23 @@ export default {
       }
     },
     addToCart(product) {
+      // ตรวจสอบว่า member_id ว่างเปล่าหรือไม่
+      if (!this.member_id) {
+        this.$swal.fire({
+          title: "กรุณาเข้าสู่ระบบ",
+          text: "กรุณาเข้าสู่ระบบก่อนที่จะทำการเพิ่มสินค้าลงในตะกร้า",
+          icon: "warning",
+          confirmButtonText: "ตกลง",
+          customClass: {
+            confirmButton:
+              "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400",
+          },
+        });
+        return; // ออกจากฟังก์ชันหลังจากแจ้งเตือนให้เข้าสู่ระบบ
+      }
+
+      // ดำเนินการเพิ่มสินค้าลงในตะกร้าต่อไปเมื่อเงื่อนไขผ่าน
+      
       // ดึงข้อมูลที่มีอยู่ใน localStorage มาเก็บไว้ในตัวแปร carts (array)
       let carts = JSON.parse(localStorage.getItem("carts")) || [];
 
@@ -198,21 +221,20 @@ export default {
 
       if (existingItem) {
         // หากมีอยู่แล้วให้เพิ่ม quantity ของสินค้านี้
-        existingItem.quantity += this.quantity;
+        existingItem.qty += parseFloat(this.qty);
       } else {
         // หากยังไม่มีให้เพิ่มรายการสินค้าใหม่
         carts.push({
           id: product.id,
           name: product.name,
           price: product.price,
-          quantity: this.quantity 
+          qty: parseFloat(this.qty),
+          image: this.product.images[0].path,
         });
       }
-
       // บันทึก carts กลับไปยัง localStorage
       localStorage.setItem("carts", JSON.stringify(carts));
 
-      // แสดงข้อความแจ้งเตือนว่าเพิ่มสินค้าลงในตะกร้าเรียบร้อยแล้ว
       this.$swal
         .fire({
           title: "สำเร็จ",
@@ -232,6 +254,14 @@ export default {
 
       // แสดงข้อมูลใน localStorage ที่บันทึกอยู่ในคอนโซล
       console.log("ข้อมูลใน localStorage (ตะกร้าสินค้า):", carts);
+    },
+    decrementQuantity() {
+      if (this.qty > 1) {
+        this.qty--;
+      }
+    },
+    incrementQuantity() {
+      this.qty++;
     },
   },
 };

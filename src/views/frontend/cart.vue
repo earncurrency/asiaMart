@@ -39,55 +39,71 @@ import Modal from "@/components/backend/modal.vue";
                     </div>
                   </div>
 
-                  <div
-                    v-for="(item, index) in carts"
-                    :key="index"
-                    class="relative w-full h-auto bg-gray-50 rounded-md shadow-md text-md cursor-pointer mb-4"
-                  >
-                    <div class="flex gap-4 lg:gap-6 p-2 lg:p-4 rounded-md">
-                      <img
-                        src="../../assets/image/product/food3.jpg"
-                        alt=""
-                        class="h-28 w-28 lg:h-32 lg:w-48 object-cover rounded-md"
-                      />
-                      <div class="flex flex-col w-full">
-                        <div
-                          class="flex justify-between items-center mb-1 lg:mb-2"
-                        >
-                          <p class="text-mb">{{ item.name }}</p>
-                          <button
-                            class="absolute -right-2 -top-2 bg-red-500 text-white w-10 h-10 rounded-full justify-center text-md"
-                            @click="removeItem(index)"
-                          >
-                            <i class="fa-solid fa-trash-can"></i>
-                          </button>
-                        </div>
-                        <p
-                          class="font-semibold text-mb text-orange-500 mb-2 lg:mb-3"
-                        >
-                          {{ item.price }} บาท
-                        </p>
-                        <div class="flex items-center bottom-0">
-                          <!-- ปุ่มลดจำนวน -->
-                          <button
-                            class="bg-gray-300 text-gray-600 hover:bg-gray-200 p-2 pr-3 pl-3 focus:outline-none transition rounded-l-md"
-                          >
-                            -
-                          </button>
+                  <div v-for="(item, index) in carts" :key="index">
+                    <div
+                      class="relative w-full h-auto bg-gray-50 rounded-md shadow-md text-md mb-4"
+                    >
+                      <div class="flex gap-4 lg:gap-6 p-2 lg:p-4 rounded-md">
+                        <RouterLink :to="`/product-detail/${item.id}`">
+                          <div class="h-28 w-28 lg:h-32 lg:w-48">
+                            <img
+                              :src="`${baseUrl}/api/uploads/${Math.ceil(
+                                item.id / 100
+                              )}/${item.image}`"
+                              alt=""
+                              class="w-full h-full object-cover rounded-md"
+                            />
+                          </div>
+                        </RouterLink>
 
-                          <!-- ช่องกรอกจำนวนสินค้า -->
-                          <input
-                            type="text"
-                            class="w-14 text-center border-none focus:outline-none p-2 pr-3 pl-3"
-                            value="1"
-                          />
-
-                          <!-- ปุ่มเพิ่มจำนวน -->
-                          <button
-                            class="bg-gray-300 text-gray-600 hover:bg-gray-200 p-2 pr-3 pl-3 focus:outline-none transition rounded-r-md"
+                        <div class="flex flex-col w-full">
+                          <div
+                            class="flex justify-between items-center mb-1 lg:mb-2"
                           >
-                            +
-                          </button>
+                            <RouterLink :to="`/product-detail/${item.id}`">
+                              <p class="text-mb cursor-pointer">
+                                {{ item.name }}
+                              </p>
+                            </RouterLink>
+
+                            <button
+                              class="absolute -right-2 -top-2 bg-red-500 text-white w-10 h-10 rounded-full justify-center text-md"
+                              @click="removeItem(index)"
+                            >
+                              <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                          </div>
+                          <p
+                            class="font-semibold text-mb text-orange-500 mb-2 lg:mb-3"
+                          >
+                            {{ item.price }} บาท
+                          </p>
+                          <div class="flex items-center bottom-0">
+                            <!-- ปุ่มลดจำนวน -->
+                            <button
+                              class="bg-gray-300 text-gray-600 hover:bg-gray-200 p-2 pr-3 pl-3 focus:outline-none transition rounded-l-md"
+                              @click="decrementQuantity(index)"
+                              :disabled="item.qty <= 1"
+                            >
+                              -
+                            </button>
+
+                            <!-- ช่องกรอกจำนวนสินค้า -->
+                            <input
+                              type="text"
+                              class="w-14 text-center border-none focus:outline-none p-2 pr-3 pl-3"
+                              v-model.number="item.qty"
+                              min="1"
+                            />
+
+                            <!-- ปุ่มเพิ่มจำนวน -->
+                            <button
+                              class="bg-gray-300 text-gray-600 hover:bg-gray-200 p-2 pr-3 pl-3 focus:outline-none transition rounded-r-md"
+                              @click="incrementQuantity(index)"
+                            >
+                              +
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -104,7 +120,8 @@ import Modal from "@/components/backend/modal.vue";
                 <hr class="my-2 text-gray-600" />
 
                 <p class="text-mb text-gray-600 mt-4">
-                  จำนวน<span class="mr-2 ml-2">4</span>รายการ
+                  จำนวน<span class="mr-2 ml-2">{{ carts.length }}</span
+                  >รายการ
                 </p>
 
                 <div
@@ -112,7 +129,7 @@ import Modal from "@/components/backend/modal.vue";
                 >
                   <p class="mb-8">ราคารวม</p>
                   <div class="flex">
-                    <span class="">600</span>
+                    <span class="">{{ totalAmount }}</span>
                     <span class="ml-2">บาท</span>
                   </div>
                 </div>
@@ -149,8 +166,20 @@ import Modal from "@/components/backend/modal.vue";
 export default {
   data() {
     return {
-      carts: [], // กำหนด carts เป็น array เพื่อเก็บข้อมูลจาก localStorage
+      baseUrl: __BASE_URL__,
+      carts: [],
+
     };
+  },
+  computed: {
+    totalAmount() {
+      // คำนวณราคารวม
+      let total = this.carts.reduce((acc, item) => {
+        return acc + item.price * item.qty;
+      }, 0);
+
+      return total;
+    },
   },
   mounted() {
     this.setdata();
@@ -158,7 +187,19 @@ export default {
   methods: {
     setdata() {
       let carts = localStorage.getItem("carts");
-      this.carts = JSON.parse(carts);
+      this.carts = JSON.parse(carts) || []; 
+    },
+    decrementQuantity(index) {
+      if (this.carts[index].qty > 1) {
+        this.carts[index].qty--;
+        localStorage.setItem("carts", JSON.stringify(this.carts));
+        console.log(this.carts);
+      }
+    },
+    incrementQuantity(index) {
+      this.carts[index].qty++;
+      localStorage.setItem("carts", JSON.stringify(this.carts));
+      console.log(this.carts);
     },
     removeItem(index) {
       // ลบสินค้าออกจาก carts โดยใช้ index

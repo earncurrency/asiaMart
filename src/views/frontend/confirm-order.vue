@@ -124,101 +124,36 @@ import frontend_navbar from "../../components/frontend/navbar.vue";
                     class="bg-gray-50 shadow-md p-4 rounded-md grid grid-rows-auto gap-4"
                   >
                     <!-- สินค้า -->
-                    <div
-                      class="w-full h-auto rounded-md text-md cursor-pointer border bg-gray-50"
-                    >
-                      <div class="flex gap-4 lg:gap-6 p-2 lg:p-4 rounded-md">
-                        <img
-                          src="../../assets/image/product/food3.jpg"
-                          alt=""
-                          class="h-20 w-48 object-cover rounded-md"
-                        />
-                        <div class="w-full">
-                          <div class="flex justify-between">
-                            <p class="text-mb mb-1 lg:mb-2">ข้าวมันไก่ทอด</p>
-                            <p
-                              class="font-semibold text-mb text-orange-500 mb-2 lg:mb-3"
-                            >
-                              150 บาท
-                            </p>
+                    <div v-for="(item, index) in carts" :key="index">
+                      <div
+                        class="w-full h-auto rounded-md text-md cursor-pointer border bg-gray-50"
+                      >
+                        <div class="flex gap-4 lg:gap-6 p-2 lg:p-4 rounded-md">
+                          <div class="h-20 w-48 object-cover rounded-md">
+                            <img
+                              :src="`${baseUrl}/api/uploads/${Math.ceil(
+                                item.id / 100
+                              )}/${item.image}`"
+                              alt=""
+                              class="w-full h-full object-cover rounded-md"
+                            />
                           </div>
-                          <div class="flex justify-end">
-                            <p class="text-mb mb-2 lg:mb-3">จำนวน X1</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div
-                      class="w-full h-auto rounded-md text-md cursor-pointer border bg-gray-50"
-                    >
-                      <div class="flex gap-4 lg:gap-6 p-2 lg:p-4 rounded-md">
-                        <img
-                          src="../../assets/image/product/food3.jpg"
-                          alt=""
-                          class="h-20 w-48 object-cover rounded-md"
-                        />
-                        <div class="w-full">
-                          <div class="flex justify-between">
-                            <p class="text-mb mb-1 lg:mb-2">ข้าวมันไก่ทอด</p>
-                            <p
-                              class="font-semibold text-mb text-orange-500 mb-2 lg:mb-3"
-                            >
-                              150 บาท
-                            </p>
-                          </div>
-                          <div class="flex justify-end">
-                            <p class="text-mb mb-2 lg:mb-3">จำนวน X1</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div
-                      class="w-full h-auto rounded-md text-md cursor-pointer border bg-gray-50"
-                    >
-                      <div class="flex gap-4 lg:gap-6 p-2 lg:p-4 rounded-md">
-                        <img
-                          src="../../assets/image/product/food3.jpg"
-                          alt=""
-                          class="h-20 w-48 object-cover rounded-md"
-                        />
-                        <div class="w-full">
-                          <div class="flex justify-between">
-                            <p class="text-mb mb-1 lg:mb-2">ข้าวมันไก่ทอด</p>
-                            <p
-                              class="font-semibold text-mb text-orange-500 mb-2 lg:mb-3"
-                            >
-                              150 บาท
-                            </p>
-                          </div>
-                          <div class="flex justify-end">
-                            <p class="text-mb mb-2 lg:mb-3">จำนวน X1</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div
-                      class="w-full h-auto rounded-md text-md cursor-pointer border bg-gray-50"
-                    >
-                      <div class="flex gap-4 lg:gap-6 p-2 lg:p-4 rounded-md">
-                        <img
-                          src="../../assets/image/product/food3.jpg"
-                          alt=""
-                          class="h-20 w-48 object-cover rounded-md"
-                        />
-                        <div class="w-full">
-                          <div class="flex justify-between">
-                            <p class="text-mb mb-1 lg:mb-2">ข้าวมันไก่ทอด</p>
-                            <p
-                              class="font-semibold text-mb text-orange-500 mb-2 lg:mb-3"
-                            >
-                              150 บาท
-                            </p>
-                          </div>
-                          <div class="flex justify-end">
-                            <p class="text-mb mb-2 lg:mb-3">จำนวน X1</p>
+                          <div class="w-full">
+                            <div class="flex justify-between">
+                              <p class="text-mb mb-1 lg:mb-2">
+                                {{ item.name }}
+                              </p>
+                              <p
+                                class="font-semibold text-mb text-orange-500 mb-2 lg:mb-3"
+                              >
+                                {{ item.price }} บาท
+                              </p>
+                            </div>
+                            <div class="flex justify-end">
+                              <p class="text-mb mb-2 lg:mb-3">
+                                จำนวน X{{ item.qty }}
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -238,7 +173,8 @@ import frontend_navbar from "../../components/frontend/navbar.vue";
                 <hr class="my-2 text-gray-600" />
 
                 <p class="text-mb text-gray-600 mt-4">
-                  จำนวน<span class="mr-2 ml-2">4</span>รายการ
+                  จำนวน<span class="mr-2 ml-2">{{ carts.length }}</span
+                  >รายการ
                 </p>
 
                 <div
@@ -246,7 +182,7 @@ import frontend_navbar from "../../components/frontend/navbar.vue";
                 >
                   <p class="mb-8">ราคารวม</p>
                   <div class="flex">
-                    <span class="">600</span>
+                    <span class="">{{ totalAmount }}</span>
                     <span class="ml-2">บาท</span>
                   </div>
                 </div>
@@ -282,16 +218,42 @@ import frontend_navbar from "../../components/frontend/navbar.vue";
 
 <script>
 export default {
+  data() {
+    return {
+      baseUrl: __BASE_URL__,
+      carts: [],
+    };
+  },
+  computed: {
+    totalAmount() {
+      // คำนวณราคารวม
+      let total = this.carts.reduce((acc, item) => {
+        return acc + item.price * item.qty;
+      }, 0);
+
+      return total;
+    },
+  },
+  mounted() {
+    this.setdata();
+  },
   methods: {
+    setdata() {
+      let carts = localStorage.getItem("carts");
+      this.carts = JSON.parse(carts) || []; 
+    },
+
+
     clearLocalStorage() {
-      // ลบข้อมูลที่มีอยู่ใน localStorage ซึ่งอยู่ใน key "carts" (หรือ key อื่นๆ ตามที่ต้องการลบ)
+      // ลบข้อมูลที่มีอยู่ใน localStorage ซึ่งอยู่ใน key "carts"
       localStorage.removeItem("carts");
-      // หรือถ้าต้องการล้างทั้งหมดของ localStorage
-      // localStorage.clear();
+      this.carts = [];
 
       // แสดงข้อมูลที่บันทึกใน localStorage ที่เกี่ยวข้องกับตะกร้าสินค้าในคอนโซล
-      let carts = JSON.parse(localStorage.getItem("carts"));
-      console.log("ข้อมูลใน localStorage:", carts);
+      console.log(
+        "ข้อมูลใน localStorage:",
+        JSON.parse(localStorage.getItem("carts"))
+      );
     },
   },
 };
