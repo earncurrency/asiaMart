@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy import asc, desc
 
 from database import SessionLocal, engine
-from model import CategoryModel 
-from schema import CategorySchema 
+from model import CategoryModel
+from schema import CategorySchema
 
 # สร้าง APIRouter สำหรับหมวดหมู่สินค้า
 router = APIRouter(
