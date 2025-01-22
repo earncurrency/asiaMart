@@ -5,7 +5,7 @@ import axios from "axios";
 </script>
 
 <template>
-  <frontend_navbar />
+  <frontend_navbar :cartsLength="cartsLength"/>
 
   <div class="flex justify-center pt-24 p-4">
     <div
@@ -143,11 +143,13 @@ import axios from "axios";
 
 <script>
 export default {
+  components: { frontend_navbar },
   props: {
     productId: {
       required: true,
     },
   },
+
   data() {
     return {
       apiUrl: "http://127.0.0.1:8000/",
@@ -164,6 +166,8 @@ export default {
         images: [],
       },
       qty: 1,
+      member_id: "1",
+      cartsLength: 0,
 
       // กำหนดภาพเริ่มต้นที่จะแสดง
       selectedImage: "",
@@ -208,11 +212,11 @@ export default {
               "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400",
           },
         });
-        return; // ออกจากฟังก์ชันหลังจากแจ้งเตือนให้เข้าสู่ระบบ
+        return;
       }
 
       // ดำเนินการเพิ่มสินค้าลงในตะกร้าต่อไปเมื่อเงื่อนไขผ่าน
-      
+
       // ดึงข้อมูลที่มีอยู่ใน localStorage มาเก็บไว้ในตัวแปร carts (array)
       let carts = JSON.parse(localStorage.getItem("carts")) || [];
 
@@ -234,27 +238,24 @@ export default {
       }
       // บันทึก carts กลับไปยัง localStorage
       localStorage.setItem("carts", JSON.stringify(carts));
+      this.cartsLength = carts.length,
 
-      this.$swal
-        .fire({
-          title: "สำเร็จ",
-          text: "เพิ่มสินค้าเข้าสู่ตะกร้าเรียบร้อยแล้ว",
-          icon: "success",
-          confirmButtonText: "ยืนยัน",
-          customClass: {
-            confirmButton:
-              "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400",
-          },
-        })
-        .then((result) => {
-          if (result.isConfirmed) {
-            // ทำอะไรต่อไปหลังจากกดยืนยัน (ถ้ามี)
-          }
-        });
+      this.$swal.fire({
+        title: "สำเร็จ",
+        text: "เพิ่มสินค้าเข้าสู่ตะกร้าเรียบร้อยแล้ว",
+        icon: "success",
+        confirmButtonText: "ยืนยัน",
+        customClass: {
+          confirmButton:
+            "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400",
+        },
+      });
 
       // แสดงข้อมูลใน localStorage ที่บันทึกอยู่ในคอนโซล
-      console.log("ข้อมูลใน localStorage (ตะกร้าสินค้า):", carts);
+      console.log("ตะกร้าสินค้า:", carts);
+      console.log("รายการ:", carts.length);
     },
+
     decrementQuantity() {
       if (this.qty > 1) {
         this.qty--;

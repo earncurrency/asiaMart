@@ -164,6 +164,7 @@ import Modal from "@/components/backend/modal.vue";
 
 <script>
 export default {
+  
   data() {
     return {
       baseUrl: __BASE_URL__,

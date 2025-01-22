@@ -71,7 +71,7 @@ import { RouterLink, RouterView } from "vue-router";
             <div
               class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full top-6 -end-2"
             >
-              {{ carts.length }}
+              {{ computedCartsLength }}
             </div>
           </button>
         </RouterLink>
@@ -236,17 +236,35 @@ import { RouterLink, RouterView } from "vue-router";
 
 <script>
 export default {
+  props: {
+    cartsLength: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+  },
   data() {
     return {
       fullname: "",
       iconUserOpen: false,
-      carts: "0",
+      carts: [],
     };
   },
+  computed: {
+    // คำนวณค่าความยาวของ carts
+    computedCartsLength() {
+      return this.carts.length;
+    },
+  },
   mounted() {
-    this.setdata();
-
     document.addEventListener("click", this.closeIconUser);
+    this.setdata();
+  },
+  watch: {
+    // ติดตามการเปลี่ยนแปลงของ prop 'cartsLength' ทุกครั้งที่มันเปลี่ยน
+    cartsLength(newLength) {
+      this.setdata(); // เรียก setdata เมื่อ prop เปลี่ยน
+    },
   },
 
   methods: {
@@ -254,7 +272,7 @@ export default {
       let carts = localStorage.getItem("carts");
       this.carts = JSON.parse(carts) || [];
     },
-
+    
     async logout() {
       localStorage.setItem("hash", "");
       localStorage.setItem("fullname", "");
