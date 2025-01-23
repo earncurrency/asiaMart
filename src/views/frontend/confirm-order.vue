@@ -1,9 +1,12 @@
 <script setup>
+import axios from "axios";
 import frontend_navbar from "../../components/frontend/navbar.vue";
+import Modal from "@/components/frontend/modal.vue";
 </script>
 
 <template>
-  <frontend_navbar />
+  <frontend_navbar :cartsLength="cartsLength" />
+  <Modal ref="modal" @clearLocalStorage="clearLocalStorage" />
 
   <div class="flex justify-center pt-24">
     <div
@@ -71,6 +74,7 @@ import frontend_navbar from "../../components/frontend/navbar.vue";
                         type="radio"
                         name="deliveryOption"
                         value="0"
+                        v-model="deliveryOption"
                         class="h-4 w-4 text-gray-600 border-gray-300 focus:ring-gray-500 cursor-pointer"
                       />
                       <span class="text-gray-700">รับที่ Asia Mart</span>
@@ -80,6 +84,7 @@ import frontend_navbar from "../../components/frontend/navbar.vue";
                         type="radio"
                         name="deliveryOption"
                         value="1"
+                        v-model="deliveryOption"
                         class="h-4 w-4 text-gray-600 border-gray-300 focus:ring-gray-500 cursor-pointer"
                       />
                       <span class="text-gray-700">รับที่สาขาบางมด</span>
@@ -89,6 +94,7 @@ import frontend_navbar from "../../components/frontend/navbar.vue";
                         type="radio"
                         name="deliveryOption"
                         value="2"
+                        v-model="deliveryOption"
                         class="h-4 w-4 text-gray-600 border-gray-300 focus:ring-gray-500 cursor-pointer"
                       />
                       <span class="text-gray-700">รับที่สาขาบ้านเเพ้ว</span>
@@ -98,23 +104,11 @@ import frontend_navbar from "../../components/frontend/navbar.vue";
                         type="radio"
                         name="deliveryOption"
                         value="3"
+                        v-model="deliveryOption"
                         class="h-4 w-4 text-gray-600 border-gray-300 focus:ring-gray-500 cursor-pointer"
                       />
                       <span class="text-gray-700">รับที่สาขามหาชัย</span>
                     </label>
-                    <!-- <div class="flex justify-between pt-4 items-center">
-                                            <label class="flex items-center space-x-2">
-                                                <input type="radio" name="deliveryOption" value="address"
-                                                    class="h-4 w-4 text-gray-600 border-gray-300 focus:ring-gray-500 cursor-pointer">
-                                                <span class="text-gray-700">ที่อยู่ในการจัดส่ง</span>
-                                            </label>
-                                            <button class="py-1 px-2 bg-white shadow-md rounded-md text-orange-500">
-                                                <i class="fa-regular fa-pen-to-square"></i>
-                                            </button>
-                                        </div>
-                                        <textarea rows="4"
-                                            class="block p-2 w-full text-md text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:border-gray-300 mt-2"
-                                            placeholder="ใส่ที่อยู่ในการจัดส่ง"></textarea> -->
                   </div>
                 </div>
                 <!--รายการสินค้า-->
@@ -124,6 +118,20 @@ import frontend_navbar from "../../components/frontend/navbar.vue";
                     class="bg-gray-50 shadow-md p-4 rounded-md grid grid-rows-auto gap-4"
                   >
                     <!-- สินค้า -->
+
+                    <div
+                      v-if="carts.length === 0"
+                      class="w-full h-auto rounded-md text-md cursor-pointer border bg-gray-50"
+                    >
+                      <div class="flex gap-4 lg:gap-6 p-2 lg:p-4 rounded-md">
+                        <div class="w-full">
+                          <div class="flex items-center justify-center">
+                            <h1 class="text-center">ไม่มีสินค้าในตระกร้า</h1>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                     <div v-for="(item, index) in carts" :key="index">
                       <div
                         class="w-full h-auto rounded-md text-md cursor-pointer border bg-gray-50"
@@ -188,7 +196,7 @@ import frontend_navbar from "../../components/frontend/navbar.vue";
                 </div>
 
                 <button
-                  @click="clearLocalStorage"
+                  @click="confirmOrder()"
                   class="bg-gray-800 text-white p-2 w-full rounded-md"
                 >
                   สั่งซื้อ
@@ -220,8 +228,13 @@ import frontend_navbar from "../../components/frontend/navbar.vue";
 export default {
   data() {
     return {
+      apiUrl: "http://127.0.0.1:8000/",
       baseUrl: __BASE_URL__,
+      deliveryOption: "",
       carts: [],
+      cartsLength: 0,
+
+      member_id: "1",
     };
   },
   computed: {
@@ -237,17 +250,84 @@ export default {
   mounted() {
     this.setdata();
   },
+  watch: {
+    // คอยติดตามการเปลี่ยนแปลงของ carts และอัพเดต cartsLength
+    carts(newCarts) {
+      this.cartsLength = newCarts.length;
+    },
+  },
   methods: {
     setdata() {
       let carts = localStorage.getItem("carts");
-      this.carts = JSON.parse(carts) || []; 
+      this.carts = JSON.parse(carts) || [];
     },
 
+    async confirmOrder() {
+      if (!this.member_id) {
+        this.$refs.modal.showAlertModal({
+          swlIcon: "warning",
+          swlTitle: "กรุณาเข้าสู่ระบบ",
+          swlText: "กรุณาเข้าสู่ระบบก่อนที่จะทำการสั่งซื้อ",
+        });
+        return;
+      }
+      if (this.carts.length == 0) {
+        this.$refs.modal.showAlertModal({
+          swlIcon: "warning",
+          swlTitle: "ไม่มีสินค้าในตระกร้า",
+          swlText: "กรุณาเพิ่มสินค้าลงในตะกร้าก่อนยืนยันรายการ",
+        });
+        return;
+      }
+      if (!this.deliveryOption) {
+        this.$refs.modal.showAlertModal({
+          swlIcon: "warning",
+          swlTitle: "ไม่พบที่อยู่ในการจัดส่ง",
+          swlText: "กรุณาเลือกที่อยู่ในการจัดส่ง",
+        });
+        return;
+      }
+      try {
+        const order = {
+          code: "CODE",
+          member_id: this.member_id,
+          address: this.deliveryOption,
+          total: this.totalAmount,
+          status: "รายการใหม่",
+          length: this.carts.length,
+        };
+
+        // เอาข้อมูลสินค้าจากตะกร้าเพื่อส่งไปใน API
+        const orderDetails = this.carts.map((item) => ({
+          product_id: item.id, // หรือใช้ key ที่เก็บ ID ของสินค้าในตะกร้า
+          qty: item.qty, // จำนวนสินค้าที่เลือก
+        }));
+
+        const response = await axios.post(`${this.apiUrl}orders/`, {
+          order: order,
+          orderDetails: orderDetails, // ส่งข้อมูลสินค้าพร้อมออเดอร์
+        });
+
+        if (response.status === 200) {
+          this.$refs.modal.showSuccessModal({
+            swlIcon: "success",
+            swlTitle: "ทำรายการสั่งซื้อสำเร็จ",
+            swlText: "",
+          });
+        }
+      } catch (error) {}
+    },
 
     clearLocalStorage() {
       // ลบข้อมูลที่มีอยู่ใน localStorage ซึ่งอยู่ใน key "carts"
       localStorage.removeItem("carts");
       this.carts = [];
+
+      // อัพเดท local storage ด้วยข้อมูลใหม่
+      localStorage.setItem("carts", JSON.stringify(this.carts));
+
+      // อัพเดท cartsLength ใหม่
+      this.cartsLength = this.carts.length;
 
       // แสดงข้อมูลที่บันทึกใน localStorage ที่เกี่ยวข้องกับตะกร้าสินค้าในคอนโซล
       console.log(

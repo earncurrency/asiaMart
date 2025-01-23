@@ -1,10 +1,11 @@
 <script setup>
 import frontend_navbar from "../../components/frontend/navbar.vue";
-import Modal from "@/components/backend/modal.vue";
+import Modal from "@/components/frontend/modal.vue";
 </script>
 
 <template>
-  <frontend_navbar />
+  <frontend_navbar :cartsLength="cartsLength" />
+  <Modal ref="modal" />
 
   <div class="flex justify-center pt-24">
     <div
@@ -134,11 +135,17 @@ import Modal from "@/components/backend/modal.vue";
                   </div>
                 </div>
 
-                <RouterLink to="/confirm-order">
+                <!-- <RouterLink to="/confirm-order">
                   <button class="bg-gray-800 text-white p-2 w-full rounded-md">
                     ยืนยันรายการสินค้า
                   </button>
-                </RouterLink>
+                </RouterLink> -->
+                <button
+                  @click="confirmOrder()"
+                  class="bg-gray-800 text-white p-2 w-full rounded-md"
+                >
+                  ยืนยันรายการสินค้า
+                </button>
               </div>
             </div>
           </div>
@@ -164,12 +171,12 @@ import Modal from "@/components/backend/modal.vue";
 
 <script>
 export default {
-  
   data() {
     return {
       baseUrl: __BASE_URL__,
       carts: [],
-
+      cartsLength: 0,
+      member_id: "1",
     };
   },
   computed: {
@@ -185,10 +192,16 @@ export default {
   mounted() {
     this.setdata();
   },
+  watch: {
+    // คอยติดตามการเปลี่ยนแปลงของ carts และอัพเดต cartsLength
+    carts(newCarts) {
+      this.cartsLength = newCarts.length;
+    },
+  },
   methods: {
     setdata() {
       let carts = localStorage.getItem("carts");
-      this.carts = JSON.parse(carts) || []; 
+      this.carts = JSON.parse(carts) || [];
     },
     decrementQuantity(index) {
       if (this.carts[index].qty > 1) {
@@ -209,7 +222,32 @@ export default {
       // อัพเดท local storage ด้วยข้อมูลใหม่
       localStorage.setItem("carts", JSON.stringify(this.carts));
 
-      // แสดงข้อมูลใน localStorage ที่บันทึกอยู่ในคอนโซล
+      // อัพเดท cartsLength ใหม่
+      this.cartsLength = this.carts.length;
+
+      console.log("cartsLength:", this.carts.length);
+      console.log("ข้อมูลใน localStorage (ตะกร้าสินค้า):", this.carts);
+    },
+    confirmOrder() {
+      if (!this.member_id) {
+        this.$refs.modal.showAlertModal({
+          swlIcon: "warning",
+          swlTitle: "กรุณาเข้าสู่ระบบ",
+          swlText: "กรุณาเข้าสู่ระบบก่อนที่จะทำการเพิ่มสินค้าลงในตะกร้า",
+        });
+        return;
+      }
+      if (this.carts.length == 0) {
+        this.$refs.modal.showAlertModal({
+          swlIcon: "warning",
+          swlTitle: "ไม่มีสินค้าในตระกร้า",
+          swlText: "กรุณาเพิ่มสินค้าลงในตะกร้าก่อนยืนยันรายการ",
+        });
+        return;
+      }
+
+      // If passed both checks, navigate to confirm order page
+      this.$router.push("/confirm-order");
       console.log("ข้อมูลใน localStorage (ตะกร้าสินค้า):", this.carts);
     },
   },

@@ -1,5 +1,6 @@
 <script setup>
 import backend_navbar from "@/components/backend/navbar.vue";
+import Modal from "@/components/backend/modal.vue";
 import axios from "axios";
 </script>
 

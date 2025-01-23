@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime
+from sqlalchemy import Column, Integer, String, Float, TIMESTAMP  
 from sqlalchemy.ext.declarative import declarative_base
 from database import engine
 
@@ -55,11 +55,12 @@ class OrderSchema(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     code = Column(String(15))
-    date = Column(DateTime)
+    date = Column(TIMESTAMP)
     member_id = Column(Integer)
     address = Column(String(15))
     total = Column(Float)
     status = Column(String(15))
+    length = Column(Integer)
 
 
 class OrderDetailSchema(Base):
@@ -68,6 +69,7 @@ class OrderDetailSchema(Base):
     id = Column(Integer, primary_key=True, index=True)
     order_id = Column(Integer)
     product_id = Column(Integer)
+    qty = Column(Integer)
 
     
 # สร้างตารางในฐานข้อมูล (หากยังไม่มี)

@@ -37,10 +37,12 @@ class OrderModel(BaseModel):
     address : Optional[str] = None
     total : Optional[float] = None
     status : Optional[str] = None
+    length : Optional[int] = None
 
 class OrderDetailModel(BaseModel):
     order_id: Optional[int] = None
     product_id: Optional[int] = None
+    qty : Optional[int] = None
 
 class Config:
     orm_mode = True

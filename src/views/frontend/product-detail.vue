@@ -166,7 +166,6 @@ export default {
         images: [],
       },
       qty: 1,
-      member_id: "1",
       cartsLength: 0,
 
       // กำหนดภาพเริ่มต้นที่จะแสดง
@@ -200,22 +199,6 @@ export default {
       }
     },
     addToCart(product) {
-      // ตรวจสอบว่า member_id ว่างเปล่าหรือไม่
-      if (!this.member_id) {
-        this.$swal.fire({
-          title: "กรุณาเข้าสู่ระบบ",
-          text: "กรุณาเข้าสู่ระบบก่อนที่จะทำการเพิ่มสินค้าลงในตะกร้า",
-          icon: "warning",
-          confirmButtonText: "ตกลง",
-          customClass: {
-            confirmButton:
-              "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400",
-          },
-        });
-        return;
-      }
-
-      // ดำเนินการเพิ่มสินค้าลงในตะกร้าต่อไปเมื่อเงื่อนไขผ่าน
 
       // ดึงข้อมูลที่มีอยู่ใน localStorage มาเก็บไว้ในตัวแปร carts (array)
       let carts = JSON.parse(localStorage.getItem("carts")) || [];

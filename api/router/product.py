@@ -28,6 +28,7 @@ def list_products():
 
         # สร้างผลลัพธ์ที่จะส่งกลับ
         result = []
+        
         for product in products:
             # ดึงข้อมูลภาพ (ถ้ามี)
             product_images = session.query(ProductImageSchema).filter(ProductImageSchema.product_id == product.id, ProductImageSchema.status == 'active').all()
