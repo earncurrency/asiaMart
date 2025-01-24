@@ -32,7 +32,7 @@ class CategoryModel(BaseModel):
 
 class OrderModel(BaseModel):
     code : Optional[str] = None
-    date : Optional[datetime] = None
+    order_date : Optional[datetime] = None
     member_id : Optional[int] = None
     address : Optional[str] = None
     total : Optional[float] = None

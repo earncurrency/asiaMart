@@ -55,7 +55,7 @@ class OrderSchema(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     code = Column(String(15))
-    date = Column(TIMESTAMP)
+    order_date = Column(TIMESTAMP)
     member_id = Column(Integer)
     address = Column(String(15))
     total = Column(Float)
