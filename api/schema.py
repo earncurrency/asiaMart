@@ -57,7 +57,7 @@ class OrderSchema(Base):
     code = Column(String(15))
     order_date = Column(TIMESTAMP)
     member_id = Column(Integer)
-    address = Column(String(15))
+    address = Column(String(25))
     total = Column(Float)
     status = Column(String(15))
     length = Column(Integer)
@@ -69,6 +69,8 @@ class OrderDetailSchema(Base):
     id = Column(Integer, primary_key=True, index=True)
     order_id = Column(Integer)
     product_id = Column(Integer)
+    product_name = Column(String(50))
+    product_price = Column(Float)
     qty = Column(Integer)
 
     

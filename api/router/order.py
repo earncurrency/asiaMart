@@ -4,8 +4,8 @@ from sqlalchemy import asc, desc
 from datetime import datetime
 
 from database import SessionLocal, engine
-from model import OrderModel , OrderDetailModel
-from schema import OrderSchema ,OrderDetailSchema
+from model import OrderModel , OrderDetailModel ,ProductModel ,ProductImageModel
+from schema import OrderSchema ,OrderDetailSchema ,ProductSchema ,ProductImageSchema
 
 # สร้าง APIRouter สำหรับออเดอร์
 router = APIRouter(
@@ -24,29 +24,18 @@ def list_orders():
         result = []
         for order in orders:
             
-            formatted_date = order.date.strftime("%Y-%m-%d %H:%M:%S")
+            formatted_date = order.order_date.strftime("%Y-%m-%d %H:%M:%S")
 
-            # ดึงข้อมูลรายละเอียดของแต่ละออเดอร์
-            order_details = session.query(OrderDetailSchema).filter(OrderDetailSchema.order_id == order.id).all()
 
-            # สร้างรายการรายละเอียดออเดอร์
-            details = [
-                {
-                    "product_id": detail.product_id,
-                    "qty": detail.qty
-                }
-                for detail in order_details
-            ]
             result.append({
                 "id": order.id,
                 "code": order.code,
-                "date": formatted_date,
+                "order_date": formatted_date,
                 "member_id": order.member_id,
                 "address": order.address,
                 "total": order.total,
                 "status": order.status,
                 "length": order.length,
-                "details": details  # ส่งข้อมูลรายละเอียดของออเดอร์ทั้งหมด
             })
 
         return {
@@ -58,8 +47,6 @@ def list_orders():
     finally:
         session.close()
 
-
-
 @router.post("/")
 def add_order(order: OrderModel, orderDetails: list[OrderDetailModel]):
     session = SessionLocal()
@@ -67,7 +54,7 @@ def add_order(order: OrderModel, orderDetails: list[OrderDetailModel]):
         # เพิ่มออเดอร์หลัก (Order)
         new_order = OrderSchema(
             code=order.code,
-            date=datetime.now(),
+            order_date=datetime.now(),
             member_id=order.member_id,
             address=order.address,
             total=order.total,
@@ -83,6 +70,8 @@ def add_order(order: OrderModel, orderDetails: list[OrderDetailModel]):
             new_order_detail = OrderDetailSchema(
                 order_id=new_order.id,
                 product_id=detail.product_id,
+                product_name=detail.product_name,
+                product_price=detail.product_price,
                 qty=detail.qty,
             )
             session.add(new_order_detail)
@@ -94,3 +83,71 @@ def add_order(order: OrderModel, orderDetails: list[OrderDetailModel]):
     finally:
         session.close()
 
+@router.get("/{order_id}") 
+def get_order(order_id: int):
+    session = SessionLocal()
+    try:
+        # ดึงข้อมูลออเดอร์
+        order = session.query(OrderSchema).filter(OrderSchema.id == order_id).first()
+
+        if not order:
+            raise HTTPException(status_code=404, detail="ไม่พบออเดอร์")
+
+        # ฟอร์แมตวันที่ออเดอร์
+        formatted_date = order.order_date.strftime("%Y-%m-%d %H:%M:%S")
+
+        # ดึงรายละเอียดออเดอร์พร้อมผลิตภัณฑ์และรูปภาพที่เกี่ยวข้อง
+        order_details = (
+            session.query(OrderDetailSchema, ProductSchema)
+            .join(ProductSchema, OrderDetailSchema.product_id == ProductSchema.id)
+            .filter(OrderDetailSchema.order_id == order_id)
+            .all()
+        )
+
+        products = []
+
+        for detail, product in order_details:
+
+            images = (
+                session.query(ProductImageSchema)
+                .filter(ProductImageSchema.product_id == product.id)
+                .first()
+            )
+            image_data = {}
+            if images:
+                image_data = {
+                    "id": images.id,
+                    "path": images.path
+            }
+
+            product_data = {
+                "code": product.code,
+                "id": product.id,
+                "product_price": detail.product_price,
+                "product_name": detail.product_name,
+                "qty": detail.qty,
+                "images": image_data
+            }
+
+            products.append(product_data)
+
+        # เตรียมข้อมูลออเดอร์ที่จะส่งกลับ
+        result = {
+            "id": order.id,
+            "code": order.code,
+            "order_date": formatted_date,
+            "member_id": order.member_id,
+            "address": order.address,
+            "total": order.total,
+            "status": order.status,
+            "length": order.length,
+            "products": products
+        }
+
+        return {
+            "message": "ดึงข้อมูลออเดอร์สำเร็จ",
+            "row": result
+        }
+
+    finally:
+        session.close()

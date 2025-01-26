@@ -202,14 +202,14 @@ import axios from "axios";
                   <tr
                     v-for="(order, index) in orders"
                     :key="index"
-                    @click="showFormEdit"
+                    @click="showFormEdit(order.id)"
                     class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 cursor-pointer hover:bg-gray-100 transition"
                   >
                     <th
                       scope="row"
                       class="px-6 py-4 font-medium whitespace-nowrap dark:text-white"
                     >
-                      {{ order.date }}
+                      {{ order.order_date }}
                     </th>
                     <td class="px-6 py-4 whitespace-nowrap">
                       {{ order.code }}
@@ -247,12 +247,12 @@ import axios from "axios";
                 <div class="lg:w-1/2 w-full">
                   <input
                     type="text"
-                    v-model="codeOrder"
+                    v-model="order.code"
                     ref="inputCodeOrder"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !codeOrder,
+                        !order.code,
                     }"
                     placeholder="รหัสคำสั่งซื้อ"
                     disabled
@@ -262,12 +262,12 @@ import axios from "axios";
                 <div class="lg:w-1/2 w-full">
                   <input
                     type="text"
-                    v-model="dayTimeOrder"
-                    ref="inputDayTimeOrder"
+                    v-model="order.order_date"
+                    ref="inputDateOrder"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !dayTimeOrder,
+                        !order.order_date,
                     }"
                     placeholder="วันที่ เวลา"
                     disabled
@@ -277,12 +277,12 @@ import axios from "axios";
                 <div class="lg:w-1/2 w-full">
                   <input
                     type="text"
-                    v-model="statusOrder"
+                    v-model="order.status"
                     ref="inputStatusOrder"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !statusOrder,
+                        !order.status,
                     }"
                     placeholder="สถานะ"
                     disabled
@@ -300,12 +300,12 @@ import axios from "axios";
                 <div class="lg:w-1/2 w-full">
                   <input
                     type="text"
-                    v-model="nameMemberOrder"
-                    ref="inputNameMemberOrder"
+                    v-model="order.member_id"
+                    ref="inputMemberOrder"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !nameMemberOrder,
+                        !order.member_id,
                     }"
                     placeholder="ชื่อผู้รับ"
                     disabled
@@ -315,12 +315,12 @@ import axios from "axios";
                 <div class="lg:w-1/2 w-full">
                   <input
                     type="text"
-                    v-model="phoneMemberOrder"
+                    v-model="order.phone"
                     ref="inputPhoneMemberOrder"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !phoneMemberOrder,
+                        !order.phone,
                     }"
                     placeholder="เบอร์โทร"
                     disabled
@@ -331,13 +331,13 @@ import axios from "axios";
             <div class="w-full mb-4 pt-1 mt-4">
               <textarea
                 type="text"
-                v-model="addressOrder"
+                v-model="order.address"
                 ref="inputAddressOrder"
                 rows="4"
                 :class="{
                   'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                   'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                    !addressOrder,
+                    !order.address,
                 }"
                 placeholder="ที่อยู่การจัดส่ง"
                 disabled
@@ -367,89 +367,45 @@ import axios from "axios";
                       ชื่อ
                     </th>
                     <th scope="col" class="px-6 py-4 whitespace-nowrap">
-                      จำนวน
+                      ราคา
                     </th>
                     <th scope="col" class="px-6 py-4 whitespace-nowrap">
-                      ราคา
+                      จำนวน
                     </th>
                   </tr>
                 </thead>
 
                 <tbody>
                   <tr
+                    v-for="(product, index) in order.products"
+                    :key="index"
                     class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 cursor-pointer hover:bg-gray-100 transition"
                   >
                     <th scope="row" class="px-6 py-4">
                       <div class="w-24 h-14 lg:w-36 lg:h-24">
+
                         <img
+                          :src="`${baseUrl}/api/uploads/${Math.ceil(
+                            product.id / 100
+                          )}/${product.images.path}`"
+                          alt="Product Image Preview"
                           class="w-full h-full rounded-md object-cover ring-4 ring-gray-300 shadow-md"
-                          src="../../assets/image/product/food1.jpg"
                         />
                       </div>
                     </th>
 
                     <td class="px-6 py-4 whitespace-nowrap font-semibold">
-                      78945623
+                      {{ product.code }}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">สินค้าทดสอบ 01</td>
-                    <td class="px-6 py-4 whitespace-nowrap">1</td>
-                    <td class="px-6 py-4 whitespace-nowrap">150 บาท</td>
-                  </tr>
-                  <tr
-                    class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 cursor-pointer hover:bg-gray-100 transition"
-                  >
-                    <th scope="row" class="px-6 py-4">
-                      <div class="w-24 h-14 lg:w-36 lg:h-24">
-                        <img
-                          class="w-full h-full rounded-md object-cover ring-4 ring-gray-300 shadow-md"
-                          src="../../assets/image/product/food2.jpg"
-                        />
-                      </div>
-                    </th>
-
-                    <td class="px-6 py-4 whitespace-nowrap font-semibold">
-                      78945623
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      {{ product.product_name }}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">สินค้าทดสอบ 02</td>
-                    <td class="px-6 py-4 whitespace-nowrap">1</td>
-                    <td class="px-6 py-4 whitespace-nowrap">150 บาท</td>
-                  </tr>
-                  <tr
-                    class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 cursor-pointer hover:bg-gray-100 transition"
-                  >
-                    <th scope="row" class="px-6 py-4">
-                      <div class="w-24 h-14 lg:w-36 lg:h-24">
-                        <img
-                          class="w-full h-full rounded-md object-cover ring-4 ring-gray-300 shadow-md"
-                          src="../../assets/image/product/food3.jpg"
-                        />
-                      </div>
-                    </th>
-                    <td class="px-6 py-4 whitespace-nowrap font-semibold">
-                      78945623
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      {{ product.product_price }} บาท
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">สินค้าทดสอบ 03</td>
-                    <td class="px-6 py-4 whitespace-nowrap">1</td>
-                    <td class="px-6 py-4 whitespace-nowrap">150 บาท</td>
-                  </tr>
-                  <tr
-                    class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 cursor-pointer hover:bg-gray-100 transition"
-                  >
-                    <th scope="row" class="px-6 py-4">
-                      <div class="w-24 h-14 lg:w-36 lg:h-24">
-                        <img
-                          class="w-full h-full rounded-md object-cover ring-4 ring-gray-300 shadow-md"
-                          src="../../assets/image/product/food4.jpg"
-                        />
-                      </div>
-                    </th>
-
-                    <td class="px-6 py-4 whitespace-nowrap font-semibold">
-                      78945623
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      {{ product.qty }} ชิ้น
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">สินค้าทดสอบ 04</td>
-                    <td class="px-6 py-4 whitespace-nowrap">1</td>
-                    <td class="px-6 py-4 whitespace-nowrap">150 บาท</td>
                   </tr>
                 </tbody>
               </table>
@@ -458,8 +414,11 @@ import axios from "axios";
             <div
               class="flex gap-2 justify-end mb-4 mt-6 text-2xl font-semibold"
             >
+              <span class="">จำนวน :</span>
+              <span class="text-orange-500">{{ order.length }} รายการ</span>
+
               <span class="">ยอดรวม :</span>
-              <span class="text-orange-500">600บาท</span>
+              <span class="text-orange-500">{{ order.total }} บาท</span>
             </div>
 
             <hr class="my-2 text-gray-600" />
@@ -467,13 +426,13 @@ import axios from "axios";
             <div class="w-full mb-4 pt-1 mt-4">
               <textarea
                 type="text"
-                v-model="infoOrder"
+                v-model="order.info"
                 ref="inputInfoOrder"
                 rows="4"
                 :class="{
                   'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                   'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                    !infoOrder,
+                    !order.info,
                 }"
                 placeholder="หมายเหตุ"
               />
@@ -509,16 +468,22 @@ export default {
   data() {
     return {
       apiUrl: "http://127.0.0.1:8000/",
-
+      baseUrl: __BASE_URL__,
       orders: [],
 
-      codeOrder: "",
-      dayTimeOrder: "",
-      statusOrder: "",
-      nameMemberOrder: "",
-      phoneMemberOrder: "",
-      addressOrder: "",
-      infoOrder: "",
+      order: {
+        id: "",
+        code: "",
+        order_date: "",
+        member_id: "",
+        address: "",
+        total: "",
+        status: "",
+        length: "",
+        details: "",
+        info: "",
+        products: [],
+      },
 
       formTable: true,
       formEdit: false,
@@ -551,9 +516,51 @@ export default {
         });
     },
 
-    showFormEdit() {
+    async showFormEdit(orderId) {
       this.formTable = false;
       this.formEdit = true;
+
+      try {
+        // เรียก API เพื่อดึงข้อมูลสินค้าที่ระบุ
+        const response = await axios.get(`${this.apiUrl}orders/${orderId}`);
+
+        // ตรวจสอบว่าข้อมูลของสินค้าได้รับมาอย่างถูกต้อง
+        if (response.status === 200) {
+          const order = response.data.row;
+
+          if (order) {
+            this.order.id = order.id;
+            this.order.code = order.code;
+            this.order.order_date = order.order_date;
+            this.order.status = order.status;
+            this.order.member_id = order.member_id;
+            this.order.address = order.address;
+            this.order.total = order.total;
+            this.order.length = order.length;
+            this.order.products = order.products;
+
+            // แสดงข้อมูลสินค้าใน console
+            console.log("data Data:", order);
+          } else {
+            alert("ไม่พบข้อมูลประเภทสินค้าที่ต้องการแก้ไข");
+          }
+        } else {
+          alert(`Failed to fetch data type: ${response.statusText}`);
+        }
+      } catch (error) {
+        console.error(
+          `Error fetching order type ${orderId} from ${this.apiUrl}orders/${orderId}:`,
+          error.response?.data?.detail || error.message
+        );
+        this.$refs.modal.showAlertModal({
+          swlIcon: "error",
+          swlTitle: "ล้มเหลว",
+          swlText: "เกิดข้อผิดพลาด",
+        });
+      } finally {
+        // Set loading state to false
+        this.loading = false;
+      }
     },
 
     DropdownStatus(statusName) {

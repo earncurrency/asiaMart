@@ -69,43 +69,43 @@ import Modal from "@/components/frontend/modal.vue";
                   <div
                     class="p-4 lg:flex gap-6 text-md text-gray-600 rounded-lg bg-gray-50 shadow-md"
                   >
-                    <label class="flex items-center space-x-2">
+                    <label class="flex items-center space-x-2 cursor-pointer">
                       <input
                         type="radio"
                         name="deliveryOption"
-                        value="0"
+                        value="รับที่ Asia Mart"
                         v-model="deliveryOption"
                         class="h-4 w-4 text-gray-600 border-gray-300 focus:ring-gray-500 cursor-pointer"
                       />
                       <span class="text-gray-700">รับที่ Asia Mart</span>
                     </label>
-                    <label class="flex items-center space-x-2 pt-4 lg:pt-0">
+                    <label class="flex items-center space-x-2 pt-4 lg:pt-0 cursor-pointer">
                       <input
                         type="radio"
                         name="deliveryOption"
-                        value="1"
+                        value="รับที่สาขาบางมด"
                         v-model="deliveryOption"
                         class="h-4 w-4 text-gray-600 border-gray-300 focus:ring-gray-500 cursor-pointer"
                       />
                       <span class="text-gray-700">รับที่สาขาบางมด</span>
                     </label>
-                    <label class="flex items-center space-x-2 pt-4 lg:pt-0">
+                    <label class="flex items-center space-x-2 pt-4 lg:pt-0 cursor-pointer">
                       <input
                         type="radio"
                         name="deliveryOption"
-                        value="2"
+                        value="รับที่สาขาบ้านเเพ้ว"
                         v-model="deliveryOption"
-                        class="h-4 w-4 text-gray-600 border-gray-300 focus:ring-gray-500 cursor-pointer"
+                        class="h-4 w-4 text-gray-600 border-gray-300 focus:ring-gray-500"
                       />
                       <span class="text-gray-700">รับที่สาขาบ้านเเพ้ว</span>
                     </label>
-                    <label class="flex items-center space-x-2 pt-4 lg:pt-0">
+                    <label class="flex items-center space-x-2 pt-4 lg:pt-0 cursor-pointer">
                       <input
                         type="radio"
                         name="deliveryOption"
-                        value="3"
+                        value="รับที่สาขามหาชัย"
                         v-model="deliveryOption"
-                        class="h-4 w-4 text-gray-600 border-gray-300 focus:ring-gray-500 cursor-pointer"
+                        class="h-4 w-4 text-gray-600 border-gray-300 focus:ring-gray-500"
                       />
                       <span class="text-gray-700">รับที่สาขามหาชัย</span>
                     </label>
@@ -299,8 +299,10 @@ export default {
 
         // เอาข้อมูลสินค้าจากตะกร้าเพื่อส่งไปใน API
         const orderDetails = this.carts.map((item) => ({
-          product_id: item.id, // หรือใช้ key ที่เก็บ ID ของสินค้าในตะกร้า
-          qty: item.qty, // จำนวนสินค้าที่เลือก
+          product_id: item.id, 
+          product_name : item.name,
+          product_price: item.price,
+          qty: item.qty, 
         }));
 
         const response = await axios.post(`${this.apiUrl}orders/`, {

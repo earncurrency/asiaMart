@@ -42,6 +42,8 @@ class OrderModel(BaseModel):
 class OrderDetailModel(BaseModel):
     order_id: Optional[int] = None
     product_id: Optional[int] = None
+    product_name: Optional[str] = None
+    product_price:Optional[float] = None
     qty : Optional[int] = None
 
 class Config:
