@@ -37,9 +37,10 @@ import Modal from "@/components/frontend/modal.vue";
                         >ชื่อผู้รับสินค้า</label
                       >
                       <input
+                        v-model="member.name"
                         type="text"
                         class="bg-gray-50 border border-gray-300 text-orange-500 text-md rounded-lg focus:border-gray-300 block w-full p-2"
-                        value="เจษฎากร หวานสนิท"
+                        value=""
                         disabled
                       />
                     </div>
@@ -55,9 +56,10 @@ import Modal from "@/components/frontend/modal.vue";
                         </button>
                       </div>
                       <input
+                        v-model="member.phone"
                         type="text"
                         class="bg-gray-50 border border-gray-300 text-orange-500 text-md rounded-lg focus:border-gray-300 block w-full p-2"
-                        value="0xx xxx xxxx"
+                        value=""
                         disabled
                       />
                     </div>
@@ -79,7 +81,9 @@ import Modal from "@/components/frontend/modal.vue";
                       />
                       <span class="text-gray-700">รับที่ Asia Mart</span>
                     </label>
-                    <label class="flex items-center space-x-2 pt-4 lg:pt-0 cursor-pointer">
+                    <label
+                      class="flex items-center space-x-2 pt-4 lg:pt-0 cursor-pointer"
+                    >
                       <input
                         type="radio"
                         name="deliveryOption"
@@ -89,7 +93,9 @@ import Modal from "@/components/frontend/modal.vue";
                       />
                       <span class="text-gray-700">รับที่สาขาบางมด</span>
                     </label>
-                    <label class="flex items-center space-x-2 pt-4 lg:pt-0 cursor-pointer">
+                    <label
+                      class="flex items-center space-x-2 pt-4 lg:pt-0 cursor-pointer"
+                    >
                       <input
                         type="radio"
                         name="deliveryOption"
@@ -99,7 +105,9 @@ import Modal from "@/components/frontend/modal.vue";
                       />
                       <span class="text-gray-700">รับที่สาขาบ้านเเพ้ว</span>
                     </label>
-                    <label class="flex items-center space-x-2 pt-4 lg:pt-0 cursor-pointer">
+                    <label
+                      class="flex items-center space-x-2 pt-4 lg:pt-0 cursor-pointer"
+                    >
                       <input
                         type="radio"
                         name="deliveryOption"
@@ -234,7 +242,13 @@ export default {
       carts: [],
       cartsLength: 0,
 
-      member_id: "1",
+      member: {
+        id: "",
+        name: "",
+        phone: "0xxxxxxxxx",
+      },
+      member_name: "",
+      code: "",
     };
   },
   computed: {
@@ -260,10 +274,22 @@ export default {
     setdata() {
       let carts = localStorage.getItem("carts");
       this.carts = JSON.parse(carts) || [];
+
+      let storedHash = localStorage.getItem("hash");
+      const firstNumber = storedHash.split("-")[0];
+      this.member.id = firstNumber;
+
+      let storedFullname = localStorage.getItem("fullname");
+      this.member.name = storedFullname;
+
+      // กรองข้อมูลใน carts เฉพาะที่ member_id ตรงกับ this.member_id
+      this.carts = this.carts.filter(
+        (item) => item.member_id === this.member.id
+      );
     },
 
     async confirmOrder() {
-      if (!this.member_id) {
+      if (!this.member.id) {
         this.$refs.modal.showAlertModal({
           swlIcon: "warning",
           swlTitle: "กรุณาเข้าสู่ระบบ",
@@ -288,9 +314,13 @@ export default {
         return;
       }
       try {
+        this.generateRandomCode();
+
         const order = {
-          code: "CODE",
-          member_id: this.member_id,
+          code: this.code,
+          member_id: this.member.id,
+          member_name: this.member.name,
+          member_phone: this.member.phone,
           address: this.deliveryOption,
           total: this.totalAmount,
           status: "รายการใหม่",
@@ -299,10 +329,10 @@ export default {
 
         // เอาข้อมูลสินค้าจากตะกร้าเพื่อส่งไปใน API
         const orderDetails = this.carts.map((item) => ({
-          product_id: item.id, 
-          product_name : item.name,
+          product_id: item.id,
+          product_name: item.name,
           product_price: item.price,
-          qty: item.qty, 
+          qty: item.qty,
         }));
 
         const response = await axios.post(`${this.apiUrl}orders/`, {
@@ -317,7 +347,13 @@ export default {
             swlText: "",
           });
         }
-      } catch (error) {}
+      } catch (error) {
+        this.$refs.modal.showAlertModal({
+          swlIcon: "warning",
+          swlTitle: "เกิดข้อผิดพลาด",
+          swlText: error,
+        });
+      }
     },
 
     clearLocalStorage() {
@@ -336,6 +372,33 @@ export default {
         "ข้อมูลใน localStorage:",
         JSON.parse(localStorage.getItem("carts"))
       );
+    },
+
+    generateRandomCode() {
+      const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const randomChars1 = Array.from(
+        { length: 2 },
+        () => characters[Math.floor(Math.random() * characters.length)]
+      );
+      const randomChars2 = Array.from(
+        { length: 1 },
+        () => characters[Math.floor(Math.random() * characters.length)]
+      );
+      const randomDigits = Math.floor(10 + Math.random() * 90);
+      const currentDate = new Date()
+        .toISOString()
+        .slice(0, 10)
+        .replace(/-/g, "");
+
+      const code =
+        randomChars1.join("") +
+        this.member.id.toString() +
+        currentDate +
+        randomDigits.toString() +
+        randomChars2.join("");
+
+      this.code = code  
+      console.log(code);
     },
   },
 };

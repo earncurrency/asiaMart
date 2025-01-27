@@ -47,7 +47,7 @@ export default {
         .then((response) => {
           const data = response.data;
           this.categorys = data.rows;
-          console.log(this.categorys);
+          // console.log(this.categorys);
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error); // แสดงข้อผิดพลาด

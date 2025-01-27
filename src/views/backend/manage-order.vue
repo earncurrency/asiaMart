@@ -300,12 +300,12 @@ import axios from "axios";
                 <div class="lg:w-1/2 w-full">
                   <input
                     type="text"
-                    v-model="order.member_id"
+                    v-model="order.member_name"
                     ref="inputMemberOrder"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !order.member_id,
+                        !order.member_name,
                     }"
                     placeholder="ชื่อผู้รับ"
                     disabled
@@ -315,12 +315,27 @@ import axios from "axios";
                 <div class="lg:w-1/2 w-full">
                   <input
                     type="text"
-                    v-model="order.phone"
+                    v-model="order.member_phone"
                     ref="inputPhoneMemberOrder"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !order.phone,
+                        !order.member_phone,
+                    }"
+                    placeholder="เบอร์โทร"
+                    disabled
+                  />
+                </div>
+
+                <div class="lg:w-1/2 w-full">
+                  <input
+                    type="text"
+                    v-model="order.address"
+                    ref="inputAddressOrder"
+                    :class="{
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
+                        !order.address,
                     }"
                     placeholder="เบอร์โทร"
                     disabled
@@ -328,21 +343,7 @@ import axios from "axios";
                 </div>
               </div>
             </div>
-            <div class="w-full mb-4 pt-1 mt-4">
-              <textarea
-                type="text"
-                v-model="order.address"
-                ref="inputAddressOrder"
-                rows="4"
-                :class="{
-                  'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
-                  'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                    !order.address,
-                }"
-                placeholder="ที่อยู่การจัดส่ง"
-                disabled
-              />
-            </div>
+
 
             <div class="mb-4 mt-8">
               <p class="text-xl font-semibold">รายการสินค้า</p>
@@ -476,6 +477,8 @@ export default {
         code: "",
         order_date: "",
         member_id: "",
+        member_name:"",
+        member_phone:"",
         address: "",
         total: "",
         status: "",
@@ -533,7 +536,8 @@ export default {
             this.order.code = order.code;
             this.order.order_date = order.order_date;
             this.order.status = order.status;
-            this.order.member_id = order.member_id;
+            this.order.member_name = order.member_name;
+            this.order.member_phone =order.member_phone;
             this.order.address = order.address;
             this.order.total = order.total;
             this.order.length = order.length;

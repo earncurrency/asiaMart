@@ -176,7 +176,7 @@ export default {
       baseUrl: __BASE_URL__,
       carts: [],
       cartsLength: 0,
-      member_id: "1",
+      member_id: "",
     };
   },
   computed: {
@@ -202,6 +202,15 @@ export default {
     setdata() {
       let carts = localStorage.getItem("carts");
       this.carts = JSON.parse(carts) || [];
+
+      let storedHash = localStorage.getItem("hash");
+      const firstNumber = storedHash.split("-")[0];
+      this.member_id = firstNumber;
+
+      // กรองข้อมูลใน carts เฉพาะที่ member_id ตรงกับ this.member_id
+      this.carts = this.carts.filter(
+        (item) => item.member_id === this.member_id
+      );
     },
     decrementQuantity(index) {
       if (this.carts[index].qty > 1) {
@@ -233,7 +242,7 @@ export default {
         this.$refs.modal.showAlertModal({
           swlIcon: "warning",
           swlTitle: "กรุณาเข้าสู่ระบบ",
-          swlText: "กรุณาเข้าสู่ระบบก่อนที่จะทำการเพิ่มสินค้าลงในตะกร้า",
+          swlText: "กรุณาเข้าสู่ระบบก่อนยืนยันรายการ",
         });
         return;
       }

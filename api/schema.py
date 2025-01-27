@@ -54,9 +54,11 @@ class OrderSchema(Base):
     __tablename__ = "tb_order"
 
     id = Column(Integer, primary_key=True, index=True)
-    code = Column(String(15))
+    code = Column(String(20))
     order_date = Column(TIMESTAMP)
     member_id = Column(Integer)
+    member_name = Column(String(30))
+    member_phone = Column(String(15))
     address = Column(String(25))
     total = Column(Float)
     status = Column(String(15))

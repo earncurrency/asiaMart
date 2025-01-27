@@ -93,6 +93,7 @@ import { RouterLink, RouterView } from "vue-router";
         <!-- ไอคอน โปรไฟล์ -->
 
         <button
+          v-if="fullname"
           type="button"
           @click="toggleIconUser"
           class="flex text-sm bg-gray-200 rounded-full md:me-0 focus:ring-2 focus:ring-gray-200 items-center transition"
@@ -103,10 +104,19 @@ import { RouterLink, RouterView } from "vue-router";
             alt="user photo"
           />
           <span class="mx-2"
-            >เจษฎากร หวานสนิท
+            >{{ fullname }}
             <span class="ml-2"><i class="fa-solid fa-angle-down"></i></span>
           </span>
         </button>
+
+        <RouterLink v-else="fullname" to="/login">
+          <button
+            type="button"
+            class="flex text-sm bg-gray-200 h-10 rounded-full md:me-0 focus:ring-2 focus:ring-gray-200 items-center transition"
+          >
+            <span class="mx-6">เข้าสู่ระบบ </span>
+          </button>
+        </RouterLink>
 
         <!-- เมนู โปรไฟล์ -->
         <div
@@ -157,6 +167,7 @@ import { RouterLink, RouterView } from "vue-router";
             </li>
             <li>
               <a
+                @click="logout()"
                 class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
               >
                 <span class="mr-2 text-red-500">
@@ -259,6 +270,7 @@ export default {
   mounted() {
     document.addEventListener("click", this.closeIconUser);
     this.setdata();
+
   },
   watch: {
     // ติดตามการเปลี่ยนแปลงของ prop 'cartsLength' ทุกครั้งที่มันเปลี่ยน
@@ -268,15 +280,29 @@ export default {
   },
 
   methods: {
+
     setdata() {
       let carts = localStorage.getItem("carts");
       this.carts = JSON.parse(carts) || [];
+
+      let storedHash = localStorage.getItem("hash");
+      const firstNumber = storedHash.split("-")[0];
+      this.member_id = firstNumber;
+
+      let storedFullname = localStorage.getItem("fullname");
+      this.fullname = storedFullname;
+
+      // กรองข้อมูลใน carts เฉพาะที่ member_id ตรงกับ this.member_id
+      this.carts = this.carts.filter(
+        (item) => item.member_id === this.member_id
+      );
     },
-    
+
     async logout() {
       localStorage.setItem("hash", "");
       localStorage.setItem("fullname", "");
-      this.$router.push("/");
+      this.$router.push("/login");
+      this.closeiconUserMenu();
     },
     closeiconUserMenu() {
       this.iconUserOpen = false;

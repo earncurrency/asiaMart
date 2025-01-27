@@ -1,11 +1,13 @@
 <script setup>
 import { parse } from "vue/compiler-sfc";
 import frontend_navbar from "../../components/frontend/navbar.vue";
+import Modal from "@/components/frontend/modal.vue";
 import axios from "axios";
 </script>
 
 <template>
-  <frontend_navbar :cartsLength="cartsLength"/>
+  <frontend_navbar :cartsLength="cartsLength" />
+  <Modal ref="modal" " />
 
   <div class="flex justify-center pt-24 p-4">
     <div
@@ -165,6 +167,7 @@ export default {
         detail: "",
         images: [],
       },
+      member_id: "",
       qty: 1,
       cartsLength: 0,
 
@@ -200,6 +203,19 @@ export default {
     },
     addToCart(product) {
 
+      let storedHash = localStorage.getItem("hash");
+      const firstNumber = storedHash.split("-")[0];
+      this.member_id = firstNumber;
+
+      if (!this.member_id) {
+        this.$refs.modal.showAlertModal({
+          swlIcon: "warning",
+          swlTitle: "กรุณาเข้าสู่ระบบ",
+          swlText: "กรุณาเข้าสู่ระบบก่อนที่จะเพื่มลงตระกร้า",
+        });
+        return;
+      }
+
       // ดึงข้อมูลที่มีอยู่ใน localStorage มาเก็บไว้ในตัวแปร carts (array)
       let carts = JSON.parse(localStorage.getItem("carts")) || [];
 
@@ -212,6 +228,7 @@ export default {
       } else {
         // หากยังไม่มีให้เพิ่มรายการสินค้าใหม่
         carts.push({
+          member_id: this.member_id,
           id: product.id,
           name: product.name,
           price: product.price,
@@ -221,18 +238,17 @@ export default {
       }
       // บันทึก carts กลับไปยัง localStorage
       localStorage.setItem("carts", JSON.stringify(carts));
-      this.cartsLength = carts.length,
-
-      this.$swal.fire({
-        title: "สำเร็จ",
-        text: "เพิ่มสินค้าเข้าสู่ตะกร้าเรียบร้อยแล้ว",
-        icon: "success",
-        confirmButtonText: "ยืนยัน",
-        customClass: {
-          confirmButton:
-            "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400",
-        },
-      });
+      (this.cartsLength = carts.length),
+        this.$swal.fire({
+          title: "สำเร็จ",
+          text: "เพิ่มสินค้าเข้าสู่ตะกร้าเรียบร้อยแล้ว",
+          icon: "success",
+          confirmButtonText: "ยืนยัน",
+          customClass: {
+            confirmButton:
+              "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400",
+          },
+        });
 
       // แสดงข้อมูลใน localStorage ที่บันทึกอยู่ในคอนโซล
       console.log("ตะกร้าสินค้า:", carts);

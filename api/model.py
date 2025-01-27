@@ -34,6 +34,8 @@ class OrderModel(BaseModel):
     code : Optional[str] = None
     order_date : Optional[datetime] = None
     member_id : Optional[int] = None
+    member_name : Optional[str] = None
+    member_phone : Optional[str] = None
     address : Optional[str] = None
     total : Optional[float] = None
     status : Optional[str] = None

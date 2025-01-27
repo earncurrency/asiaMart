@@ -13,13 +13,15 @@ router = APIRouter(
     tags = ["orders"],
 )
 
+#เเสดง order ทั้งหมด
 @router.get("/")
-def list_orders():
+def list_orders(member_id: str = ''):
     session = SessionLocal()
     try:
-        # ทำการ query ข้อมูลจาก OrderSchema และ OrderDetailSchema
-        orders = session.query(OrderSchema).order_by(desc(OrderSchema.id)).all()
-
+        if member_id :
+            orders = session.query(OrderSchema).filter(OrderSchema.member_id == member_id).order_by(desc(OrderSchema.id)).all()
+        else:
+            orders = session.query(OrderSchema).order_by(desc(OrderSchema.id)).all()
         # สร้างผลลัพธ์ที่จะส่งกลับ
         result = []
         for order in orders:
@@ -32,6 +34,8 @@ def list_orders():
                 "code": order.code,
                 "order_date": formatted_date,
                 "member_id": order.member_id,
+                "member_name": order.member_name,
+                "member_phone": order.member_phone,
                 "address": order.address,
                 "total": order.total,
                 "status": order.status,
@@ -47,6 +51,7 @@ def list_orders():
     finally:
         session.close()
 
+#บันทึก order
 @router.post("/")
 def add_order(order: OrderModel, orderDetails: list[OrderDetailModel]):
     session = SessionLocal()
@@ -56,6 +61,8 @@ def add_order(order: OrderModel, orderDetails: list[OrderDetailModel]):
             code=order.code,
             order_date=datetime.now(),
             member_id=order.member_id,
+            member_name= order.member_name,
+            member_phone= order.member_phone,
             address=order.address,
             total=order.total,
             status=order.status,
@@ -83,6 +90,7 @@ def add_order(order: OrderModel, orderDetails: list[OrderDetailModel]):
     finally:
         session.close()
 
+#เเสดงข้อมูลตาม order_id
 @router.get("/{order_id}") 
 def get_order(order_id: int):
     session = SessionLocal()
@@ -137,6 +145,8 @@ def get_order(order_id: int):
             "code": order.code,
             "order_date": formatted_date,
             "member_id": order.member_id,
+            "member_name": order.member_name,
+            "member_phone": order.member_phone,
             "address": order.address,
             "total": order.total,
             "status": order.status,
