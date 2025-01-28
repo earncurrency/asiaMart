@@ -323,7 +323,7 @@ export default {
           member_phone: this.member.phone,
           address: this.deliveryOption,
           total: this.totalAmount,
-          status: "รายการใหม่",
+          status: "new",
           length: this.carts.length,
         };
 

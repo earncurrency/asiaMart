@@ -210,7 +210,7 @@ import { RouterLink, RouterView } from "vue-router";
           <div
             class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-0 end-5"
           >
-            4
+          {{ computedCartsLength }}
           </div>
         </button>
       </RouterLink>
@@ -270,7 +270,6 @@ export default {
   mounted() {
     document.addEventListener("click", this.closeIconUser);
     this.setdata();
-
   },
   watch: {
     // ติดตามการเปลี่ยนแปลงของ prop 'cartsLength' ทุกครั้งที่มันเปลี่ยน
@@ -280,7 +279,6 @@ export default {
   },
 
   methods: {
-
     setdata() {
       let carts = localStorage.getItem("carts");
       this.carts = JSON.parse(carts) || [];

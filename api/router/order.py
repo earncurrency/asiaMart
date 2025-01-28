@@ -15,20 +15,22 @@ router = APIRouter(
 
 #เเสดง order ทั้งหมด
 @router.get("/")
-def list_orders(member_id: str = ''):
+def list_orders(member_id: str = '', orders_status: str = ''):
     session = SessionLocal()
     try:
-        if member_id :
-            orders = session.query(OrderSchema).filter(OrderSchema.member_id == member_id).order_by(desc(OrderSchema.id)).all()
+        if member_id:
+            if orders_status:
+    
+                orders = session.query(OrderSchema).filter(OrderSchema.member_id == member_id, OrderSchema.status != 'success',OrderSchema.status != 'cancel').order_by(desc(OrderSchema.id)).all()
+            else:
+                orders = session.query(OrderSchema).filter(OrderSchema.member_id == member_id).order_by(desc(OrderSchema.id)).all()
         else:
             orders = session.query(OrderSchema).order_by(desc(OrderSchema.id)).all()
-        # สร้างผลลัพธ์ที่จะส่งกลับ
+
+
         result = []
         for order in orders:
-            
             formatted_date = order.order_date.strftime("%Y-%m-%d %H:%M:%S")
-
-
             result.append({
                 "id": order.id,
                 "code": order.code,
@@ -50,6 +52,7 @@ def list_orders(member_id: str = ''):
 
     finally:
         session.close()
+
 
 #บันทึก order
 @router.post("/")
@@ -118,7 +121,7 @@ def get_order(order_id: int):
 
             images = (
                 session.query(ProductImageSchema)
-                .filter(ProductImageSchema.product_id == product.id)
+                .filter(ProductImageSchema.product_id == product.id,ProductImageSchema.status == 'active')
                 .first()
             )
             image_data = {}

@@ -25,11 +25,7 @@ import axios from "axios";
             <div class="lg:flex gap-4 mt-2">
               <div class="flex gap-2 justify-center lg:justify-start">
                 <p class="font-semibold">รหัสพนักงาน :</p>
-                <p>{{ member_id}}</p>
-              </div>
-              <div class="flex gap-2 justify-center lg:justify-start">
-                <p class="font-semibold">ตำเเหน่ง :</p>
-                <p>โปรเเกรมเมอร์</p>
+                <p>{{ member_id }}</p>
               </div>
             </div>
             <div class="lg:flex gap-4 mb-2">
@@ -37,10 +33,10 @@ import axios from "axios";
                 <p class="font-semibold">เบอร์มือถือ :</p>
                 <p>0xx xxx xxxx</p>
               </div>
-              <div class="flex gap-2 justify-center lg:justify-start">
+              <!-- <div class="flex gap-2 justify-center lg:justify-start">
                 <p class="font-semibold">ไลน์ :</p>
                 <p>kornwsn04</p>
-              </div>
+              </div> -->
             </div>
             <button
               class="p-2 pr-4 pl-4 rounded-lg bg-red-600 text-white mt-2 hover:bg-red-500 transition"
@@ -66,54 +62,97 @@ import axios from "axios";
               <i class="fa-solid fa-box"></i> ติดตามสถานะสินค้า
             </p>
 
-            <RouterLink
-              v-for="(order, index) in orders"
-              :key="index"
-              to="/order-detail"
-            >
-              <div
-                class="w-full h-auto bg-gray-50 rounded-md p-4 shadow-md text-md cursor-pointer mb-4"
+            <div v-if="orders.length > 0">
+              <RouterLink
+                v-for="(order, index) in orders"
+                :key="index"
+                :to="`/order-detail/${order.id}`"
               >
-                <div class="flex gap-2">
-                  <p>วันที่</p>
-                  <p class="font-semibold">{{ order.order_date }}</p>
-                </div>
-
                 <div
-                  class="flex items-center gap-4 border p-2 lg:p-4 rounded-md mt-3 mb-3"
+                  class="w-full h-auto bg-gray-50 rounded-md p-4 shadow-md text-md cursor-pointer mb-4"
                 >
-                  <img
-                    src="../../assets/image/system/delivery-bike.png"
-                    alt=""
-                    class="h-12 w-12 lg:h-16 lg:w-16 object-cover"
-                  />
-                  <div>
-                    <div class="flex gap-2 mt-1">
-                      <p class="">เลขที่ :</p>
-                      <p class="font-semibold">{{ order.code }}</p>
-                    </div>
-
-                    <div class="flex gap-2 mt-1">
-                      <p class="">สถานะ :</p>
-                      <p class="font-semibold">{{ order.status }}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="lg:flex lg:justify-end gap-4">
                   <div class="flex gap-2">
-                    <p>จำนวนสินค้า :</p>
-                    <p class="">{{ order.length }} ชิ้น</p>
+                    <p>วันที่</p>
+                    <p class="font-semibold">{{ order.order_date }}</p>
                   </div>
-                  <div class="flex gap-2 text-orange-500">
-                    <p>ราคารวม :</p>
-                    <p class="font-semibold">{{ order.total }} บาท</p>
+
+                  <div
+                    class="flex items-center gap-4 border p-2 lg:p-4 rounded-md mt-3 mb-3"
+                  >
+                    <img
+                      v-if="order.status === 'new'"
+                      :src="`${baseUrl}/src/assets/image/system/product.png`"
+                      alt=""
+                      class="h-12 w-12 lg:h-16 lg:w-16 object-cover"
+                    />
+                    <img
+                      v-else-if="order.status === 'pending'"
+                      :src="`${baseUrl}/src/assets/image/system/checklist.png`"
+                      alt=""
+                      class="h-12 w-12 lg:h-16 lg:w-16 object-cover"
+                    />
+                    <img
+                      v-else-if="order.status === 'delivery'"
+                      :src="`${baseUrl}/src/assets/image/system/delivery-man.png`"
+                      alt=""
+                      class="h-12 w-12 lg:h-16 lg:w-16 object-cover"
+                    />
+                    <img
+                      v-else
+                      :src="`${baseUrl}/src/assets/image/system/warning.png`"
+                      alt=""
+                      class="h-12 w-12 lg:h-16 lg:w-16 object-cover"
+                    />
+                    <div>
+                      <div class="flex gap-2 mt-1">
+                        <p class="">เลขที่ :</p>
+                        <p class="font-semibold">{{ order.code }}</p>
+                      </div>
+
+                      <div class="flex gap-2 mt-1">
+                        <p class="">สถานะ :</p>
+                        <p class="font-semibold" v-if="order.status === 'new'">
+                          รอรับออเดอร์
+                        </p>
+                        <p
+                          class="font-semibold"
+                          v-else-if="order.status === 'pending'"
+                        >
+                          กำลังเตรียมสินค้า
+                        </p>
+                        <p
+                          class="font-semibold"
+                          v-else-if="order.status === 'delivery'"
+                        >
+                          กำลังจัดส่ง
+                        </p>
+                        <p
+                          class="font-semibold"
+                          v-else-if="order.status === 'success'"
+                        >
+                          สำเร็จ
+                        </p>
+                        <p class="font-semibold" v-else>ไม่พบสถานะ</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="lg:flex lg:justify-end gap-4">
+                    <div class="flex gap-2">
+                      <p>จำนวนสินค้า :</p>
+                      <p class="">{{ order.length }} ชิ้น</p>
+                    </div>
+                    <div class="flex gap-2 text-orange-500">
+                      <p>ราคารวม :</p>
+                      <p class="font-semibold">{{ order.total }} บาท</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </RouterLink>
+              </RouterLink>
+            </div>
 
             <div
+              v-else
               class="w-full h-auto bg-gray-50 rounded-md p-4 shadow-md text-md cursor-pointer mb-4"
             >
               <div
@@ -143,14 +182,14 @@ export default {
       baseUrl: __BASE_URL__,
       apiUrl: "http://127.0.0.1:8000/",
 
-      orders:[],
+      orders: [],
       order: {
         id: "",
         code: "",
         order_date: "",
         member_id: "",
-        member_name:"",
-        member_phone:"",
+        member_name: "",
+        member_phone: "",
         address: "",
         total: "",
         status: "",
@@ -161,7 +200,7 @@ export default {
       },
 
       order_status: "",
-      fullname:"",
+      fullname: "",
       member_id: "",
     };
   },
@@ -171,27 +210,25 @@ export default {
   },
 
   methods: {
-
     setdata() {
-
       let storedHash = localStorage.getItem("hash");
       const firstNumber = storedHash.split("-")[0];
       this.member_id = firstNumber;
 
       let storedFullname = localStorage.getItem("fullname");
       this.fullname = storedFullname;
-
     },
 
     async getListOrder() {
-
       this.setdata();
+      this.orders_status = "pending";
 
       await axios
         .get(`${this.apiUrl}orders/`, {
           params: {
             member_id: this.member_id,
-          }
+            orders_status: this.orders_status,
+          },
         })
         .then((response) => {
           const data = response.data;

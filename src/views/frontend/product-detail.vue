@@ -50,7 +50,7 @@ import axios from "axios";
         >
           <div>
             <!-- รูปใหญ่ด้านบนที่จะแสดงภาพที่เลือก -->
-            <div class="lg:h-96 h-60 w-full cursor-pointer">
+            <div class="lg:h-auto h-60 w-full cursor-pointer">
               <img
                 :src="selectedImage"
                 alt="Selected Food"

@@ -15,7 +15,7 @@ import axios from "axios";
           <div v-if="formTable">
             <!-- title  -->
             <div class="flex justify-between items-center mb-2">
-              <p class="text-3xl font-semibold">จัดการออร์เดอร์</p>
+              <p class="text-3xl font-semibold">จัดการออเดอร์</p>
             </div>
 
             <!-- sort -->
@@ -218,10 +218,35 @@ import axios from "axios";
                       {{ order.address }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                      <span class="font-semibold mr-2 text-pink-500">{{
-                        order.status
-                      }}</span>
+                      <span
+                        v-if="order.status === 'new'"
+                        class="font-semibold mr-2 text-pink-500"
+                      >
+                        ออเดอร์ใหม่
+                      </span>
+                      <span
+                        v-else-if="order.status === 'pending'"
+                        class="font-semibold mr-2 text-yellow-400"
+                      >
+                        กำลังจัดเตรียมสินค้า
+                      </span>
+                      <span
+                        v-else-if="order.status === 'delivery'"
+                        class="font-semibold mr-2 text-blue-400"
+                      >
+                        กำลังจัดส่งสินค้า
+                      </span>
+                      <span
+                        v-else-if="order.status === 'success'"
+                        class="font-semibold mr-2 text-green-400"
+                      >
+                        สำเร็จ
+                      </span>
+                      <span v-else class="font-semibold mr-2 text-gray-500">
+                        ไม่พบสถานะ
+                      </span>
                     </td>
+
                     <td class="px-6 py-4 whitespace-nowrap">
                       <span class="font-semibold mr-2"
                         >{{ order.length }} รายการ</span
@@ -277,14 +302,47 @@ import axios from "axios";
                 <div class="lg:w-1/2 w-full">
                   <input
                     type="text"
-                    v-model="order.status"
+                    v-if="order.status === 'new'"
+                    value="ออเดอร์ใหม่"
                     ref="inputStatusOrder"
-                    :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
-                      'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !order.status,
-                    }"
-                    placeholder="สถานะ"
+                    class="block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300"
+                    placeholder=""
+                    disabled
+                  />
+                  <input
+                    type="text"
+                    v-if="order.status === 'pending'"
+                    value="กำลังเตรียมสินค้า"
+                    ref="inputStatusOrder"
+                    class="block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300"
+                    placeholder=""
+                    disabled
+                  />
+                  <input
+                    type="text"
+                    v-if="order.status === 'delivery'"
+                    value="กำลังจัดส่ง"
+                    ref="inputStatusOrder"
+                    class="block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300"
+                    placeholder=""
+                    disabled
+                  />
+                  <input
+                    type="text"
+                    v-if="order.status === 'success'"
+                    value="สำเร็จ"
+                    ref="inputStatusOrder"
+                    class="block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300"
+                    placeholder=""
+                    disabled
+                  />
+                  <input
+                    type="text"
+                    v-else
+                    value="ไม่พบสถานะ"
+                    ref="inputStatusOrder"
+                    class="block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300"
+                    placeholder=""
                     disabled
                   />
                 </div>
@@ -344,7 +402,6 @@ import axios from "axios";
               </div>
             </div>
 
-
             <div class="mb-4 mt-8">
               <p class="text-xl font-semibold">รายการสินค้า</p>
             </div>
@@ -384,7 +441,6 @@ import axios from "axios";
                   >
                     <th scope="row" class="px-6 py-4">
                       <div class="w-24 h-14 lg:w-36 lg:h-24">
-
                         <img
                           :src="`${baseUrl}/api/uploads/${Math.ceil(
                             product.id / 100
@@ -477,8 +533,8 @@ export default {
         code: "",
         order_date: "",
         member_id: "",
-        member_name:"",
-        member_phone:"",
+        member_name: "",
+        member_phone: "",
         address: "",
         total: "",
         status: "",
@@ -537,7 +593,7 @@ export default {
             this.order.order_date = order.order_date;
             this.order.status = order.status;
             this.order.member_name = order.member_name;
-            this.order.member_phone =order.member_phone;
+            this.order.member_phone = order.member_phone;
             this.order.address = order.address;
             this.order.total = order.total;
             this.order.length = order.length;
