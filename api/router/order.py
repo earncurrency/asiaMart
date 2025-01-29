@@ -16,40 +16,64 @@ router = APIRouter(
 #เเสดง order ทั้งหมด
 @router.get("/")
 def list_orders(member_id: str = '', orders_status: str = ''):
+    """ List Orders """
     session = SessionLocal()
     try:
+        # if member_id:
+        #     if orders_status:
+        #         orders = session.query(OrderSchema).filter(OrderSchema.member_id == member_id, OrderSchema.status != 'success',OrderSchema.status != 'cancel').order_by(desc(OrderSchema.id)).all()
+        #     else:
+        #         orders = session.query(OrderSchema).filter(OrderSchema.member_id == member_id).order_by(desc(OrderSchema.id)).all()
+        # else:
+        #     orders = session.query(OrderSchema).order_by(desc(OrderSchema.id)).all()
+
+        query = session.query(OrderSchema).order_by(desc(OrderSchema.id))
+
         if member_id:
-            if orders_status:
-    
-                orders = session.query(OrderSchema).filter(OrderSchema.member_id == member_id, OrderSchema.status != 'success',OrderSchema.status != 'cancel').order_by(desc(OrderSchema.id)).all()
-            else:
-                orders = session.query(OrderSchema).filter(OrderSchema.member_id == member_id).order_by(desc(OrderSchema.id)).all()
-        else:
-            orders = session.query(OrderSchema).order_by(desc(OrderSchema.id)).all()
+            query = query.filter(OrderSchema.member_id == member_id)
+        if orders_status:
+            query = query.filter(OrderSchema.status.notin_(['success', 'cancel']))
 
+        orders = query.all()
 
-        result = []
-        for order in orders:
-            formatted_date = order.order_date.strftime("%Y-%m-%d %H:%M:%S")
-            result.append({
-                "id": order.id,
-                "code": order.code,
-                "order_date": formatted_date,
-                "member_id": order.member_id,
-                "member_name": order.member_name,
-                "member_phone": order.member_phone,
-                "address": order.address,
-                "total": order.total,
-                "status": order.status,
-                "length": order.length,
-            })
+        # result = []
+        # for order in orders:
+        #     result.append({
+        #         "id": order.id,
+        #         "code": order.code,
+        #         "order_date": order.order_date.strftime("%Y-%m-%d %H:%M:%S"),
+        #         "member_id": order.member_id,
+        #         "member_name": order.member_name,
+        #         "member_phone": order.member_phone,
+        #         "address": order.address,
+        #         "total": order.total,
+        #         "status": order.status,
+        #         "length": order.length,
+        #     })
 
+        # return {
+        #     "message": "Get orders successfully",
+        #     "rows": result,
+        #     "total": len(result)
+        # }
         return {
             "message": "Get orders successfully",
-            "rows": result,
-            "total": len(result)
+            "rows": [
+                {
+                    "id": o.id,
+                    "code": o.code,
+                    "order_date": o.order_date.strftime("%Y-%m-%d %H:%M:%S"),
+                    "member_id": o.member_id,
+                    "member_name": o.member_name,
+                    "member_phone": o.member_phone,
+                    "address": o.address,
+                    "total": o.total,
+                    "status": o.status,
+                    "length": o.length,
+                } for o in orders
+            ],
+            "total": len(orders)
         }
-
     finally:
         session.close()
 
