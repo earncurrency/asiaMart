@@ -1,11 +1,12 @@
 <script setup>
 import backend_navbar from "@/components/backend/navbar.vue";
+import Modal from "@/components/backend/modal.vue";
 import axios from "axios";
 </script>
 
 <template class="">
   <backend_navbar @showFormTable="showFormTable" />
-
+  <Modal ref="modal" @showFormTable="showFormTable" />
   <div class="p-4 lg:pr-24 lg:pl-24 pt-6 sm:ml-64">
     <div
       class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14"
@@ -228,7 +229,7 @@ import axios from "axios";
                         v-else-if="order.status === 'pending'"
                         class="font-semibold mr-2 text-yellow-400"
                       >
-                        กำลังจัดเตรียมสินค้า
+                        กำลังเตรียมสินค้า
                       </span>
                       <span
                         v-else-if="order.status === 'delivery'"
@@ -241,6 +242,12 @@ import axios from "axios";
                         class="font-semibold mr-2 text-green-400"
                       >
                         สำเร็จ
+                      </span>
+                      <span
+                        v-else-if="order.status === 'cancel'"
+                        class="font-semibold mr-2 text-red-500"
+                      >
+                        ยกเลิก
                       </span>
                       <span v-else class="font-semibold mr-2 text-gray-500">
                         ไม่พบสถานะ
@@ -302,47 +309,26 @@ import axios from "axios";
                 <div class="lg:w-1/2 w-full">
                   <input
                     type="text"
-                    v-if="order.status === 'new'"
-                    value="ออเดอร์ใหม่"
-                    ref="inputStatusOrder"
-                    class="block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300"
-                    placeholder=""
-                    disabled
-                  />
-                  <input
-                    type="text"
-                    v-if="order.status === 'pending'"
-                    value="กำลังเตรียมสินค้า"
-                    ref="inputStatusOrder"
-                    class="block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300"
-                    placeholder=""
-                    disabled
-                  />
-                  <input
-                    type="text"
-                    v-if="order.status === 'delivery'"
-                    value="กำลังจัดส่ง"
-                    ref="inputStatusOrder"
-                    class="block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300"
-                    placeholder=""
-                    disabled
-                  />
-                  <input
-                    type="text"
-                    v-if="order.status === 'success'"
-                    value="สำเร็จ"
-                    ref="inputStatusOrder"
-                    class="block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300"
-                    placeholder=""
-                    disabled
-                  />
-                  <input
-                    type="text"
-                    v-else
-                    value="ไม่พบสถานะ"
-                    ref="inputStatusOrder"
-                    class="block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300"
-                    placeholder=""
+                    v-model="order.status"
+                    ref="inputDateOrder"
+                    :class="{
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
+                        !order.status,
+                    }"
+                    :value="
+                      order.status === 'new'
+                        ? 'ออเดอร์ใหม่'
+                        : order.status === 'pending'
+                        ? 'กำลังเตรียมสินค้า'
+                        : order.status === 'delivery'
+                        ? 'กำลังจัดส่ง'
+                        : order.status === 'success'
+                        ? 'สำเร็จ'
+                        : order.status === 'cancel'
+                        ? 'ยกเลิก'
+                        : ''
+                    "
                     disabled
                   />
                 </div>
@@ -496,11 +482,21 @@ import axios from "axios";
             </div>
 
             <div class="flex gap-2 justify-center mt-4 md:mt-4">
-              <button
-                class="text-white bg-blue-500 border border-blue-500 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center h-full"
+              <button v-if="order.status !== 'cancel'"
+                @click="updateStatus(order.id, order.status)"
+                class="text-white font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center h-full"
+                :class="{
+                  'bg-blue-500 border-blue-500': order.status === 'new',
+                  'bg-blue-400 border-blue-400': order.status === 'pending',
+                  'bg-green-500 border-green-500': order.status === 'delivery',
+                }"
               >
-                เตรียมสินค้า
+                <span v-if="order.status === 'new'">เตรียมสินค้า</span>
+                <span v-else-if="order.status === 'pending'">จัดส่งสินค้า</span>
+                <span v-else-if="order.status === 'delivery'">สำเร็จ</span>
+                <span v-else-if="order.status === 'success'"></span>
               </button>
+
               <button
                 @click="showFormTable"
                 class="text-black bg-gray-200 border border-gray-400 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center h-full"
@@ -508,6 +504,8 @@ import axios from "axios";
                 ยกเลิก
               </button>
               <button
+                v-if="order.status !== 'cancel' && order.status !== 'success'"
+                @click="cancelStatus(order.id)"
                 class="text-white bg-red-500 border border-red-500 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center h-full"
               >
                 ยกเลิกคำสั่งซื้อ
@@ -620,6 +618,71 @@ export default {
       } finally {
         // Set loading state to false
         this.loading = false;
+      }
+    },
+    async updateStatus(orderId, orderStatus) {
+      try {
+        // ตรวจสอบว่า status ที่ส่งมาคืออะไร
+        if (orderStatus) {
+          if (orderStatus === "new") {
+            this.orderStatus = "pending";
+          } else if (orderStatus === "pending") {
+            this.orderStatus = "delivery";
+          } else if (orderStatus === "delivery") {
+            this.orderStatus = "success";
+          }
+        }
+
+        const dataOrder = {
+          status: this.orderStatus, // ค่าที่จะส่งไป
+        };
+
+        // ส่งคำขอ PUT เพื่ออัปเดตสถานะ
+        const response = await axios.put(
+          `${this.apiUrl}orders/${orderId}`,
+          dataOrder
+        );
+
+        if (response.status === 200) {
+          this.$refs.modal.showAlertModal({
+            swlIcon: "success",
+            swlTitle: "สำเร็จ",
+            swlText: response.data.message,
+          });
+        }
+      } catch (error) {
+        this.$refs.modal.showAlertModal({
+          swlIcon: "error",
+          swlTitle: "ล้มเหลว",
+          swlText: error,
+        });
+      }
+    },
+    async cancelStatus(orderId) {
+      try {
+        const dataOrder = {
+          status: "cancel", // ค่าที่จะส่งไป
+        };
+
+        // ส่งคำขอ PUT เพื่ออัปเดตสถานะ
+        const response = await axios.put(
+          `${this.apiUrl}orders/${orderId}`,
+          dataOrder
+        );
+
+        if (response.status === 200) {
+          this.$refs.modal.showAlertModal({
+            swlIcon: "success",
+            swlTitle: "สำเร็จ",
+            swlText: response.data.message,
+          });
+        }
+      } catch (error) {
+        this.$refs.modal.showAlertModal({
+          swlIcon: "error",
+          swlTitle: "ล้มเหลว",
+          swlText: error,
+        });
       }
     },
 

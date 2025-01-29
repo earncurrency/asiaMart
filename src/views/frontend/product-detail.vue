@@ -220,7 +220,7 @@ export default {
       let carts = JSON.parse(localStorage.getItem("carts")) || [];
 
       // ตรวจสอบว่าสินค้าที่ต้องการเพิ่มมีอยู่ใน carts อยู่แล้วหรือไม่
-      let existingItem = carts.find((item) => item.id === product.id);
+      let existingItem = carts.find((item) => item.id === product.id && item.member_id === this.member_id);
 
       if (existingItem) {
         // หากมีอยู่แล้วให้เพิ่ม quantity ของสินค้านี้

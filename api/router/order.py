@@ -19,43 +19,18 @@ def list_orders(member_id: str = '', orders_status: str = ''):
     """ List Orders """
     session = SessionLocal()
     try:
-        # if member_id:
-        #     if orders_status:
-        #         orders = session.query(OrderSchema).filter(OrderSchema.member_id == member_id, OrderSchema.status != 'success',OrderSchema.status != 'cancel').order_by(desc(OrderSchema.id)).all()
-        #     else:
-        #         orders = session.query(OrderSchema).filter(OrderSchema.member_id == member_id).order_by(desc(OrderSchema.id)).all()
-        # else:
-        #     orders = session.query(OrderSchema).order_by(desc(OrderSchema.id)).all()
 
         query = session.query(OrderSchema).order_by(desc(OrderSchema.id))
 
         if member_id:
             query = query.filter(OrderSchema.member_id == member_id)
+
+        #ไม่เเสดง status success กับ cancel    
         if orders_status:
             query = query.filter(OrderSchema.status.notin_(['success', 'cancel']))
 
         orders = query.all()
 
-        # result = []
-        # for order in orders:
-        #     result.append({
-        #         "id": order.id,
-        #         "code": order.code,
-        #         "order_date": order.order_date.strftime("%Y-%m-%d %H:%M:%S"),
-        #         "member_id": order.member_id,
-        #         "member_name": order.member_name,
-        #         "member_phone": order.member_phone,
-        #         "address": order.address,
-        #         "total": order.total,
-        #         "status": order.status,
-        #         "length": order.length,
-        #     })
-
-        # return {
-        #     "message": "Get orders successfully",
-        #     "rows": result,
-        #     "total": len(result)
-        # }
         return {
             "message": "Get orders successfully",
             "rows": [
@@ -76,7 +51,6 @@ def list_orders(member_id: str = '', orders_status: str = ''):
         }
     finally:
         session.close()
-
 
 #บันทึก order
 @router.post("/")
@@ -188,3 +162,29 @@ def get_order(order_id: int):
 
     finally:
         session.close()
+
+@router.put("/{order_id}")
+def update_order(order_id: int, order: OrderModel):
+    session: Session = SessionLocal()
+    try:
+        existing_order = session.query(OrderSchema).filter(OrderSchema.id == order_id).first()
+
+        if not existing_order:
+            raise HTTPException(status_code=404, detail="ไม่พบข้อมูลออเดอร์")
+
+        if order.status is not None:
+            existing_order.status = order.status
+
+        updated_fields = {} 
+        updated_fields = existing_order
+        session.commit()
+
+        return {
+            "success": True,
+            "message": "เเก้ไขข้อมูลสำเร็จ!",
+            "id": order_id,
+            "updated_data": updated_fields  
+        }
+    finally:
+        session.close()
+

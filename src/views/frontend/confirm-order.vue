@@ -357,21 +357,21 @@ export default {
     },
 
     clearLocalStorage() {
-      // ลบข้อมูลที่มีอยู่ใน localStorage ซึ่งอยู่ใน key "carts"
-      localStorage.removeItem("carts");
-      this.carts = [];
+      // ดึงข้อมูลจาก localStorage
+      let carts = localStorage.getItem("carts");
+      this.carts = JSON.parse(carts) || [];
 
-      // อัพเดท local storage ด้วยข้อมูลใหม่
-      localStorage.setItem("carts", JSON.stringify(this.carts));
-
-      // อัพเดท cartsLength ใหม่
-      this.cartsLength = this.carts.length;
-
-      // แสดงข้อมูลที่บันทึกใน localStorage ที่เกี่ยวข้องกับตะกร้าสินค้าในคอนโซล
-      console.log(
-        "ข้อมูลใน localStorage:",
-        JSON.parse(localStorage.getItem("carts"))
+      // กรองออก item ที่ตรงกับ member_id
+      this.carts = this.carts.filter(
+        (item) => !(item.member_id === this.member.id) // ลบ item ที่ตรงกับเงื่อนไข
       );
+
+      // ลบข้อมูลทั้งหมดใน localStorage
+      localStorage.removeItem("carts");
+
+      // อัพเดท localStorage ด้วยข้อมูลใหม่ที่กรองแล้ว
+      localStorage.setItem("carts", JSON.stringify(this.carts)); 
+      this.cartsLength = this.carts.length;
     },
 
     generateRandomCode() {
@@ -397,7 +397,7 @@ export default {
         randomDigits.toString() +
         randomChars2.join("");
 
-      this.code = code  
+      this.code = code;
       console.log(code);
     },
   },

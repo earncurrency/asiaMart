@@ -92,7 +92,7 @@ def update_category(category_id: int, category: CategoryModel):
 
         return {
             "success": True,
-            "message": "เเก้ไขข้อมูลสมาชิกสำเร็จ!",
+            "message": "เเก้ไขข้อมูลสำเร็จ!",
             "id": category_id,
             "updated_data": updated_fields  
         }

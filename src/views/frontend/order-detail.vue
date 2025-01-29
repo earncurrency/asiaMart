@@ -132,7 +132,7 @@ import axios from "axios";
                   class="w-full h-auto rounded-md text-md cursor-pointer border bg-gray-50"
                 >
                   <div class="flex gap-4 lg:gap-6 p-2 lg:p-4 rounded-md">
-                    <div class="h-auto w-48 rounded-md">
+                    <div class="h-20 w-48 rounded-md">
                       <img
                         :src="`${baseUrl}/api/uploads/${Math.ceil(
                           product.id / 100
@@ -144,15 +144,15 @@ import axios from "axios";
 
                     <div class="w-full">
                       <div class="flex justify-between">
-                        <p class="text-mb mb-1 lg:mb-2">ข้าวมันไก่ทอด</p>
+                        <p class="text-mb mb-1 lg:mb-2">{{ product.product_name }}</p>
                         <p
                           class="font-semibold text-mb text-orange-500 mb-2 lg:mb-3"
                         >
-                          150 บาท
+                          {{ product.product_price }} บาท
                         </p>
                       </div>
                       <div class="flex justify-end">
-                        <p class="text-mb mb-2 lg:mb-3">จำนวน X1</p>
+                        <p class="text-mb mb-2 lg:mb-3">จำนวน X{{ product.qty }}</p>
                       </div>
                     </div>
                   </div>

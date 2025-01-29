@@ -82,11 +82,11 @@ import { RouterLink, RouterView } from "vue-router";
             class="relative text-gray-600 w-10 h-10 rounded-full object-cover ring-4 ring-gray-300 shadow-md"
           >
             <i class="fa-solid fa-bell"></i>
-            <div
+            <!-- <div
               class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full top-6 -end-2"
             >
               20
-            </div>
+            </div> -->
           </button>
         </RouterLink>
 
@@ -223,11 +223,11 @@ import { RouterLink, RouterView } from "vue-router";
           <span class="mt-1 text-sm text-gray-500 group-hover:text-blue-600"
             >เเจ้งเตือน</span
           >
-          <div
+          <!-- <div
             class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-0 end-5"
           >
             20
-          </div>
+          </div> -->
         </button>
       </RouterLink>
       <RouterLink to="/profile">
@@ -301,6 +301,7 @@ export default {
       localStorage.setItem("fullname", "");
       this.$router.push("/login");
       this.closeiconUserMenu();
+
     },
     closeiconUserMenu() {
       this.iconUserOpen = false;

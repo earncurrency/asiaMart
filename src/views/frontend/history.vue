@@ -58,6 +58,12 @@ import axios from "axios";
                       class="h-12 w-12 lg:h-16 lg:w-16 object-cover"
                     />
                     <img
+                      v-else-if="order.status === 'cancel'"
+                      :src="`${baseUrl}/src/assets/image/system/x-button.png`"
+                      alt=""
+                      class="h-12 w-12 lg:h-16 lg:w-16 object-cover"
+                    />
+                    <img
                       v-else
                       :src="`${baseUrl}/src/assets/image/system/warning.png`"
                       alt=""
@@ -91,6 +97,12 @@ import axios from "axios";
                           v-else-if="order.status === 'success'"
                         >
                           สำเร็จ
+                        </p>
+                        <p
+                          class="font-semibold"
+                          v-else-if="order.status === 'cancel'"
+                        >
+                          ยกเลิก
                         </p>
                         <p class="font-semibold" v-else>ไม่พบสถานะ</p>
                       </div>

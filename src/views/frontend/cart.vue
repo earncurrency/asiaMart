@@ -69,7 +69,7 @@ import Modal from "@/components/frontend/modal.vue";
 
                             <button
                               class="absolute -right-2 -top-2 bg-red-500 text-white w-10 h-10 rounded-full justify-center text-md"
-                              @click="removeItem(index)"
+                              @click="removeItem(item.id)"
                             >
                               <i class="fa-solid fa-trash-can"></i>
                             </button>
@@ -83,7 +83,7 @@ import Modal from "@/components/frontend/modal.vue";
                             <!-- ปุ่มลดจำนวน -->
                             <button
                               class="bg-gray-300 text-gray-600 hover:bg-gray-200 p-2 pr-3 pl-3 focus:outline-none transition rounded-l-md"
-                              @click="decrementQuantity(index)"
+                              @click="decrementQuantity(item.id)"
                               :disabled="item.qty <= 1"
                             >
                               -
@@ -100,7 +100,7 @@ import Modal from "@/components/frontend/modal.vue";
                             <!-- ปุ่มเพิ่มจำนวน -->
                             <button
                               class="bg-gray-300 text-gray-600 hover:bg-gray-200 p-2 pr-3 pl-3 focus:outline-none transition rounded-r-md"
-                              @click="incrementQuantity(index)"
+                              @click="incrementQuantity(item.id)"
                             >
                               +
                             </button>
@@ -212,31 +212,66 @@ export default {
         (item) => item.member_id === this.member_id
       );
     },
-    decrementQuantity(index) {
-      if (this.carts[index].qty > 1) {
-        this.carts[index].qty--;
+    decrementQuantity(itemId) {
+      let carts = localStorage.getItem("carts");
+      this.carts = JSON.parse(carts) || [];
+
+      // ค้นหารายการในตะกร้าที่ตรงกับ itemId
+      let item = this.carts.find(
+        (item) => item.id === itemId && item.member_id === this.member_id
+      );
+
+      if (item && item.qty > 1) {
+        // ลดจำนวนสินค้า
+        item.qty--;
+
+        // อัพเดท localStorage
         localStorage.setItem("carts", JSON.stringify(this.carts));
+        this.setdata();
+        // แสดงผลในคอนโซลเพื่อดีบัก
         console.log(this.carts);
       }
     },
-    incrementQuantity(index) {
-      this.carts[index].qty++;
-      localStorage.setItem("carts", JSON.stringify(this.carts));
-      console.log(this.carts);
+
+    incrementQuantity(itemId) {
+      let carts = localStorage.getItem("carts");
+      this.carts = JSON.parse(carts) || [];
+
+      let item = this.carts.find(
+        (item) => item.id === itemId && item.member_id === this.member_id
+      );
+
+      if (item) {
+        // เพิ่มจำนวนสินค้า
+        item.qty++;
+
+        // อัพเดท localStorage
+        localStorage.setItem("carts", JSON.stringify(this.carts));
+        this.setdata();
+        // แสดงผลในคอนโซลเพื่อดีบัก
+        console.log(this.carts);
+      }
     },
-    removeItem(index) {
-      // ลบสินค้าออกจาก carts โดยใช้ index
-      this.carts.splice(index, 1);
 
-      // อัพเดท local storage ด้วยข้อมูลใหม่
+    removeItem(itemId) {
+      // ดึงข้อมูลจาก localStorage
+      let carts = localStorage.getItem("carts");
+      this.carts = JSON.parse(carts) || [];
+
+      // กรองออก item ที่ตรงกับ itemId และ member_id
+      this.carts = this.carts.filter(
+        (item) => !(item.id === itemId && item.member_id === this.member_id) // ลบ item ที่ตรงกับเงื่อนไข
+      );
+
+      // อัพเดท localStorage ด้วยข้อมูลใหม่ที่กรองแล้ว
       localStorage.setItem("carts", JSON.stringify(this.carts));
-
-      // อัพเดท cartsLength ใหม่
       this.cartsLength = this.carts.length;
+      this.setdata();
 
-      console.log("cartsLength:", this.carts.length);
+      console.log("cartsLength:", this.cartsLength);
       console.log("ข้อมูลใน localStorage (ตะกร้าสินค้า):", this.carts);
     },
+
     confirmOrder() {
       if (!this.member_id) {
         this.$refs.modal.showAlertModal({
