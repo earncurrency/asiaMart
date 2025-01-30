@@ -6,6 +6,7 @@ from router import member
 from router import product
 from router import category
 from router import order
+from router import admin
 # from router import product_image
 
 # สร้างแอปพลิเคชัน FastAPI
@@ -31,4 +32,5 @@ app.include_router(member.router)
 app.include_router(product.router)
 app.include_router(category.router)
 app.include_router(order.router)
+app.include_router(admin.router)
 # app.include_router(product_image.router)

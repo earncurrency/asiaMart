@@ -25,7 +25,7 @@ import axios from "axios";
             <div class="lg:flex gap-4 mt-2">
               <div class="flex gap-2 justify-center lg:justify-start">
                 <p class="font-semibold">รหัสพนักงาน :</p>
-                <p>{{ member_id }}</p>
+                <p>{{ member_code }}</p>
               </div>
             </div>
             <div class="lg:flex gap-4 mb-2">
@@ -202,6 +202,7 @@ export default {
       order_status: "",
       fullname: "",
       member_id: "",
+      member_code:"",
     };
   },
   mounted() {
@@ -214,6 +215,9 @@ export default {
       let storedHash = localStorage.getItem("hash");
       const firstNumber = storedHash.split("-")[0];
       this.member_id = firstNumber;
+
+      const twoNumber = storedHash.split("-")[1];
+      this.member_code = twoNumber;
 
       let storedFullname = localStorage.getItem("fullname");
       this.fullname = storedFullname;

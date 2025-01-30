@@ -54,7 +54,7 @@ def get_category(category_id: int):
 async def add_category(category: CategoryModel):
     session = SessionLocal()
     try:
-        # 1. เพิ่มข้อมูลสินค้าใหม่
+        
         new_category = CategorySchema(
             name=category.name,
             status=category.status,

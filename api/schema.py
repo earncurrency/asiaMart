@@ -75,6 +75,16 @@ class OrderDetailSchema(Base):
     product_price = Column(Float)
     qty = Column(Integer)
 
+
+class AdminSchema(Base):
+
+    __tablename__ = "tb_admin"
+
+    id = Column(Integer, primary_key=True, index=True)
+    code = Column(String(15))
+    name = Column(String(50))
+    phone = Column(String(15))
+    status = Column(String(15))
     
 # สร้างตารางในฐานข้อมูล (หากยังไม่มี)
 Base.metadata.create_all(bind=engine)

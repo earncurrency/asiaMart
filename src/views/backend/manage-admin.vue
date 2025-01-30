@@ -17,7 +17,13 @@ import axios from "axios";
           <div v-if="formTable">
             <!-- title -->
             <div class="flex justify-between items-center mb-2">
-              <p class="text-3xl font-semibold">รายการลูกค้า</p>
+              <p class="text-3xl font-semibold">รายการแอดมิน</p>
+              <button
+                @click="showFormAdd"
+                class="block py-2 px-6 bg-green-500 hover:bg-green-600 text-white rounded-md transition"
+              >
+                <i class="fa-solid fa-plus"></i>
+              </button>
             </div>
 
             <!-- sort -->
@@ -159,7 +165,7 @@ import axios from "axios";
             <!-- ตาราง -->
             <div
               class="relative overflow-x-auto rounded-lg border border-gray-200"
-              >
+            >
               <table
                 class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
               >
@@ -180,13 +186,14 @@ import axios from "axios";
                     <th scope="col" class="px-6 py-4 whitespace-nowrap">
                       สถานะ
                     </th>
+                    <th scope="col" class="px-6 py-4 whitespace-nowrap"></th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr
-                    v-for="(member, index) in members"
+                    v-for="(admin, index) in admins"
                     :key="index"
-                    @click="showFormEdit(member.id)"
+                    @click="showFormEdit(admin.id)"
                     class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 cursor-pointer hover:bg-gray-100 transition"
                   >
                     <th scope="row" class="px-6 py-4">
@@ -199,17 +206,17 @@ import axios from "axios";
                     </th>
 
                     <td class="px-6 py-4 whitespace-nowrap font-semibold">
-                      {{ member.code }}
+                      {{ admin.code }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                      {{ member.name }}
+                      {{ admin.name }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                      {{ member.phone }}
+                      {{ admin.phone }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                       <span
-                        v-if="member.status === 'active'"
+                        v-if="admin.status === 'active'"
                         class="font-semibold text-green-500 p-1 bg-green-100 rounded-md"
                       >
                         แสดง
@@ -221,16 +228,24 @@ import axios from "axios";
                         ไม่แสดง
                       </span>
                     </td>
+                    <td class="px-6 py-4">
+                      <button
+                        @click.stop="btnDelete(admin.id)"
+                        class="bg-red-500 text-white px-4 py-2 rounded-md"
+                      >
+                        <i class="fa-solid fa-trash-can"></i>
+                      </button>
+                    </td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </div>
 
-          <div v-if="formEdit">
+          <div v-if="formAdd">
             <!-- title -->
             <div class="flex justify-between items-center mb-2">
-              <p class="text-3xl font-semibold">ข้อมูลลูกค้า</p>
+              <p class="text-3xl font-semibold">ข้อมูลเเอดมิน</p>
             </div>
 
             <div class="flex justify-center w-full">
@@ -247,12 +262,12 @@ import axios from "axios";
                 <div class="lg:w-1/2 w-full">
                   <input
                     type="text"
-                    v-model="member.code"
-                    ref="inputCodeMember"
+                    v-model="admin.code"
+                    ref="inputCodeAdmin"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !member.code,
+                        !admin.code,
                     }"
                     placeholder="รหัส"
                   />
@@ -261,14 +276,14 @@ import axios from "axios";
                 <div class="lg:w-1/2 w-full">
                   <input
                     type="text"
-                    v-model="member.name"
-                    ref="inputNameMember"
+                    v-model="admin.name"
+                    ref="inputNameAdmin"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !member.name,
+                        !admin.name,
                     }"
-                    placeholder="ชื่อลูกค้า"
+                    placeholder="ชื่อแอดมิน"
                   />
                 </div>
               </div>
@@ -277,12 +292,12 @@ import axios from "axios";
                 <div class="lg:w-1/2 w-full">
                   <input
                     type="text"
-                    v-model="member.phone"
-                    ref="inputPhoneMember"
+                    v-model="admin.phone"
+                    ref="inputPhoneAdmin"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !member.phone,
+                        !admin.phone,
                     }"
                     placeholder="เบอร์"
                   />
@@ -290,12 +305,12 @@ import axios from "axios";
 
                 <div class="lg:w-1/2 w-full">
                   <select
-                    v-model="member.status"
-                    ref="inputStatusMember"
+                    v-model="admin.status"
+                    ref="inputStatusAdmin"
                     :class="{
                       'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-200 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                        !member.status,
+                        !admin.status,
                     }"
                   >
                     <option value="" disabled>สถานะ</option>
@@ -306,14 +321,111 @@ import axios from "axios";
               </div>
             </div>
 
-            <div
-              class="flex gap-2 items-center mb-4 mt-8 text-2xl font-semibold"
-            >
-              <span class="">ยอดรวมคำสั่งซื้อทั้งหมด :</span>
-              <span class="text-orange-500">600บาท</span>
+
+            <hr class="my-2 text-gray-600 mt-8" />
+
+            <div class="flex gap-2 justify-center mt-4 md:mt-4">
+              <button
+                @click="btnAdd"
+                class="text-white bg-blue-500 border border-blue-500 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center h-full"
+              >
+                ยืนยัน
+              </button>
+              <button
+                @click="showFormTable"
+                class="text-black bg-gray-200 border border-gray-400 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center h-full"
+              >
+                ยกเลิก
+              </button>
+            </div>
+          </div>
+
+          <div v-if="formEdit">
+            <!-- title -->
+            <div class="flex justify-between items-center mb-2">
+              <p class="text-3xl font-semibold">เเก้ไขข้อมูลสินค้า</p>
+              <button
+                @click.stop="btnDelete(adminId)"
+                class="bg-red-500 text-white px-4 py-1.5 rounded-md"
+              >
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
             </div>
 
-            <hr class="my-2 text-gray-600" />
+            <div class="flex justify-center w-full">
+              <div class="w-28 h-28 lg:w-44 lg:h-44 mt-4 mb-2">
+                <img
+                  class="w-full h-full rounded-full object-cover ring-4 ring-gray-300 shadow-md"
+                  src="../../assets/image/system/cathothead.jpg"
+                />
+              </div>
+            </div>
+
+            <div class="md:flex w-full gap-2 mb-2 pt-1 mt-4">
+              <div class="flex gap-2 w-full">
+                <div class="lg:w-1/2 w-full">
+                  <input
+                    type="text"
+                    v-model="admin.code"
+                    ref="inputCodeAdmin"
+                    :class="{
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
+                        !admin.code,
+                    }"
+                    placeholder="รหัส"
+                  />
+                </div>
+
+                <div class="lg:w-1/2 w-full">
+                  <input
+                    type="text"
+                    v-model="admin.name"
+                    ref="inputNameAdmin"
+                    :class="{
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
+                        !admin.name,
+                    }"
+                    placeholder="ชื่อลูกค้า"
+                  />
+                </div>
+              </div>
+
+              <div class="flex gap-2 w-full pt-1 mt-4 lg:pt-0 lg:mt-0">
+                <div class="lg:w-1/2 w-full">
+                  <input
+                    type="text"
+                    v-model="admin.phone"
+                    ref="inputPhoneAdmin"
+                    :class="{
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
+                        !admin.phone,
+                    }"
+                    placeholder="เบอร์"
+                  />
+                </div>
+
+                <div class="lg:w-1/2 w-full">
+                  <select
+                    v-model="admin.status"
+                    ref="inputStatusAdmin"
+                    :class="{
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-200 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
+                        !admin.status,
+                    }"
+                  >
+                    <option value="" disabled>สถานะ</option>
+                    <option value="active">เเสดง</option>
+                    <option value="inactive">ไม่เเสดง</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <hr class="my-2 text-gray-600 mt-8" />
 
             <div class="flex gap-2 justify-center mt-4 md:mt-4">
               <button
@@ -330,7 +442,6 @@ import axios from "axios";
               </button>
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -343,13 +454,14 @@ export default {
     return {
       apiUrl: "http://127.0.0.1:8000/",
 
-      members: [],
-      memberId: "",
-      member:{
-        code:"",
-        name:"",
-        phone:"",
-        status:"",
+      admins: [],
+      adminId: "",
+      admin: {
+        id: "",
+        code: "",
+        name: "",
+        phone: "",
+        status: "",
       },
 
       isFocus: false,
@@ -362,7 +474,7 @@ export default {
     };
   },
   mounted() {
-    this.getListMember();
+    this.getListAdmin();
 
     document.addEventListener("click", this.closeDropdownStatus);
     document.addEventListener("click", this.closeDropdown);
@@ -374,48 +486,61 @@ export default {
       this.formAdd = false;
       this.formEdit = false;
 
-      this.getListMember();
+      this.getListAdmin();
     },
 
-    //เเสดงข้อมูลสมาชิกบนตาราง
-    async getListMember() {
+    async getListAdmin() {
       await axios
-        .get(`${this.apiUrl}members`)
+        .get(`${this.apiUrl}admins`)
         .then((response) => {
           const data = response.data;
-          this.members = data.rows;
-          console.log(this.members);
+          this.admins = data.rows;
+
+          console.log(this.admins);
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error);
         });
     },
 
-    async showFormEdit(memberId) {
+    showFormAdd() {
+      this.formTable = false;
+      this.formAdd = true;
+      this.formEdit = false;
+
+      this.adminId = "";
+      this.admin.code = "";
+      this.admin.name = "";
+      this.admin.phone = "";
+      this.admin.status = "";
+    },
+
+    async showFormEdit(adminId) {
       // เปิดฟอร์มแก้ไข
       this.formTable = false;
       this.formAdd = false;
       this.formEdit = true;
 
       // รีเซ็ตค่าเริ่มต้นในฟอร์ม
-      this.member.code = "";
-      this.member.name = "";
-      this.member.phone = "";
-      this.member.status = "";
+      this.admin.code = "";
+      this.admin.name = "";
+      this.admin.phone = "";
+      this.admin.status = "";
 
       try {
         // เรียก API เพื่อดึงข้อมูลสมาชิกที่ระบุ
-        const response = await axios.get(`${this.apiUrl}members/${memberId}`);
+        const response = await axios.get(`${this.apiUrl}admins/${adminId}`);
 
         if (response.status === 200) {
-          const member = response.data.row;
+          const admin = response.data.row;
 
-          if (member) {
-            this.memberId = memberId;
-            this.member.code = member.code;
-            this.member.name = member.name;
-            this.member.phone = member.phone;
-            this.member.status = member.status;
+          if (admin) {
+            this.admin.id = admin.id;
+            this.adminId = admin.id;
+            this.admin.code = admin.code;
+            this.admin.name = admin.name;
+            this.admin.phone = admin.phone;
+            this.admin.status = admin.status;
           } else {
             alert("ไม่พบข้อมูลสมาชิกที่ต้องการแก้ไข");
           }
@@ -426,34 +551,78 @@ export default {
           "เกิดข้อผิดพลาด: " + (error.response?.data?.detail || error.message)
         );
       }
+      console.log("adminId", adminId);
+    },
+
+    async btnAdd() {
+      if (!this.admin.code) {
+        this.isFocus = true;
+        this.$refs.inputCodeAdmin.focus();
+      } else if (!this.admin.name) {
+        this.isFocus = true;
+        this.$refs.inputNameAdmin.focus();
+      } else if (!this.admin.phone) {
+        this.isFocus = true;
+        this.$refs.inputPhoneAdmin.focus();
+      } else if (!this.admin.status) {
+        this.isFocus = true;
+        this.$refs.inputStatusAdmin.focus();
+      } else {
+        try {
+          const dataAdmin = {
+            code: this.admin.code,
+            name: this.admin.name,
+            phone: this.admin.phone,
+            status: this.admin.status,
+          };
+
+          const response = await axios.post(
+            `${this.apiUrl}admins/`,
+            dataAdmin
+          );
+
+          if (response.status === 200) {
+            this.$refs.modal.showAlertModal({
+              swlIcon: "success",
+              swlTitle: "สำเร็จ",
+              swlText: response.data.message,
+            });
+          }
+        } catch (error) {
+          this.$refs.modal.showAlertModal({
+            swlIcon: "error",
+            swlTitle: "เกิดข้อผิดพลาด",
+            swlText: "เกิดข้อผิดพลาดในการอัปเดตข้อมูล",
+          });
+        }
+      }
     },
 
     async btnEdit() {
-      if (!this.member.code) {
+      if (!this.admin.code) {
         this.isFocus = true;
-        this.$refs.inputCodeMember.focus();
-      } else if (!this.member.name) {
+        this.$refs.inputCodeAdmin.focus();
+      } else if (!this.admin.name) {
         this.isFocus = true;
-        this.$refs.inputNameMember.focus();
-      } else if (!this.member.phone) {
+        this.$refs.inputNameAdmin.focus();
+      } else if (!this.admin.phone) {
         this.isFocus = true;
-        this.$refs.inputPhoneMember.focus();
-      } else if (!this.member.status) {
+        this.$refs.inputPhoneAdmin.focus();
+      } else if (!this.admin.status) {
         this.isFocus = true;
-        this.$refs.inputStatusMember.focus();
+        this.$refs.inputStatusAdmin.focus();
       } else {
         try {
-          const dataMember = {
-            code: this.member.code,
-            name: this.member.name,
-            phone: this.member.phone,
-            status: this.member.status,
+          const dataAdmin = {
+            code: this.admin.code,
+            name: this.admin.name,
+            phone: this.admin.phone,
+            status: this.admin.status,
           };
 
-          // เรียก API เพื่ออัปเดตข้อมูลสมาชิก
           const response = await axios.put(
-            `${this.apiUrl}members/${this.memberId}`,
-            dataMember
+            `${this.apiUrl}admins/${this.adminId}`,
+            dataAdmin
           );
 
           if (response.status === 200) {
@@ -471,6 +640,55 @@ export default {
           });
         }
       }
+    },
+
+    btnDelete(adminId) {
+      // เรียกใช้งาน modal เพื่อแสดงคำเตือน
+      this.$refs.modal.showDeleteModal({
+        swlIcon: "warning",
+        swlTitle: "แจ้งเตือน",
+        swlText: "คุณต้องการลบข้อมูลนี้หรือไม่!",
+        onConfirm: () => {
+          // เมื่อผู้ใช้กด "ยืนยัน" ใน modal
+
+          const dataAdmin = {
+            status: "remove",
+          };
+
+          axios
+            .put(`${this.apiUrl}admins/${adminId}`, dataAdmin)
+            .then((response) => {
+              // แสดงข้อความว่า "ลบสำเร็จ"
+              this.$swal
+                .fire({
+                  title: "ลบสำเร็จ",
+                  icon: "success",
+                  confirmButtonText: "ยืนยัน",
+                  customClass: {
+                    confirmButton:
+                      "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400",
+                  },
+                })
+                .then(() => {
+                  // เมื่อกดปุ่ม "ยืนยัน" ใน swal ที่สอง
+                  this.showFormTable();
+                });
+            })
+            .catch((error) => {
+              console.error("Error updating product status:", error);
+              this.$swal.fire({
+                title: "เกิดข้อผิดพลาด",
+                text: "ไม่สามารถอัปเดตสถานะสินค้าได้",
+                icon: "error",
+                confirmButtonText: "ยืนยัน",
+                customClass: {
+                  confirmButton:
+                    "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400",
+                },
+              });
+            });
+        },
+      });
     },
 
     DropdownStatus(statusName) {

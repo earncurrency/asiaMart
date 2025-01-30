@@ -75,7 +75,7 @@ import Modal from "@/components/frontend/modal.vue";
                       <input
                         type="radio"
                         name="deliveryOption"
-                        value="รับที่ Asia Mart"
+                        value="Asia Mart"
                         v-model="deliveryOption"
                         class="h-4 w-4 text-gray-600 border-gray-300 focus:ring-gray-500 cursor-pointer"
                       />
@@ -87,11 +87,11 @@ import Modal from "@/components/frontend/modal.vue";
                       <input
                         type="radio"
                         name="deliveryOption"
-                        value="รับที่สาขาบางมด"
+                        value="สาขาบางมด"
                         v-model="deliveryOption"
                         class="h-4 w-4 text-gray-600 border-gray-300 focus:ring-gray-500 cursor-pointer"
                       />
-                      <span class="text-gray-700">รับที่สาขาบางมด</span>
+                      <span class="text-gray-700">สาขาบางมด</span>
                     </label>
                     <label
                       class="flex items-center space-x-2 pt-4 lg:pt-0 cursor-pointer"
@@ -99,11 +99,11 @@ import Modal from "@/components/frontend/modal.vue";
                       <input
                         type="radio"
                         name="deliveryOption"
-                        value="รับที่สาขาบ้านเเพ้ว"
+                        value="สาขาบ้านเเพ้ว"
                         v-model="deliveryOption"
                         class="h-4 w-4 text-gray-600 border-gray-300 focus:ring-gray-500"
                       />
-                      <span class="text-gray-700">รับที่สาขาบ้านเเพ้ว</span>
+                      <span class="text-gray-700">สาขาบ้านเเพ้ว</span>
                     </label>
                     <label
                       class="flex items-center space-x-2 pt-4 lg:pt-0 cursor-pointer"
@@ -111,11 +111,11 @@ import Modal from "@/components/frontend/modal.vue";
                       <input
                         type="radio"
                         name="deliveryOption"
-                        value="รับที่สาขามหาชัย"
+                        value="สาขามหาชัย"
                         v-model="deliveryOption"
                         class="h-4 w-4 text-gray-600 border-gray-300 focus:ring-gray-500"
                       />
-                      <span class="text-gray-700">รับที่สาขามหาชัย</span>
+                      <span class="text-gray-700">สาขามหาชัย</span>
                     </label>
                   </div>
                 </div>

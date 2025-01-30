@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from sqlalchemy.orm import Session
-from sqlalchemy import asc, desc
+from sqlalchemy import asc, desc , func
 from datetime import datetime
 
 from database import SessionLocal, engine

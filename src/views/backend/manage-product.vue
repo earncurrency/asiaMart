@@ -708,10 +708,8 @@ export default {
     return {
       baseUrl: __BASE_URL__,
       apiUrl: "http://127.0.0.1:8000/",
+
       products: [],
-
-      isFocus: false,
-
       productId: "",
       product: {
         id: "",
@@ -727,7 +725,8 @@ export default {
       categorys: [],
       categoryStatus:"",
       previewImages: [],
-
+      
+      isFocus: false,
       formTable: true,
       formAdd: false,
       formEdit: false,

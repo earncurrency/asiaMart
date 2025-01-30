@@ -91,6 +91,7 @@ import Modal from "@/components/frontend/modal.vue";
 
                             <!-- ช่องกรอกจำนวนสินค้า -->
                             <input
+                              @change="inputQuantity(item.id , item.qty)"
                               type="text"
                               class="w-14 text-center border-none focus:outline-none p-2 pr-3 pl-3"
                               v-model.number="item.qty"
@@ -178,6 +179,8 @@ export default {
       cartsLength: 0,
       member_id: "",
     };
+
+
   },
   computed: {
     totalAmount() {
@@ -234,9 +237,11 @@ export default {
     },
 
     incrementQuantity(itemId) {
+      // ดึงข้อมูลจาก localStorage
       let carts = localStorage.getItem("carts");
       this.carts = JSON.parse(carts) || [];
 
+      // ค้นหารายการในตะกร้าที่ตรงกับ itemId
       let item = this.carts.find(
         (item) => item.id === itemId && item.member_id === this.member_id
       );
@@ -252,7 +257,28 @@ export default {
         console.log(this.carts);
       }
     },
+    inputQuantity(itemId ,itemQty) {
+      // ดึงข้อมูลจาก localStorage
+      let carts = localStorage.getItem("carts");
+      this.carts = JSON.parse(carts) || [];
 
+      // ค้นหารายการในตะกร้าที่ตรงกับ itemId
+      let item = this.carts.find(
+        (item) => item.id === itemId && item.member_id === this.member_id
+      );
+
+      if (item) {
+        // เพิ่มจำนวนสินค้า
+        item.qty = itemQty;
+
+        // อัพเดท localStorage
+        localStorage.setItem("carts", JSON.stringify(this.carts));
+        this.setdata();
+        // แสดงผลในคอนโซลเพื่อดีบัก
+        console.log(this.carts);
+      }
+
+    },
     removeItem(itemId) {
       // ดึงข้อมูลจาก localStorage
       let carts = localStorage.getItem("carts");
@@ -290,7 +316,6 @@ export default {
         return;
       }
 
-      // If passed both checks, navigate to confirm order page
       this.$router.push("/confirm-order");
       console.log("ข้อมูลใน localStorage (ตะกร้าสินค้า):", this.carts);
     },

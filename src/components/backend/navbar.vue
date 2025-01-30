@@ -1,7 +1,6 @@
 <script setup>
 import router from "@/router";
 import { faL } from "@fortawesome/free-solid-svg-icons";
-import { RouterLink, RouterView } from "vue-router";
 </script>
 
 <template>
@@ -52,7 +51,7 @@ import { RouterLink, RouterView } from "vue-router";
               <div
                 v-if="iconUserOpen"
                 ref="iconUserMenu"
-                class="absolute lg:w-full right-0 top-12 z-50 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600"
+                class="absolute lg:w-full right-0 top-12 z-50 my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600 cursor-pointer"
               >
                 <div class="lg:hidden px-4 py-3 w-full" role="none">
                   <p
@@ -80,9 +79,8 @@ import { RouterLink, RouterView } from "vue-router";
                   </li>
                   <li>
                     <a
-                      href="#"
-                      @click="closeiconUserMenu"
-                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
+                      @click="logout()"
+                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white "
                       role="menuitem"
                       >ออกจากระบบ</a
                     >
@@ -145,6 +143,19 @@ import { RouterLink, RouterView } from "vue-router";
           </RouterLink>
         </li>
         <li @click="showFormTable">
+          <RouterLink to="/backend/manage-admin">
+            <a
+              href="#"
+              class="flex items-center p-2 text-white rounded-lg group"
+            >
+              <div class="text-xl text-white">
+                <i class="fa-solid fa-user"></i>
+              </div>
+              <span class="flex-1 ms-3 whitespace-nowrap">รายการแอดมิน</span>
+            </a>
+          </RouterLink>
+        </li>
+        <li @click="showFormTable">
           <RouterLink to="/backend/manage-member">
             <a
               href="#"
@@ -187,7 +198,10 @@ import { RouterLink, RouterView } from "vue-router";
             <span class="flex-1 ms-7 whitespace-nowrap">- สินค้าคงคลัง</span>
           </a>
 
-          <a href="#" class="flex items-center p-2 text-gray-400 rounded-lg group">
+          <a
+            href="#"
+            class="flex items-center p-2 text-gray-400 rounded-lg group"
+          >
             <span class="flex-1 ms-7 whitespace-nowrap">- ยอดขาย</span>
           </a>
         </li>
@@ -223,6 +237,13 @@ export default {
   methods: {
     showFormTable() {
       this.$emit("showFormTable");
+    },
+
+    logout() {
+      localStorage.setItem("admin_hash", "");
+      localStorage.setItem("admin_name", "");
+      this.$router.push("/backend/login");
+
     },
 
     checkScreenWidth() {

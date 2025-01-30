@@ -81,6 +81,11 @@ const router = createRouter({
             component: () => import('../views/backend/manage-product.vue'),
         },
         {
+            path: '/backend/manage-admin',
+            name: 'backend/manage-admin',
+            component: () => import('../views/backend/manage-admin.vue'),
+        },
+        {
             path: '/backend/manage-member',
             name: 'backend/manage-member',
             component: () => import('../views/backend/manage-member.vue'),
@@ -99,6 +104,11 @@ const router = createRouter({
             path: '/backend/report',
             name: 'backend/report',
             component: () => import('../views/backend/report.vue'),
+        },
+        {
+            path: '/backend/login',
+            name: 'backend/login',
+            component: () => import('../views/backend/login.vue'),
         },
     ]
 });

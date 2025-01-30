@@ -48,5 +48,11 @@ class OrderDetailModel(BaseModel):
     product_price:Optional[float] = None
     qty : Optional[int] = None
 
+class AdminModel(BaseModel):
+    code: Optional[str] = None
+    name: Optional[str] = None
+    phone: Optional[str] = None
+    status: Optional[str] = None
+
 class Config:
     orm_mode = True

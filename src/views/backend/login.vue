@@ -1,7 +1,8 @@
 <script setup>
 import { data } from "autoprefixer";
 import axios from "axios";
-import Modal from "@/components/frontend/modal.vue";
+import Modal from "@/components/backend/modal.vue";
+import { RouterLink, RouterView } from "vue-router";
 </script>
 <template>
   <Modal ref="modal" />
@@ -50,10 +51,7 @@ import Modal from "@/components/frontend/modal.vue";
 export default {
   data() {
     return {
-      authUrl:
-        process.env.NODE_ENV !== "production"
-          ? "https://app.asiagroup1999.co.th/app/hr/employee?"
-          : "http://localhost/asiagroup_app/hr/employee?",
+      apiUrl: "http://127.0.0.1:8000/",
 
       code: "",
       isFocus: false,
@@ -70,16 +68,14 @@ export default {
           code: this.code,
         };
         axios
-          .post(this.authUrl + "action=mrsLogin", postData)
+          .post(`${this.apiUrl}admins/login/`,postData)
+
           .then((response) => {
             if (response.data.success) {
-              localStorage.setItem("hash", response.data.hash);
-              localStorage.setItem("fullname", response.data.fullname);
-              this.$router.push("/");
+              localStorage.setItem("admin_hash", response.data.admin_hash);
+              localStorage.setItem("admin_name", response.data.admin_name);
+              this.$router.push("/backend/dashboard");
 
-              const firstNumber = response.data.hash.split("-")[0]; // แยกตัวเลขชุดเเรก
-
-              console.log("ตัวเลขชุดแรกก่อนเข้าสู่ระบบ:", firstNumber);
               console.log("เข้าสู่ระบบ :", response.data);
             } else {
               this.$refs.modal.showAlertModal({
