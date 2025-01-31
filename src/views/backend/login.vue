@@ -57,8 +57,17 @@ export default {
       isFocus: false,
     };
   },
-
+  mounted() {
+    if( this.checkAuth() ){
+      // redirect to admin home
+    }
+  },
   methods: {
+    checkAuth(){
+      // localStorage.setItem("admin_role", 'admin');
+      // เช็ค admin_role  จาก localstorage ว่าเป็น admin หรือไม่
+      // return เป็น True, False
+    },
     BtnLogin() {
       if (!this.code) {
         this.isFocus = true;
@@ -72,7 +81,7 @@ export default {
 
           .then((response) => {
             if (response.data.success) {
-              localStorage.setItem("admin_hash", response.data.admin_hash);
+              localStorage.setItem("admin_role", 'admin');
               localStorage.setItem("admin_name", response.data.admin_name);
               this.$router.push("/backend/dashboard");
 

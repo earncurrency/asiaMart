@@ -474,13 +474,24 @@ export default {
     };
   },
   mounted() {
-    this.getListAdmin();
+    if( this.checkAuth() ){
+      // redirect to admin home
+      this.getListAdmin();
 
-    document.addEventListener("click", this.closeDropdownStatus);
-    document.addEventListener("click", this.closeDropdown);
+      document.addEventListener("click", this.closeDropdownStatus);
+      document.addEventListener("click", this.closeDropdown);
+    }else{
+      // Redirect to login page
+    }
+
   },
 
   methods: {
+    checkAuth(){
+      // localStorage.setItem("admin_role", 'admin');
+      // เช็ค admin_role จาก localstorage ว่าเป็น admin หรือไม่
+      // return เป็น True, False
+    },
     showFormTable() {
       this.formTable = true;
       this.formAdd = false;

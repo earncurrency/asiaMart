@@ -188,3 +188,11 @@ def update_order(order_id: int, order: OrderModel):
     finally:
         session.close()
 
+# @router.get("/dashboard/graph")
+# def dashboard_graph():
+#     """
+#     select sum(total)
+#     from tb_order
+#     where month(orderDate)=1 and year(orderDate)=2025
+#     """
+#     return True
