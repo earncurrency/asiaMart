@@ -3,7 +3,7 @@ import frontend_navbar from "../../components/frontend/navbar.vue";
 </script>
 <template>
   <frontend_navbar />
-  <div class="flex justify-center pt-24 p-4">
+  <div class="flex justify-center lg:pt-24 p-4">
     <div
       class="w-full lg:w-2/4 max-w-screen-2xl lg:p-12 lg:border border-gray-200 rounded-lg mb-16 lg:mb-4 bg-white z-40"
     >
@@ -14,7 +14,7 @@ import frontend_navbar from "../../components/frontend/navbar.vue";
           <div class="p-4 w-full rounded-md text-gray-600">
             <p class="mb-6 text-3xl font-semibold">เเจ้งเตือน</p>
 
-            <RouterLink to="/order-detail">
+            <!-- <RouterLink to="/order-detail">
               <div
                 class="p-4 mb-4 text-md text-gray-600 rounded-lg bg-gray-50 cursor-pointer relative shadow-md"
                 role="alert"
@@ -34,7 +34,7 @@ import frontend_navbar from "../../components/frontend/navbar.vue";
                   <i class="fa-solid fa-angle-right"></i>
                 </span>
               </div>
-            </RouterLink>
+            </RouterLink> -->
 
             <div
               class="p-4 mb-4 text-md text-gray-600 rounded-lg bg-gray-50 cursor-pointer relative shadow-md text-center"

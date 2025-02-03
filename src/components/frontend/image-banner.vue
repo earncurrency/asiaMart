@@ -1,5 +1,5 @@
 <template>
-    <div id="animation-carousel" class="relative w-full top-16" data-carousel="static">
+    <div id="animation-carousel" class="relative w-full lg:top-16" data-carousel="static">
         <!-- Carousel wrapper -->
         <div class="relative h-56 overflow-hidden md:h-[410px]">
             <!-- Transition wrapper -->

@@ -79,7 +79,11 @@ export default {
   methods: {
     async getListProduct() {
       await axios
-        .get(`${this.apiUrl}products/cat/${this.categoryId}`)
+        .get(`${this.apiUrl}products/cat/`,{
+          params: {
+            category_id: this.categoryId,
+          },
+        })
         .then((response) => {
           const data = response.data;
           this.products = data.rows;
@@ -89,6 +93,7 @@ export default {
           console.error("There was an error fetching the data:", error);
         });
     },
+
   },
 };
 </script>

@@ -6,7 +6,7 @@ import { RouterLink, RouterView } from "vue-router";
 <template>
   <!-- เมนูด้านบน -->
   <nav
-    class="fixed w-full bg-white border-gray-200 dark:bg-gray-900 shadow-md z-50"
+    class="hidden lg:block fixed w-full bg-white border-gray-200 dark:bg-gray-900 shadow-md z-50"
   >
     <div
       class="max-w-screen-2xl flex flex-wrap items-center justify-between mx-auto p-4"
@@ -35,7 +35,7 @@ import { RouterLink, RouterView } from "vue-router";
       </RouterLink>
 
       <!-- ช้องค้นหา -->
-      <div class="flex items-center max-w-xl lg:w-full mx-auto">
+      <!-- <div class="flex items-center max-w-xl lg:w-full mx-auto">
         <label for="voice-search" class="sr-only">Search</label>
 
         <div class="relative w-full">
@@ -57,7 +57,7 @@ import { RouterLink, RouterView } from "vue-router";
             <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
-      </div>
+      </div> -->
 
       <div
         class="hidden lg:flex relative flex gap-1 lg:gap-4 justify-center items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse"

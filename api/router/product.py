@@ -285,25 +285,34 @@ def save_image_from_base64(base64_str: str, folder: str ) -> str:
     except Exception as e:
         raise HTTPException(status_code=400, detail="ไม่สามารถบันทึกรูปภาพได้")
 
-@router.get("/cat/{category_id}")
-def get_products_by_category_id(category_id: int):
+@router.get("/cat/")
+def get_products_by_category_id(category_id: str = ''):
     session = SessionLocal()
     try:
-        # ทำการ query และ join ข้อมูลจาก tb_product, tb_product_image และ tb_category โดยกรองเฉพาะสินค้าที่มี status เป็น 'active' และ category_id ตรงกับที่ส่งเข้ามา
-        products = session.query(ProductSchema).join(
+
+        query = session.query(ProductSchema).join(
             ProductImageSchema, ProductImageSchema.product_id == ProductSchema.id, isouter=True
         ).join(
             CategorySchema, CategorySchema.id == ProductSchema.category_id
         ).filter(
-            ProductSchema.status != 'remove', 
-            ProductSchema.category_id == category_id
-        ).order_by(desc(ProductSchema.id)).all()
+            ProductSchema.status == 'active'  
+        )
+
+        # ถ้ามี category_id ส่งมา ให้กรองตาม category_id
+        if category_id:
+            query = query.filter(ProductSchema.category_id == category_id)
+
+        # เรียงลำดับสินค้าตาม id จากมากไปน้อย
+        products = query.order_by(desc(ProductSchema.id)).all()
 
         # สร้างผลลัพธ์ที่จะส่งกลับ
         result = []
         for product in products:
             # ดึงข้อมูลภาพ (ถ้ามี)
-            product_images = session.query(ProductImageSchema).filter(ProductImageSchema.product_id == product.id, ProductImageSchema.status == 'active').all()
+            product_images = session.query(ProductImageSchema).filter(
+                ProductImageSchema.product_id == product.id, 
+                ProductImageSchema.status == 'active'
+            ).all()
 
             # สร้างรายการรูปภาพที่เกี่ยวข้อง
             image_paths = [image.path for image in product_images]

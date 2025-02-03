@@ -9,7 +9,7 @@ import axios from "axios";
   <frontend_navbar :cartsLength="cartsLength" />
   <Modal ref="modal" " />
 
-  <div class="flex justify-center pt-24 p-4">
+  <div class="flex justify-center lg:pt-24 p-4">
     <div
       class="w-full max-w-screen-2xl lg:p-12 lg:border border-gray-200 rounded-lg mb-16 lg:mb-4 bg-white z-40"
     >
@@ -26,7 +26,7 @@ import axios from "axios";
         </div>
         <div
           class="lg:flex items-center justify-between font-medium p-2 lg:p-0"
-        >
+          >
           <!-- เปุ่มนี้เสดงเมื่อจอใหญ่ -->
           <div class="flex justify-center gap-4">
             <div class="hidden lg:flex items-center gap-4">

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from sqlalchemy.orm import Session
-from sqlalchemy import asc, desc , func
+from sqlalchemy import asc, desc , func, extract
 from datetime import datetime
 
 from database import SessionLocal, engine
@@ -188,11 +188,39 @@ def update_order(order_id: int, order: OrderModel):
     finally:
         session.close()
 
-# @router.get("/dashboard/graph")
-# def dashboard_graph():
-#     """
-#     select sum(total)
-#     from tb_order
-#     where month(orderDate)=1 and year(orderDate)=2025
-#     """
-#     return True
+@router.get("/chart/")
+def chart():
+    session = SessionLocal()
+    try:
+        # Query เพื่อ group by เดือนและปี และคำนวณผลรวมของ total
+        results = session.query(
+            extract('year', OrderSchema.order_date).label('year'),
+            extract('month', OrderSchema.order_date).label('month'),
+            func.sum(OrderSchema.total).label('total_sum')
+        ).filter(
+            OrderSchema.status == 'success'  
+        ).group_by(
+            extract('year', OrderSchema.order_date),
+            extract('month', OrderSchema.order_date)
+        ).order_by(
+            extract('year', OrderSchema.order_date),
+            extract('month', OrderSchema.order_date)
+        ).all()
+
+        all_total_sum = sum(result.total_sum for result in results)
+
+        # แปลงผลลัพธ์ให้อยู่ในรูปแบบที่ต้องการ
+        chart_data = [{
+            'month_year': f"{str(result.month).zfill(2)}/{result.year}",
+            'total_sum': result.total_sum
+        } for result in results]
+
+        return {
+            "message": "Get monthly totals successfully",
+            "rows": chart_data,
+            "total": len(chart_data),
+            "all_total_sum": all_total_sum 
+        }
+
+    finally:
+        session.close()
