@@ -6,6 +6,7 @@ import tabsCategory from '@/components/frontend/tabs-category.vue';
 import productList from '@/components/frontend/product-list.vue';
 import promotion from '@/components/frontend/promotion.vue';
 
+
 </script>
 <template>
 
@@ -56,3 +57,4 @@ import promotion from '@/components/frontend/promotion.vue';
 
 
 </template>
+

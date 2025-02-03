@@ -181,7 +181,7 @@ import axios from "axios";
             <!-- ตาราง -->
             <div
               class="relative overflow-x-auto rounded-lg border border-gray-200"
-              >
+            >
               <table
                 class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
               >
@@ -723,9 +723,9 @@ export default {
         images: [],
       },
       categorys: [],
-      categoryStatus:"",
+      categoryStatus: "",
       previewImages: [],
-      
+
       isFocus: false,
       formTable: true,
       formAdd: false,
@@ -736,13 +736,21 @@ export default {
     };
   },
   mounted() {
-    this.getListProduct();
-
+    this.checkAuth();
     document.addEventListener("click", this.closeDropdownStatus);
     document.addEventListener("click", this.closeDropdown);
   },
 
   methods: {
+    checkAuth() {
+      const adminRole = localStorage.getItem("admin_role");
+
+      if (adminRole !== "admin") {
+        this.$router.push("/backend/login");
+      } else {
+        this.getListProduct();
+      }
+    },
     showFormAdd() {
       this.formTable = false;
       this.formAdd = true;
@@ -795,9 +803,7 @@ export default {
 
       try {
         // เรียก API เพื่อดึงข้อมูลสินค้าที่ระบุ
-        const response = await axios.get(
-          `${this.apiUrl}products/${productId}`
-        );
+        const response = await axios.get(`${this.apiUrl}products/${productId}`);
 
         // ตรวจสอบว่าข้อมูลของสินค้าได้รับมาอย่างถูกต้อง
         if (response.status === 200) {
@@ -840,11 +846,10 @@ export default {
 
     //เเสดงข้อมูลหมวดหมู่สินค้า
     async getListCategory() {
-
       this.categoryStatus = "active";
 
       await axios
-      .get(`${this.apiUrl}category/`, {
+        .get(`${this.apiUrl}category/`, {
           params: { category_status: this.categoryStatus },
         })
         .then((response) => {
@@ -857,7 +862,7 @@ export default {
           );
           if (!isCategoryValid) {
             this.product.category_id = ""; // ถ้าไม่ตรงกัน ให้ category_id เป็น ""
-          } 
+          }
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error);
@@ -901,13 +906,10 @@ export default {
           };
 
           // ส่งข้อมูลผลิตภัณฑ์และรูปภาพไปยัง API
-          const productResponse = await axios.post(
-            `${this.apiUrl}products/`,
-            {
-              product: dataProduct,
-              product_images: this.previewImages,
-            }
-          );
+          const productResponse = await axios.post(`${this.apiUrl}products/`, {
+            product: dataProduct,
+            product_images: this.previewImages,
+          });
 
           // ตรวจสอบผลลัพธ์จากการเพิ่มผลิตภัณฑ์
           if (productResponse.status === 200) {

@@ -321,7 +321,6 @@ import axios from "axios";
               </div>
             </div>
 
-
             <hr class="my-2 text-gray-600 mt-8" />
 
             <div class="flex gap-2 justify-center mt-4 md:mt-4">
@@ -473,24 +472,24 @@ export default {
       pageSizeOpen: false,
     };
   },
+
   mounted() {
-    if( this.checkAuth() ){
-      // redirect to admin home
-      this.getListAdmin();
+    // เช็คสิทธิ์การเข้าถึง
+    this.checkAuth();
 
-      document.addEventListener("click", this.closeDropdownStatus);
-      document.addEventListener("click", this.closeDropdown);
-    }else{
-      // Redirect to login page
-    }
-
+    document.addEventListener("click", this.closeDropdownStatus);
+    document.addEventListener("click", this.closeDropdown);
   },
 
   methods: {
-    checkAuth(){
-      // localStorage.setItem("admin_role", 'admin');
-      // เช็ค admin_role จาก localstorage ว่าเป็น admin หรือไม่
-      // return เป็น True, False
+    checkAuth() {
+      const adminRole = localStorage.getItem("admin_role");
+
+      if (adminRole !== "admin") {
+        this.$router.push("/backend/login");
+      } else {
+        this.getListAdmin();
+      }
     },
     showFormTable() {
       this.formTable = true;
@@ -587,10 +586,7 @@ export default {
             status: this.admin.status,
           };
 
-          const response = await axios.post(
-            `${this.apiUrl}admins/`,
-            dataAdmin
-          );
+          const response = await axios.post(`${this.apiUrl}admins/`, dataAdmin);
 
           if (response.status === 200) {
             this.$refs.modal.showAlertModal({

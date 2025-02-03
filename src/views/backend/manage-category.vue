@@ -373,12 +373,22 @@ export default {
     };
   },
   mounted() {
-    this.getListCategory();
+    this.checkAuth();
 
     document.addEventListener("click", this.closeDropdownStatus);
     document.addEventListener("click", this.closeDropdown);
   },
   methods: {
+    checkAuth() {
+      const adminRole = localStorage.getItem("admin_role");
+
+      if (adminRole !== "admin") {
+        this.$router.push("/backend/login");
+      } else {
+        this.getListCategory();
+      }
+    },
+
     // เพิ่มหมวดหมู่สินค้า
     showFormAdd() {
       this.formTable = false;

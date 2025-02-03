@@ -482,7 +482,8 @@ import axios from "axios";
             </div>
 
             <div class="flex gap-2 justify-center mt-4 md:mt-4">
-              <button v-if="order.status !== 'cancel'"
+              <button
+                v-if="order.status !== 'cancel'"
                 @click="updateStatus(order.id, order.status)"
                 class="text-white font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center h-full"
                 :class="{
@@ -550,13 +551,23 @@ export default {
     };
   },
   mounted() {
-    this.showFormTable();
+    this.checkAuth();
 
     document.addEventListener("click", this.closeDropdownStatus);
     document.addEventListener("click", this.closeDropdown);
   },
 
   methods: {
+    checkAuth() {
+      const adminRole = localStorage.getItem("admin_role");
+
+      if (adminRole !== "admin") {
+        this.$router.push("/backend/login");
+      } else {
+        this.showFormTable();
+      }
+    },
+
     async showFormTable() {
       this.formTable = true;
       this.formEdit = false;

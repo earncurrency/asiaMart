@@ -252,21 +252,17 @@ export default {
     };
   },
   mounted() {
-    this.getOrders();
+    this.checkAuth();
   },
   methods: {
-    async getOrders() {
-      await axios
-        .get(`${this.apiUrl}orders/`)
-        .then((response) => {
-          const data = response.data;
-          this.orders = data.rows;
+    checkAuth() {
+      const adminRole = localStorage.getItem("admin_role");
 
-          console.log(this.orders);
-        })
-        .catch((error) => {
-          console.error("There was an error fetching the data:", error);
-        });
+      if (adminRole !== "admin") {
+        this.$router.push("/backend/login");
+      } else {
+ 
+      }
     },
 
   },

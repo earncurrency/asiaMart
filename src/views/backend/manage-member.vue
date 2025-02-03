@@ -159,7 +159,7 @@ import axios from "axios";
             <!-- ตาราง -->
             <div
               class="relative overflow-x-auto rounded-lg border border-gray-200"
-              >
+            >
               <table
                 class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
               >
@@ -330,7 +330,6 @@ import axios from "axios";
               </button>
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -345,11 +344,11 @@ export default {
 
       members: [],
       memberId: "",
-      member:{
-        code:"",
-        name:"",
-        phone:"",
-        status:"",
+      member: {
+        code: "",
+        name: "",
+        phone: "",
+        status: "",
       },
 
       isFocus: false,
@@ -362,13 +361,21 @@ export default {
     };
   },
   mounted() {
-    this.getListMember();
-
+    this.checkAuth();
     document.addEventListener("click", this.closeDropdownStatus);
     document.addEventListener("click", this.closeDropdown);
   },
 
   methods: {
+    checkAuth() {
+      const adminRole = localStorage.getItem("admin_role");
+
+      if (adminRole !== "admin") {
+        this.$router.push("/backend/login");
+      } else {
+        this.getListMember();
+      }
+    },
     showFormTable() {
       this.formTable = true;
       this.formAdd = false;

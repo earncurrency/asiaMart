@@ -47,7 +47,7 @@ def get_admin(admin_id: int):
         admin = query.first()
 
         if not admin:
-            raise HTTPException(status_code=404, detail="ไม่พบข้อมูล")
+            raise HTTPException(status_code=404, detail="ไม่พบข้อมูลพนักงานในระบบ")
 
         return {
             "message": "Get admin successfully",
@@ -116,3 +116,27 @@ def update_admin(admin_id: int, admin: AdminModel):
         }
     finally:
         session.close()
+
+@router.post("/login")
+async def login(admin: AdminModel):
+    session = SessionLocal()
+    try:
+        query = session.query(AdminSchema).filter(AdminSchema.code == admin.code)
+        admin = query.first()  
+
+
+        if admin is None:
+            return {
+                "success": False,  
+                "message": "ไม่พบข้อมูลพนักงานในระบบ"  
+            }
+
+        # ถ้าพบ admin
+        return {
+            "success": True,
+            "admin_name": admin.name,  
+            # "admin_role": "admin",  
+            "message": "เข้าสู่ระบบสำเร็จ"  
+        }
+    finally:
+        session.close() 

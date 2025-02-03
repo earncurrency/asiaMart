@@ -41,7 +41,7 @@ import { faL } from "@fortawesome/free-solid-svg-icons";
                   alt="user photo"
                 />
                 <span class="hidden lg:block mx-2"
-                  >เจษฎากร หวานสนิท
+                  >{{ admin_name }}
                   <span class="ml-2"
                     ><i class="fa-solid fa-angle-down"></i
                   ></span>
@@ -58,7 +58,7 @@ import { faL } from "@fortawesome/free-solid-svg-icons";
                     class="text-md font-semibold text-gray-900 dark:text-white whitespace-nowrap"
                     role="none"
                   >
-                    เจษฎากร หวานสนิท
+                    {{ admin_name }}
                   </p>
                   <p
                     class="text-sm font-medium text-gray-900 truncate dark:text-gray-300"
@@ -214,18 +214,20 @@ import { faL } from "@fortawesome/free-solid-svg-icons";
 export default {
   data() {
     return {
-      fullname: "",
+      admin_name: "",
       sidebarOpen: false,
       iconUserOpen: false,
     };
   },
   mounted() {
     document.addEventListener("click", this.closeIconUser);
-
     // ตรวจสอบขนาดหน้าจอเมื่อหน้าเว็บโหลดเสร็จ และปรับค่า `sidebarOpen`
     this.checkScreenWidth();
     // เพิ่ม event listener เพื่อให้ตรวจจับการปรับขนาดหน้าจอ (resize)
     window.addEventListener("resize", this.checkScreenWidth);
+
+    this.setdata();
+
   },
   destroyed() {
     // Clean up the event listener
@@ -239,11 +241,21 @@ export default {
       this.$emit("showFormTable");
     },
 
+    setdata() {
+
+      let admin_name = localStorage.getItem("admin_name");
+      this.admin_name = admin_name;
+
+      let admin_role = localStorage.getItem("admin_role");
+      this.admin_role = admin_role;
+
+    },
+
     logout() {
       localStorage.setItem("admin_hash", "");
       localStorage.setItem("admin_name", "");
+      localStorage.setItem("admin_role", "");
       this.$router.push("/backend/login");
-
     },
 
     checkScreenWidth() {

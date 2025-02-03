@@ -18,13 +18,13 @@ router = APIRouter(
 
 # ดึงข้อมูลทั้งหมดจากตาราง tb_product
 @router.get("/")
-def list_products():
+def list_products(limit: int = 10, offset: int = 0):
     session = SessionLocal()
     try:
         # ทำการ query และ join ข้อมูลจาก tb_product และ tb_product_image โดยกรองเฉพาะสินค้าที่มี status เป็น 'active'
         products = session.query(ProductSchema).join(
-            ProductImageSchema, ProductImageSchema.product_id == ProductSchema.id, isouter=True
-        ).filter(ProductSchema.status != 'remove').order_by(desc(ProductSchema.id)).all()
+            ProductImageSchema, ProductImageSchema.product_id == ProductSchema.id
+        ).filter(ProductSchema.status != 'remove').order_by(desc(ProductSchema.id)).limit(limit).offset(offset).distinct(ProductSchema.id).all()
 
         # สร้างผลลัพธ์ที่จะส่งกลับ
         result = []

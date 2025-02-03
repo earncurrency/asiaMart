@@ -81,7 +81,7 @@ export default {
 
           .then((response) => {
             if (response.data.success) {
-              localStorage.setItem("admin_role", 'admin');
+              localStorage.setItem("admin_role", "admin");
               localStorage.setItem("admin_name", response.data.admin_name);
               this.$router.push("/backend/dashboard");
 
