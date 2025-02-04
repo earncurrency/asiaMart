@@ -24,7 +24,7 @@ def list_category(category_status: str = '', limit: int = 10, offset: int = 0):
         else:  # ถ้าไม่มี category_status หรือเป็นค่าว่าง
             categorys = session.query(CategorySchema).filter(CategorySchema.status != 'remove').order_by(asc(CategorySchema.id)).limit(limit).offset(offset).all()
         
-        total_category = session.query(CategorySchema).count()
+        total_category = session.query(CategorySchema).filter(CategorySchema.status != 'remove').count()
 
         return {
             "message": "Get all category",

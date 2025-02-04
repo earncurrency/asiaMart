@@ -20,7 +20,7 @@ import promotion from '@/components/frontend/promotion.vue';
             <div>
                 <!-- Title -->
                 <div class="title-content lg:flex items-center justify-between font-medium mt-4 gap-4 p-4 lg:p-0">
-                    <div class="flex justify-center">
+                    <div class="hidden lg:flex justify-center">
                         <p class="text-3xl font-semibold ">Asia Mart</p>
                     </div>
 
@@ -39,7 +39,7 @@ import promotion from '@/components/frontend/promotion.vue';
 
 
                 <div class="flex justify-center">
-                    <p class="text-3xl font-semibold mt-8 mb-2">สินค้าเเนะนำ</p>
+                    <p class="text-3xl font-semibold mt-8 mb-2">รายการสินค้า</p>
                 </div>
 
 

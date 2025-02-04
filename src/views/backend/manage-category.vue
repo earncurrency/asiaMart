@@ -1,5 +1,6 @@
 <script setup>
 import backend_navbar from "@/components/backend/navbar.vue";
+import pagination from "@/components/backend/paging.vue";
 import Modal from "@/components/backend/modal.vue";
 import axios from "axios";
 import { fas } from "@fortawesome/free-solid-svg-icons";
@@ -115,7 +116,7 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
                     type="button"
                     @click="togglePageSize"
                   >
-                    <span class="mr-2">10</span
+                    <span class="mr-2">{{ dataPaging.rows }}</span
                     ><i class="fa-solid fa-angle-down"></i>
                   </button>
                   <!-- เมนูขนาดเเถวในตาราง -->
@@ -128,7 +129,7 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
                       <li>
                         <a
                           href="#"
-                          @click="DropdownPageSize(10)"
+                          @click="pageSize(10)"
                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           >10</a
                         >
@@ -136,7 +137,7 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
                       <li>
                         <a
                           href="#"
-                          @click="DropdownPageSize(20)"
+                          @click="pageSize(20)"
                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           >20</a
                         >
@@ -144,7 +145,7 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
                       <li>
                         <a
                           href="#"
-                          @click="DropdownPageSize(50)"
+                          @click="pageSize(50)"
                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           >50</a
                         >
@@ -152,7 +153,7 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
                       <li>
                         <a
                           href="#"
-                          @click="DropdownPageSize(100)"
+                          @click="pageSize(100)"
                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           >100</a
                         >
@@ -221,6 +222,11 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
                   </tr>
                 </tbody>
               </table>
+              <pagination
+                :pageSize="dataPaging.rows"
+                :totalList="totalList"
+                @reloadData="reloadData"
+              />
             </div>
           </div>
 
@@ -350,6 +356,7 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
 
 <script>
 export default {
+  components: { pagination },
   data() {
     return {
       apiUrl: "http://127.0.0.1:8000/",
@@ -362,8 +369,15 @@ export default {
         status: "",
       },
 
-      isFocus: false,
+      dataPaging: {
+        pageNumber: 0,
+        rows: 10,
+        totalPage: 0,
+        status: "",
+      },
+      totalList: [],
 
+      isFocus: false,
       formTable: true,
       formAdd: false,
       formEdit: false,
@@ -409,20 +423,37 @@ export default {
 
     //เเสดงข้อมูลประเภทสินค้าบนตาราง
     async getListCategory() {
-      this.categoryStatus = "";
-
       await axios
         .get(`${this.apiUrl}category/`, {
-          params: { category_status: this.categoryStatus },
+          params: {
+            limit: this.dataPaging.rows,
+            offset: this.dataPaging.pageNumber,
+          },
         })
         .then((response) => {
           const data = response.data;
           this.categorys = data.rows;
+          this.totalList = data.total;
+
           console.log(this.categorys);
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error); // แสดงข้อผิดพลาด
         });
+    },
+    reloadData(pageNo) {
+      this.dataPaging.pageNumber = pageNo;
+      this.getListCategory();
+
+      console.log('pageNo',pageNo)
+    },
+    pageSize(row) {
+      this.dataPaging.pageNumber = 0;
+      this.dataPaging.rows = row;
+      this.getListCategory();
+      this.pageSizeOpen = false;
+
+      console.log('row',row)
     },
 
     async showFormEdit(productTypeId) {
@@ -603,9 +634,6 @@ export default {
       }
     },
 
-    DropdownPageSize(size) {
-      this.pageSizeOpen = false;
-    },
     togglePageSize(event) {
       // ป้องกันการคลิกบนปุ่มที่ทำให้ event ไปถึง listener ของ document
       event.stopPropagation();

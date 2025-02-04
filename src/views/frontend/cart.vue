@@ -7,7 +7,7 @@ import Modal from "@/components/frontend/modal.vue";
   <frontend_navbar :cartsLength="cartsLength" />
   <Modal ref="modal" />
 
-  <div class="flex justify-center lg:pt-24">
+  <div class="flex justify-center pt-24">
     <div
       class="w-full max-w-screen-2xl lg:p-12 lg:border border-gray-200 rounded-lg lg:mb-4 bg-white z-40"
     >
@@ -20,7 +20,7 @@ import Modal from "@/components/frontend/modal.vue";
 
             <div class="lg:flex lg:gap-8 w-full">
               <div
-                class="lg:w-3/4 w-full z-40 pr-8 pl-8 pt-2 lg:h-auto h-[calc(100vh-375px)] overflow-y-auto no-scrollbar"
+                class="lg:w-3/4 w-full z-40 pr-8 pl-8 pt-2 lg:h-auto h-[calc(100vh-480px)] overflow-y-auto no-scrollbar"
               >
                 <!-- product -->
                 <div>

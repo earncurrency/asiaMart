@@ -6,7 +6,7 @@ import { RouterLink, RouterView } from "vue-router";
 <template>
   <!-- เมนูด้านบน -->
   <nav
-    class="hidden lg:block fixed w-full bg-white border-gray-200 dark:bg-gray-900 shadow-md z-50"
+    class="fixed w-full bg-white border-gray-200 dark:bg-gray-900 shadow-md z-50 top-[-1px]"
   >
     <div
       class="max-w-screen-2xl flex flex-wrap items-center justify-between mx-auto p-4"
@@ -15,7 +15,7 @@ import { RouterLink, RouterView } from "vue-router";
       <RouterLink to="/">
         <a
           href=""
-          class="hidden lg:flex items-center space-x-3 rtl:space-x-reverse"
+          class="flex items-center space-x-3 rtl:space-x-reverse"
         >
           <img src="@/assets/image/asia/icon.png" class="h-10" alt="Logo" />
           <span
@@ -25,14 +25,14 @@ import { RouterLink, RouterView } from "vue-router";
           >
         </a>
       </RouterLink>
-      <RouterLink to="/">
+      <!-- <RouterLink to="/">
         <a
           href=""
           class="flex lg:hidden items-center space-x-3 rtl:space-x-reverse"
         >
           <img src="../../assets/image/asia/icon.png" class="h-10" alt="Logo" />
         </a>
-      </RouterLink>
+      </RouterLink> -->
 
       <!-- ช้องค้นหา -->
       <!-- <div class="flex items-center max-w-xl lg:w-full mx-auto">
@@ -210,7 +210,7 @@ import { RouterLink, RouterView } from "vue-router";
           <div
             class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-0 end-5"
           >
-          {{ computedCartsLength }}
+            {{ computedCartsLength }}
           </div>
         </button>
       </RouterLink>
@@ -301,7 +301,6 @@ export default {
       localStorage.setItem("fullname", "");
       this.$router.push("/login");
       this.closeiconUserMenu();
-
     },
     closeiconUserMenu() {
       this.iconUserOpen = false;
