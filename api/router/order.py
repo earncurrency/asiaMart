@@ -15,21 +15,23 @@ router = APIRouter(
 
 #เเสดง order ทั้งหมด
 @router.get("/")
-def list_orders(member_id: str = '', orders_status: str = ''):
+def list_orders(member_id: str = '', orders_status: str = '', limit: int = 10, offset: int = 0):
     """ List Orders """
     session = SessionLocal()
     try:
 
-        query = session.query(OrderSchema).order_by(desc(OrderSchema.id))
+        query = session.query(OrderSchema).order_by(desc(OrderSchema.id)).limit(limit).offset(offset)
 
         if member_id:
-            query = query.filter(OrderSchema.member_id == member_id)
+            query = query.filter(OrderSchema.member_id == member_id).limit(limit).offset(offset)
 
         #ไม่เเสดง status success กับ cancel    
         if orders_status:
-            query = query.filter(OrderSchema.status.notin_(['success', 'cancel']))
+            query = query.filter(OrderSchema.status.notin_(['success', 'cancel'])).limit(limit).offset(offset)
 
         orders = query.all()
+
+        total = session.query(OrderSchema).filter(OrderSchema.status != 'remove').count()
 
         return {
             "message": "Get orders successfully",
@@ -47,7 +49,7 @@ def list_orders(member_id: str = '', orders_status: str = ''):
                     "length": o.length,
                 } for o in orders
             ],
-            "total": len(orders)
+            "total": total
         }
     finally:
         session.close()

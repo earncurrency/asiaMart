@@ -1,8 +1,8 @@
 <script setup>
-import backend_navbar from "@/components/backend/navbar.vue";
-import pagination from "@/components/backend/paging.vue";
-import Modal from "@/components/backend/modal.vue";
 import axios from "axios";
+import backend_navbar from "@/components/backend/navbar.vue";
+import Modal from "@/components/backend/modal.vue";
+import pagination from "@/components/backend/paging.vue";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 </script>
 

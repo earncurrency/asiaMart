@@ -52,17 +52,17 @@ def total():
 
     session = SessionLocal()
     try:
-        order = session.query(OrderSchema).all()
-        member = session.query(MemberSchema).all()
-        product = session.query(ProductSchema).all()
+        order = session.query(OrderSchema).count()
+        member = session.query(MemberSchema).count()
+        product = session.query(ProductSchema).filter(ProductSchema.status != 'remove').count()
 
         results = session.query(func.sum(OrderSchema.total).label('total_sum')).filter(OrderSchema.status == 'success').all()
         total_sales = sum(result.total_sum for result in results)
 
         return {
-            "order": len(order),
-            "member" : len(member),
-            "product" : len(product),
+            "order": order,
+            "member" : member,
+            "product" : product,
             "total_sales" : total_sales,
         }
     finally:

@@ -58,11 +58,14 @@ import tabsCategory from "../../components/frontend/tabs-category.vue";
 <script>
 export default {
   props: {
-
     categoryId: {
-      type: String, 
+      type: String,
       required: true,
     },
   },
+  data() {
+    return {};
+  },
+  methods: {},
 };
 </script>

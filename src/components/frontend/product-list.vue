@@ -2,6 +2,7 @@
 import { useRoute } from "vue-router";
 
 import axios from "axios";
+import pagination from "@/components/backend/paging.vue";
 </script>
 
 <template>
@@ -10,7 +11,6 @@ import axios from "axios";
     class="text-center mt-24 mb-8 text-xl text-gray-600"
   >
     ไม่มีสินค้าในหมวดหมู่นี้เเสดงอยู่
-
   </div>
   <div
     v-else
@@ -51,6 +51,11 @@ import axios from "axios";
       </RouterLink>
     </div>
   </div>
+  <pagination
+    :pageSize="dataPaging.rows"
+    :totalList="totalList"
+    @reloadData="reloadData"
+  />
 </template>
 
 <script>
@@ -60,12 +65,21 @@ export default {
       type: String,
       required: true,
     },
+
   },
   data() {
     return {
       baseUrl: __BASE_URL__,
       apiUrl: "http://127.0.0.1:8000/",
       products: [],
+
+      dataPaging: {
+        pageNumber: 0,
+        rows: 4,
+        totalPage: 0,
+        status: "",
+      },
+      totalList: [],
     };
   },
   mounted() {
@@ -75,25 +89,46 @@ export default {
     categoryId(newCategoryId) {
       this.getListProduct(newCategoryId);
     },
+
   },
   methods: {
     async getListProduct() {
       await axios
-        .get(`${this.apiUrl}products/cat/`,{
+        .get(`${this.apiUrl}products/cat/`, {
           params: {
             category_id: this.categoryId,
+            limit: this.dataPaging.rows,
+            offset: this.dataPaging.pageNumber,
           },
         })
         .then((response) => {
           const data = response.data;
           this.products = data.rows;
+          this.totalList = data.total;
+
+          console.log("totalList", this.totalList);
           console.log(this.products);
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error);
         });
     },
+    reloadData(pageNo) {
+      this.dataPaging.pageNumber = pageNo;
 
+      this.getListProduct();
+
+      console.log("pageNo", pageNo);
+    },
+
+    pageSize(row) {
+      this.dataPaging.pageNumber = 0;
+      this.dataPaging.rows = row;
+      this.getListProduct();
+      this.pageSizeOpen = false;
+
+      console.log("row", row);
+    },
   },
 };
 </script>

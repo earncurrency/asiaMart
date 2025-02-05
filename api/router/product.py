@@ -22,9 +22,9 @@ def list_products(limit: int = 10, offset: int = 0):
     session = SessionLocal()
     try:
         # ทำการ query และ join ข้อมูลจาก tb_product และ tb_product_image โดยกรองเฉพาะสินค้าที่มี status เป็น 'active'
-        products = session.query(ProductSchema).join(
-            ProductImageSchema, ProductImageSchema.product_id == ProductSchema.id
-        ).filter(ProductSchema.status != 'remove').order_by(desc(ProductSchema.id)).limit(limit).offset(offset).distinct(ProductSchema.id).all()
+        products = session.query(ProductSchema).filter(ProductSchema.status != 'remove').order_by(desc(ProductSchema.id)).limit(limit).offset(offset).all()
+
+        total = session.query(ProductSchema).filter(ProductSchema.status != 'remove').count()
 
         # สร้างผลลัพธ์ที่จะส่งกลับ
         result = []
@@ -32,8 +32,6 @@ def list_products(limit: int = 10, offset: int = 0):
         for product in products:
             # ดึงข้อมูลภาพ (ถ้ามี)
             product_images = session.query(ProductImageSchema).filter(ProductImageSchema.product_id == product.id, ProductImageSchema.status == 'active').all()
-
-            # สร้างรายการรูปภาพที่เกี่ยวข้อง
             image_paths = [image.path for image in product_images]
 
             result.append({
@@ -45,13 +43,13 @@ def list_products(limit: int = 10, offset: int = 0):
                 "status": product.status,
                 "category_id": product.category_id,
                 "detail": product.detail,
-                "images": image_paths  # ส่งข้อมูลภาพทั้งหมดที่เกี่ยวข้องกับสินค้า
+                "images": image_paths  
             })
 
         return {
             "message": "Get active products",
             "rows": result,
-            "total": len(result)
+            "total": total
         }
 
     finally:
@@ -286,35 +284,22 @@ def save_image_from_base64(base64_str: str, folder: str ) -> str:
         raise HTTPException(status_code=400, detail="ไม่สามารถบันทึกรูปภาพได้")
 
 @router.get("/cat/")
-def get_products_by_category_id(category_id: str = ''):
+def get_products_by_category_id(category_id: str = '', limit: int = 10, offset: int = 0):
     session = SessionLocal()
     try:
-
-        query = session.query(ProductSchema).join(
-            ProductImageSchema, ProductImageSchema.product_id == ProductSchema.id, isouter=True
-        ).join(
-            CategorySchema, CategorySchema.id == ProductSchema.category_id
-        ).filter(
-            ProductSchema.status == 'active'  
-        )
-
-        # ถ้ามี category_id ส่งมา ให้กรองตาม category_id
         if category_id:
-            query = query.filter(ProductSchema.category_id == category_id)
+            products = session.query(ProductSchema).filter(ProductSchema.category_id == category_id, ProductSchema.status == 'active').order_by(desc(ProductSchema.id)).limit(limit).offset(offset).all()
+            total = session.query(ProductSchema).filter(ProductSchema.category_id == category_id, ProductSchema.status == 'active').count()
+        else:
+            products = session.query(ProductSchema).filter(ProductSchema.status == 'active').order_by(desc(ProductSchema.id)).limit(limit).offset(offset).all()
+            total = session.query(ProductSchema).filter(ProductSchema.status == 'active').count()
 
-        # เรียงลำดับสินค้าตาม id จากมากไปน้อย
-        products = query.order_by(desc(ProductSchema.id)).all()
-
-        # สร้างผลลัพธ์ที่จะส่งกลับ
         result = []
         for product in products:
-            # ดึงข้อมูลภาพ (ถ้ามี)
             product_images = session.query(ProductImageSchema).filter(
-                ProductImageSchema.product_id == product.id, 
+                ProductImageSchema.product_id == product.id,
                 ProductImageSchema.status == 'active'
             ).all()
-
-            # สร้างรายการรูปภาพที่เกี่ยวข้อง
             image_paths = [image.path for image in product_images]
 
             result.append({
@@ -326,13 +311,13 @@ def get_products_by_category_id(category_id: str = ''):
                 "status": product.status,
                 "category_id": product.category_id,
                 "detail": product.detail,
-                "images": image_paths  # ส่งข้อมูลภาพทั้งหมดที่เกี่ยวข้องกับสินค้า
+                "images": image_paths
             })
 
         return {
             "message": "Get active products by category",
             "rows": result,
-            "total": len(result)
+            "total": total
         }
 
     finally:

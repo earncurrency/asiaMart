@@ -1,8 +1,8 @@
 <script setup>
 import axios from "axios";
 import backend_navbar from "@/components/backend/navbar.vue";
-import dashboard_card from "@/components/backend/dashboard-card.vue";
-import dashboard_chart from "@/components/backend/dashboard-chart.vue";
+import dashboard_card from "@/components/backend/dashboard/card.vue";
+import dashboard_chart from "@/components/backend/dashboard/chart.vue";
 </script>
 
 <template>

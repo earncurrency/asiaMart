@@ -1,7 +1,8 @@
 <script setup>
+import axios from "axios";
 import backend_navbar from "@/components/backend/navbar.vue";
 import Modal from "@/components/backend/modal.vue";
-import axios from "axios";
+import pagination from "@/components/backend/paging.vue";
 </script>
 
 <template class="">
@@ -127,7 +128,7 @@ import axios from "axios";
                       <li>
                         <a
                           href="#"
-                          @click="DropdownPageSize(10)"
+                          @click="pageSize(10)"
                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           >10</a
                         >
@@ -135,7 +136,7 @@ import axios from "axios";
                       <li>
                         <a
                           href="#"
-                          @click="DropdownPageSize(20)"
+                          @click="pageSize(20)"
                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           >20</a
                         >
@@ -143,7 +144,7 @@ import axios from "axios";
                       <li>
                         <a
                           href="#"
-                          @click="DropdownPageSize(50)"
+                          @click="pageSize(50)"
                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           >50</a
                         >
@@ -151,7 +152,7 @@ import axios from "axios";
                       <li>
                         <a
                           href="#"
-                          @click="DropdownPageSize(100)"
+                          @click="pageSize(100)"
                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           >100</a
                         >
@@ -239,6 +240,11 @@ import axios from "axios";
                   </tr>
                 </tbody>
               </table>
+              <pagination
+                :pageSize="dataPaging.rows"
+                :totalList="totalList"
+                @reloadData="reloadData"
+              />
             </div>
           </div>
 
@@ -463,6 +469,14 @@ export default {
         status: "",
       },
 
+      dataPaging: {
+        pageNumber: 0,
+        rows: 10,
+        totalPage: 0,
+        status: "",
+      },
+      totalList: [],
+
       isFocus: false,
       formTable: true,
       formAdd: false,
@@ -501,16 +515,35 @@ export default {
 
     async getListAdmin() {
       await axios
-        .get(`${this.apiUrl}admins`)
+        .get(`${this.apiUrl}admins`,{
+          params: {
+            limit: this.dataPaging.rows,
+            offset: this.dataPaging.pageNumber,
+          },
+        })
         .then((response) => {
           const data = response.data;
           this.admins = data.rows;
-
+          this.totalList = data.total;
           console.log(this.admins);
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error);
         });
+    },
+    reloadData(pageNo) {
+      this.dataPaging.pageNumber = pageNo;
+      this.getListAdmin();
+
+      console.log('pageNo',pageNo)
+    },
+    pageSize(row) {
+      this.dataPaging.pageNumber = 0;
+      this.dataPaging.rows = row;
+      this.getListAdmin();
+      this.pageSizeOpen = false;
+
+      console.log('row',row)
     },
 
     showFormAdd() {
@@ -714,9 +747,6 @@ export default {
       }
     },
 
-    DropdownPageSize(size) {
-      this.pageSizeOpen = false;
-    },
     togglePageSize(event) {
       // ป้องกันการคลิกบนปุ่มที่ทำให้ event ไปถึง listener ของ document
       event.stopPropagation();

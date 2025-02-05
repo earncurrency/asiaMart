@@ -19,17 +19,17 @@ def list_category(category_status: str = '', limit: int = 10, offset: int = 0):
     session = SessionLocal()
     try:
         if category_status:  # ถ้ามี category_status
-            categorys = session.query(CategorySchema).filter(CategorySchema.status == category_status, CategorySchema.status != 'remove').order_by(asc(CategorySchema.id)).limit(limit).offset(offset).all()
+            categorys = session.query(CategorySchema).filter(CategorySchema.status == category_status, CategorySchema.status != 'remove').order_by(desc(CategorySchema.id)).all()
 
         else:  # ถ้าไม่มี category_status หรือเป็นค่าว่าง
-            categorys = session.query(CategorySchema).filter(CategorySchema.status != 'remove').order_by(asc(CategorySchema.id)).limit(limit).offset(offset).all()
+            categorys = session.query(CategorySchema).filter(CategorySchema.status != 'remove').order_by(desc(CategorySchema.id)).limit(limit).offset(offset).all()
         
-        total_category = session.query(CategorySchema).filter(CategorySchema.status != 'remove').count()
+        total = session.query(CategorySchema).filter(CategorySchema.status != 'remove').count()
 
         return {
             "message": "Get all category",
             "rows": [{"id": category.id, "name": category.name, "status": category.status} for category in categorys],
-            "total": total_category
+            "total": total
         }
     finally:
         session.close() 

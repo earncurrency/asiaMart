@@ -19,11 +19,11 @@ def get_members(limit: int = 10, offset: int = 0):
     session = SessionLocal()
     try:
         members = session.query(MemberSchema).order_by(desc(MemberSchema.id)).limit(limit).offset(offset).all()
-        total_members = session.query(MemberSchema).count()
+        total = session.query(MemberSchema).count()
         return {
             "message": "Get all members",
             "rows": [{"id": member.id, "code": member.code, "name": member.name, "phone": member.phone, "status": member.status} for member in members],
-            "total": total_members
+            "total": total
         }
     finally:
         session.close()

@@ -1,5 +1,4 @@
 <script setup>
-
 import axios from "axios";
 </script>
 <template>
@@ -22,21 +21,18 @@ import axios from "axios";
 export default {
   data() {
     return {
-        apiUrl: "http://127.0.0.1:8000/",
+      apiUrl: "http://127.0.0.1:8000/",
 
-        categorys: {
-            id: "",
-            name: "",
-        },
-
+      categorys: {
+        id: "",
+        name: "",
+      },
     };
   },
   mounted() {
     this.getListCategory();
-
   },
   methods: {
-    
     async getListCategory() {
       this.categoryStatus = "active";
 
@@ -53,6 +49,7 @@ export default {
           console.error("There was an error fetching the data:", error); // แสดงข้อผิดพลาด
         });
     },
+
   },
 };
 </script>

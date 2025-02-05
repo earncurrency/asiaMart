@@ -20,6 +20,7 @@ def list_admins(limit: int = 10, offset: int = 0):
 
         query = session.query(AdminSchema).filter(AdminSchema.status != 'remove').order_by(desc(AdminSchema.id)).limit(limit).offset(offset)
         admins = query.all()
+        total = session.query(AdminSchema).filter(AdminSchema.status != 'remove').count()
 
         return {
             "message": "Get admins successfully",
@@ -32,7 +33,7 @@ def list_admins(limit: int = 10, offset: int = 0):
                     "status": a.status,
                 } for a in admins
             ],
-            "total": len(admins)
+            "total": total
         }
     finally:
         session.close()
