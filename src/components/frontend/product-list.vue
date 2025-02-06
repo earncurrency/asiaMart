@@ -6,6 +6,39 @@ import pagination from "@/components/backend/paging.vue";
 </script>
 
 <template>
+  <div class="lg:flex items-center justify-between font-medium p-4 lg:p-0">
+    <!-- ปุ่มนี้จะแสดงเมื่อจอใหญ่ -->
+    <div class="flex justify-center gap-4">
+      <!-- แสดงชื่อผลิตภัณฑ์ที่ดึงมาจาก URL -->
+      <!-- <p class="text-3xl font-semibold">{{ categoryName }}</p> -->
+      <!-- แสดงชื่อผลิตภัณฑ์ -->
+    </div>
+
+    <!-- tabs Category-->
+    <ul
+      class="flex flex-wrap justify-center text-md font-medium text-center mt-4 lg:mt-0 text-gray-500 dark:text-gray-400"
+    >
+      <li v-for="(category, index) in categorys" :key="index" class="me-2">
+        <!-- <RouterLink :to="`/category/${category.id}`">
+          <a
+            href="#"
+            class="inline-block px-4 py-3 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white"
+            >{{ category.name }}</a
+          >
+        </RouterLink> -->
+
+        <a
+          @click="clickCategory(category.id)"
+          href="#"
+          class="inline-block px-4 py-3 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white"
+          >{{ category.name }}</a
+        >
+      </li>
+    </ul>
+  </div>
+
+  <hr class="my-2 text-gray-600" />
+
   <div
     v-if="products.length === 0"
     class="text-center mt-24 mb-8 text-xl text-gray-600"
@@ -54,6 +87,7 @@ import pagination from "@/components/backend/paging.vue";
   <pagination
     :pageSize="dataPaging.rows"
     :totalList="totalList"
+    :currentNum="currentNum"
     @reloadData="reloadData"
   />
 </template>
@@ -63,15 +97,19 @@ export default {
   props: {
     categoryId: {
       type: String,
-      required: true,
+      required: false,
     },
-
   },
   data() {
     return {
       baseUrl: __BASE_URL__,
       apiUrl: "http://127.0.0.1:8000/",
       products: [],
+
+      categorys: {
+        id: "",
+        name: "",
+      },
 
       dataPaging: {
         pageNumber: 0,
@@ -80,16 +118,17 @@ export default {
         status: "",
       },
       totalList: [],
+      currentNum:null,
     };
   },
   mounted() {
     this.getListProduct();
+    this.getListCategory();
   },
   watch: {
     categoryId(newCategoryId) {
       this.getListProduct(newCategoryId);
     },
-
   },
   methods: {
     async getListProduct() {
@@ -106,7 +145,7 @@ export default {
           this.products = data.rows;
           this.totalList = data.total;
 
-          console.log("totalList", this.totalList);
+          // console.log("totalList", this.totalList);
           console.log(this.products);
         })
         .catch((error) => {
@@ -118,16 +157,31 @@ export default {
 
       this.getListProduct();
 
-      console.log("pageNo", pageNo);
+      // console.log("pageNo", pageNo);
     },
 
-    pageSize(row) {
-      this.dataPaging.pageNumber = 0;
-      this.dataPaging.rows = row;
-      this.getListProduct();
-      this.pageSizeOpen = false;
+    async getListCategory() {
+      this.categoryStatus = "active";
 
-      console.log("row", row);
+      await axios
+        .get(`${this.apiUrl}category/`, {
+          params: { category_status: this.categoryStatus },
+        })
+        .then((response) => {
+          const data = response.data;
+          this.categorys = data.rows;
+          // console.log(this.categorys);
+        })
+        .catch((error) => {
+          console.error("There was an error fetching the data:", error); // แสดงข้อผิดพลาด
+        });
+    },
+    clickCategory(categoryId) {
+      this.$router.push(`/category/${categoryId}`);
+      this.dataPaging.pageNumber = 0;
+      this.currentNum = 1;
+      
+      // console.log("categoryId", this.categoryId);
     },
   },
 };

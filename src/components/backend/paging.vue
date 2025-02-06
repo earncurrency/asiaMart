@@ -67,6 +67,10 @@ export default {
       required: false,
       default: 1,
     },
+    currentNum:{
+      required: false,
+      default: null,
+    }
   },
   data() {
     return {
@@ -84,6 +88,11 @@ export default {
       this.currentPage = 1;
       this.changeShowRowNumber();
     },
+    currentNum() {
+      this.currentPage = 1;
+      this.changeShowRowNumber();
+    },
+
   },
   computed: {
     // คำนวณจำนวนหน้าทั้งหมด
@@ -97,8 +106,8 @@ export default {
 
       if (this.totalList < 10) {
         this.lastRowNumber = this.totalList;
-      }else{
-        this.lastRowNumber = 10
+      } else {
+        this.lastRowNumber = 10;
       }
 
       if (this.totalPagination <= 10) {
@@ -160,6 +169,8 @@ export default {
       if (this.lastRowNumber > this.totalList) {
         this.lastRowNumber = this.totalList;
       }
+
+      // console.log("currentPage",currentPage)
     },
     prev() {
       if (this.currentPage > 1) {

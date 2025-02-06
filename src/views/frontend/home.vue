@@ -19,17 +19,17 @@ import promotion from '@/components/frontend/promotion.vue';
         <div class="w-full max-w-screen-2xl lg:p-12 lg:border border-gray-200 rounded-lg mb-16 lg:mb-4 bg-white z-40">
             <div>
                 <!-- Title -->
-                <div class="title-content lg:flex items-center justify-between font-medium mt-4 gap-4 p-4 lg:p-0">
+                <!-- <div class="title-content lg:flex items-center justify-between font-medium mt-4 gap-4 p-4 lg:p-0">
                     <div class="hidden lg:flex justify-center">
                         <p class="text-3xl font-semibold ">Asia Mart</p>
                     </div>
 
-                    <!-- tabs menu -->
+
                     <tabsCategory />
 
                 </div>
 
-                <hr class="my-2 text-gray-600">
+                <hr class="my-2 text-gray-600"> -->
 
                 <!-- <div class="flex justify-center">
                     <p class="text-3xl font-semibold mt-8 mb-2">โปรโมชั่น</p>
