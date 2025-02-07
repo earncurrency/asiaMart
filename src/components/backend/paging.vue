@@ -61,15 +61,15 @@ export default {
     pageSize: {
       type: Number,
       required: false,
-      default: 10,
+      default: 4,
     },
     totalList: {
       required: false,
       default: 1,
     },
-    currentNum:{
-      required: false,
-      default: null,
+    currentNum: {
+      type: Number,
+      required: true
     }
   },
   data() {
@@ -77,7 +77,7 @@ export default {
       currentPage: 1,
       // pageList: [10, 20, 50, 100, 200],
       firstRowNumber: 1,
-      lastRowNumber: 10,
+      lastRowNumber: null,
     };
   },
   mounted() {
@@ -88,7 +88,7 @@ export default {
       this.currentPage = 1;
       this.changeShowRowNumber();
     },
-    currentNum() {
+    currentNum(NewcurrentNum) {
       this.currentPage = 1;
       this.changeShowRowNumber();
     },
@@ -104,10 +104,10 @@ export default {
       let pages = [];
       let ellipsis = "...";
 
-      if (this.totalList < 10) {
+      if (this.totalList < this.pageSize) {
         this.lastRowNumber = this.totalList;
       } else {
-        this.lastRowNumber = 10;
+        this.lastRowNumber = this.pageSize;
       }
 
       if (this.totalPagination <= 10) {

@@ -278,6 +278,7 @@ import pagination from "@/components/backend/paging.vue";
               <pagination
                 :pageSize="dataPaging.rows"
                 :totalList="totalList"
+                :currentNum="currentNum"
                 @reloadData="reloadData"
               />
             </div>
@@ -740,6 +741,7 @@ export default {
         status: "",
       },
       totalList: [],
+      currentNum: 1,
 
       isFocus: false,
       formTable: true,
@@ -752,6 +754,7 @@ export default {
   },
   mounted() {
     this.checkAuth();
+    
     document.addEventListener("click", this.closeDropdownStatus);
     document.addEventListener("click", this.closeDropdown);
   },
@@ -806,9 +809,9 @@ export default {
           this.totalList = data.total;
 
           console.log(this.products);
-          console.log('limit',this.dataPaging.rows);
-          console.log('offset' , this.dataPaging.pageNumber);
-          console.log('totalList' , data.total);
+          console.log("limit", this.dataPaging.rows);
+          console.log("offset", this.dataPaging.pageNumber);
+          console.log("totalList", data.total);
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error);
@@ -818,15 +821,16 @@ export default {
       this.dataPaging.pageNumber = pageNo;
       this.getListProduct();
 
-      console.log('pageNo',pageNo)
+      console.log("pageNo", pageNo);
     },
     pageSize(row) {
       this.dataPaging.pageNumber = 0;
+      this.currentNum = row;
       this.dataPaging.rows = row;
       this.getListProduct();
-      this.pageSizeOpen = false;
 
-      console.log('row',row)
+      this.pageSizeOpen = false;
+      console.log("row", row);
     },
 
     async showFormEdit(productId) {

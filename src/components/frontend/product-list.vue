@@ -8,10 +8,28 @@ import pagination from "@/components/backend/paging.vue";
 <template>
   <div class="lg:flex items-center justify-between font-medium p-4 lg:p-0">
     <!-- ปุ่มนี้จะแสดงเมื่อจอใหญ่ -->
-    <div class="flex justify-center gap-4">
-      <!-- แสดงชื่อผลิตภัณฑ์ที่ดึงมาจาก URL -->
-      <!-- <p class="text-3xl font-semibold">{{ categoryName }}</p> -->
-      <!-- แสดงชื่อผลิตภัณฑ์ -->
+    <div class="flex items-center max-w-xl lg:w-full">
+      <label for="voice-search" class="sr-only">Search</label>
+
+      <div class="relative w-full">
+        <div
+          class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
+        >
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+        <input
+          type="text"
+          id="voice-search"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 pr-10 p-2.5 focus:border-gray-300"
+          placeholder="ค้นหา..."
+        />
+
+        <button
+          class="absolute inset-y-0 end-0 flex items-center ps-3 p-3 pointer"
+        >
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
     </div>
 
     <!-- tabs Category-->
@@ -19,20 +37,23 @@ import pagination from "@/components/backend/paging.vue";
       class="flex flex-wrap justify-center text-md font-medium text-center mt-4 lg:mt-0 text-gray-500 dark:text-gray-400"
     >
       <li v-for="(category, index) in categorys" :key="index" class="me-2">
-        <!-- <RouterLink :to="`/category/${category.id}`">
+        <RouterLink
+          :to="`/category/${category.id}/${category.name}`"
+          @click="clickCategory(category.id)"
+        >
           <a
             href="#"
             class="inline-block px-4 py-3 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white"
             >{{ category.name }}</a
           >
-        </RouterLink> -->
+        </RouterLink>
 
-        <a
+        <!-- <a
           @click="clickCategory(category.id)"
           href="#"
           class="inline-block px-4 py-3 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white"
           >{{ category.name }}</a
-        >
+        > -->
       </li>
     </ul>
   </div>
@@ -60,7 +81,7 @@ import pagination from "@/components/backend/paging.vue";
                 product.images[0]
               }`"
               alt="Card 1"
-              class="w-full h-full object-cover rounded-t-lg lg:rounded-lg cursor-pointer"
+              class="w-full h-full object-cover rounded-t-lg lg:rounded-lg p-1 cursor-pointer"
             />
           </div>
           <div class="p-2 pt-4">
@@ -84,18 +105,25 @@ import pagination from "@/components/backend/paging.vue";
       </RouterLink>
     </div>
   </div>
-  <pagination
-    :pageSize="dataPaging.rows"
-    :totalList="totalList"
-    :currentNum="currentNum"
-    @reloadData="reloadData"
-  />
+  <div v-if="products.length === 0" class=""></div>
+  <div v-else class="">
+    <pagination
+      :pageSize="dataPaging.rows"
+      :totalList="totalList"
+      :currentNum="currentNum"
+      @reloadData="reloadData"
+    />
+  </div>
 </template>
 
 <script>
 export default {
   props: {
     categoryId: {
+      type: String,
+      required: false,
+    },
+    categoryName: {
       type: String,
       required: false,
     },
@@ -110,7 +138,6 @@ export default {
         id: "",
         name: "",
       },
-
       dataPaging: {
         pageNumber: 0,
         rows: 4,
@@ -118,7 +145,7 @@ export default {
         status: "",
       },
       totalList: [],
-      currentNum:null,
+      currentNum: 1,
     };
   },
   mounted() {
@@ -170,18 +197,19 @@ export default {
         .then((response) => {
           const data = response.data;
           this.categorys = data.rows;
-          // console.log(this.categorys);
+          console.log("categorys", this.categorys);
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error); // แสดงข้อผิดพลาด
         });
     },
-    clickCategory(categoryId) {
-      this.$router.push(`/category/${categoryId}`);
+    clickCategory(id) {
+      // this.$router.push(`/category/${categoryId}`);
       this.dataPaging.pageNumber = 0;
-      this.currentNum = 1;
-      
-      // console.log("categoryId", this.categoryId);
+      this.currentNum = id;
+
+      console.log("categoryId", categoryId);
+      console.log("currentNum", this.currentNum);
     },
   },
 };

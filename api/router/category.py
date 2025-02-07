@@ -36,7 +36,7 @@ def list_category(category_status: str = '', limit: int = 10, offset: int = 0):
 
 # ดึงข้อมูลตามไอดีจากตาราง tb_category
 @router.get("/{category_id}")
-def get_category(category_id: int):
+def get_category(category_id: int = ''):
     session = SessionLocal()
     try:
         category = session.query(CategorySchema).filter(CategorySchema.id == category_id).first()

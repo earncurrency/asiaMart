@@ -48,7 +48,7 @@ const router = createRouter({
             props: true,
         },
         {
-            path: '/category/:categoryId',
+            path: '/category/:categoryId/:categoryName',
             name: 'category',
             component: () => import('../views/frontend/category.vue'),
             props: true,

@@ -16,45 +16,19 @@ import axios from "axios";
       <div>
         <!-- Title -->
         <!-- เปุ่มนี้เสดงเมื่อจอเล็ก -->
-        <div class="flex items-center gap-4 lg:hidden">
-          <RouterLink to="/">
-            <button class="px-2 py-1 bg-gray-800 rounded-md text-white text-sm">
-              <i class="fa-solid fa-arrow-left"></i>
-            </button>
-          </RouterLink>
-          <!-- <p class="text-xl">อาหาร</p> -->
-        </div>
-        <div
-          class="lg:flex items-center justify-between font-medium p-2 lg:p-0"
-          >
-          <!-- เปุ่มนี้เสดงเมื่อจอใหญ่ -->
-          <div class="flex justify-center gap-4">
-            <div class="hidden lg:flex items-center gap-4">
-              <RouterLink :to="`/category/${product.category_id}`">
-                <button
-                  class="px-2 py-1 bg-gray-800 rounded-md text-white text-sm hover:bg-gray-600 transition"
-                >
-                  <i class="fa-solid fa-arrow-left"></i>
-                </button>
-              </RouterLink>
-              <!-- <p class="text-xl">อาหาร</p> -->
-            </div>
-            <!-- <p class="text-xl">กลับ</p> -->
-          </div>
-        </div>
 
-        <hr class="my-2 text-gray-600" />
+
 
         <div
-          class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8 mt-8"
+          class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8 "
         >
           <div>
             <!-- รูปใหญ่ด้านบนที่จะแสดงภาพที่เลือก -->
-            <div class="lg:h-auto h-60 w-full cursor-pointer">
+            <div class="lg:h-96 h-60 w-full cursor-pointer">
               <img
                 :src="selectedImage"
                 alt="Selected Food"
-                class="h-full w-full object-cover rounded-md"
+                class="h-full w-full object-contain rounded-md"
               />
             </div>
 
@@ -76,7 +50,7 @@ import axios from "axios";
                     product.id / 100
                   )}/${image.path}`"
                   alt="image 1"
-                  class="h-full w-full object-cover rounded-md"
+                  class="h-full w-full object-contain rounded-md"
                 />
               </div>
             </div>

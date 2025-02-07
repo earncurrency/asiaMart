@@ -2,7 +2,6 @@
 
 import frontend_navbar from '@/components/frontend/navbar.vue';
 import imageBanner from '@/components/frontend/image-banner.vue';
-import tabsCategory from '@/components/frontend/tabs-category.vue';
 import productList from '@/components/frontend/product-list.vue';
 import promotion from '@/components/frontend/promotion.vue';
 
@@ -25,11 +24,11 @@ import promotion from '@/components/frontend/promotion.vue';
                     </div>
 
 
-                    <tabsCategory />
+  
 
-                </div>
+                </div> -->
 
-                <hr class="my-2 text-gray-600"> -->
+                <!-- <hr class="my-2 text-gray-600"> -->
 
                 <!-- <div class="flex justify-center">
                     <p class="text-3xl font-semibold mt-8 mb-2">โปรโมชั่น</p>
@@ -39,7 +38,7 @@ import promotion from '@/components/frontend/promotion.vue';
 
 
                 <div class="flex justify-center">
-                    <p class="text-3xl font-semibold mt-8 mb-2">รายการสินค้า</p>
+                    <p class="text-3xl font-semibold mt-8 mb-4 lg:mb-16">รายการสินค้า</p>
                 </div>
 
 

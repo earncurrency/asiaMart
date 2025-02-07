@@ -92,7 +92,7 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
                       <li>
                         <a
                           href="#"
-                          @click="DropdownStatus(0)"
+                          @click="DropdownStatus('active')"
                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           >เเสดง</a
                         >
@@ -100,7 +100,7 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
                       <li>
                         <a
                           href="#"
-                          @click="DropdownStatus(1)"
+                          @click="DropdownStatus('inactive')"
                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           >ไม่เเสดง</a
                         >
@@ -225,6 +225,7 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
               <pagination
                 :pageSize="dataPaging.rows"
                 :totalList="totalList"
+                :currentNum="currentNum"
                 @reloadData="reloadData"
               />
             </div>
@@ -376,6 +377,7 @@ export default {
         status: "",
       },
       totalList: [],
+      currentNum: 0,
 
       isFocus: false,
       formTable: true,
@@ -426,6 +428,7 @@ export default {
       await axios
         .get(`${this.apiUrl}category/`, {
           params: {
+            category_status: this.categoryStatus,
             limit: this.dataPaging.rows,
             offset: this.dataPaging.pageNumber,
           },
@@ -445,15 +448,16 @@ export default {
       this.dataPaging.pageNumber = pageNo;
       this.getListCategory();
 
-      console.log('pageNo',pageNo)
+      console.log("pageNo", pageNo);
     },
     pageSize(row) {
       this.dataPaging.pageNumber = 0;
+      this.currentNum = row;
       this.dataPaging.rows = row;
       this.getListCategory();
       this.pageSizeOpen = false;
 
-      console.log('row',row)
+      console.log("row", row);
     },
 
     async showFormEdit(productTypeId) {
@@ -618,7 +622,9 @@ export default {
       });
     },
 
-    DropdownStatus(statusName) {
+    DropdownStatus(status) {
+      this.categoryStatus = status;
+      this.getListCategory();
       this.pageSizeOpen = false;
     },
     dropdownStatus(event) {
