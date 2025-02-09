@@ -18,7 +18,9 @@ import pagination from "@/components/backend/paging.vue";
           <i class="fa-solid fa-magnifying-glass"></i>
         </div>
         <input
-          type="text" v-model="searchText" @input="getListProduct"
+          type="text"
+          v-model="searchText"
+          @input="getListProduct"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 pr-10 p-2.5 focus:border-gray-300"
           placeholder="ค้นหา..."
         />
@@ -131,10 +133,8 @@ export default {
     return {
       baseUrl: __BASE_URL__,
       apiUrl: "http://127.0.0.1:8000/",
-
-      searchText:"",
       products: [],
-
+      searchText:"",
       categorys: {
         id: "",
         name: "",
@@ -166,7 +166,7 @@ export default {
             category_id: this.categoryId,
             limit: this.dataPaging.rows,
             offset: this.dataPaging.pageNumber,
-            q: this.searchText
+            q: this.searchText,
           },
         })
         .then((response) => {
@@ -210,7 +210,6 @@ export default {
       this.dataPaging.pageNumber = 0;
       this.currentNum = id;
 
-      console.log("categoryId", categoryId);
       console.log("currentNum", this.currentNum);
     },
   },
