@@ -61,7 +61,6 @@ export default {
     pageSize: {
       type: Number,
       required: false,
-      default: 4,
     },
     totalList: {
       required: false,
@@ -69,8 +68,8 @@ export default {
     },
     currentNum: {
       type: Number,
-      required: true
-    }
+      required: false,
+    },
   },
   data() {
     return {
@@ -92,7 +91,6 @@ export default {
       this.currentPage = 1;
       this.changeShowRowNumber();
     },
-
   },
   computed: {
     // คำนวณจำนวนหน้าทั้งหมด

@@ -144,6 +144,14 @@ import pagination from "@/components/backend/paging.vue";
                       <li>
                         <a
                           href="#"
+                          @click="pageSize(5)"
+                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >5</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          href="#"
                           @click="pageSize(10)"
                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           >10</a
@@ -278,7 +286,6 @@ import pagination from "@/components/backend/paging.vue";
               <pagination
                 :pageSize="dataPaging.rows"
                 :totalList="totalList"
-                :currentNum="currentNum"
                 @reloadData="reloadData"
               />
             </div>
@@ -741,7 +748,6 @@ export default {
         status: "",
       },
       totalList: [],
-      currentNum: 1,
 
       isFocus: false,
       formTable: true,
@@ -754,7 +760,6 @@ export default {
   },
   mounted() {
     this.checkAuth();
-    
     document.addEventListener("click", this.closeDropdownStatus);
     document.addEventListener("click", this.closeDropdown);
   },
@@ -824,13 +829,13 @@ export default {
       console.log("pageNo", pageNo);
     },
     pageSize(row) {
-      this.dataPaging.pageNumber = 0;
-      this.currentNum = row;
-      this.dataPaging.rows = row;
-      this.getListProduct();
-
-      this.pageSizeOpen = false;
-      console.log("row", row);
+      // ตรวจสอบว่าค่า row ใหม่ไม่เท่ากับค่าเดิม
+      if (this.dataPaging.rows !== row) {
+        this.dataPaging.pageNumber = 0;
+        this.dataPaging.rows = row;
+        this.getListProduct();
+        this.pageSizeOpen = false;
+      }
     },
 
     async showFormEdit(productId) {

@@ -289,15 +289,20 @@ def save_image_from_base64(base64_str: str, folder: str ) -> str:
         raise HTTPException(status_code=400, detail="ไม่สามารถบันทึกรูปภาพได้")
 
 @router.get("/cat/")
-def get_products_by_category_id(category_id: str = '', limit: int = 10, offset: int = 0):
+def get_products_by_category_id(category_id: str = '', limit: int = 10, offset: int = 0, q: str = ''):
     session = SessionLocal()
     try:
+        query = session.query(ProductSchema).filter(ProductSchema.status == 'active')
+
         if category_id:
-            products = session.query(ProductSchema).filter(ProductSchema.category_id == category_id, ProductSchema.status == 'active').order_by(desc(ProductSchema.id)).limit(limit).offset(offset).all()
-            total = session.query(ProductSchema).filter(ProductSchema.category_id == category_id, ProductSchema.status == 'active').count()
-        else:
-            products = session.query(ProductSchema).filter(ProductSchema.status == 'active').order_by(desc(ProductSchema.id)).limit(limit).offset(offset).all()
-            total = session.query(ProductSchema).filter(ProductSchema.status == 'active').count()
+            query = query.filter(ProductSchema.category_id == category_id)
+
+        if q: 
+            query = query.filter(ProductSchema.name.ilike(f'%{q}%'))
+
+        products = query.order_by(desc(ProductSchema.id)).limit(limit).offset(offset).all()
+
+        total = query.count()
 
         result = []
         for product in products:
