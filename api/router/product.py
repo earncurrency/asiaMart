@@ -289,8 +289,11 @@ def save_image_from_base64(base64_str: str, folder: str ) -> str:
         raise HTTPException(status_code=400, detail="ไม่สามารถบันทึกรูปภาพได้")
 
 @router.get("/cat/")
-def get_products_by_category_id(category_id: str = '', limit: int = 10, offset: int = 0, q: str = ''):
+def get_products_by_category_id(category_id: str = '', limit: int = 10, page: int = 0, q: str = ''):
     session = SessionLocal()
+
+    offset = (page*limit)-limit
+    
     try:
         query = session.query(ProductSchema).filter(ProductSchema.status == 'active')
 
