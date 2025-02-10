@@ -51,7 +51,7 @@ import { RouterLink, RouterView } from "vue-router";
 export default {
   data() {
     return {
-      apiUrl: "http://127.0.0.1:8000/",
+      apiUrl: __API_URL__,
 
       code: "",
       isFocus: false,

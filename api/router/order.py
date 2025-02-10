@@ -20,16 +20,16 @@ def list_orders(member_id: str = '', orders_status: str = '', limit: int = 10, o
     session = SessionLocal()
     try:
 
-        query = session.query(OrderSchema).order_by(desc(OrderSchema.id)).limit(limit).offset(offset)
+        query = session.query(OrderSchema).order_by(desc(OrderSchema.id))
 
         if member_id:
-            query = query.filter(OrderSchema.member_id == member_id).limit(limit).offset(offset)
+            query = query.filter(OrderSchema.member_id == member_id)
 
-        #ไม่เเสดง status success กับ cancel    
         if orders_status:
-            query = query.filter(OrderSchema.status.notin_(['success', 'cancel'])).limit(limit).offset(offset)
+            query = query.filter(OrderSchema.status.notin_(['success', 'cancel']))
 
-        orders = query.all()
+
+        orders = query.limit(limit).offset(offset).all()
 
         total = session.query(OrderSchema).filter(OrderSchema.status != 'remove').count()
 
@@ -51,6 +51,7 @@ def list_orders(member_id: str = '', orders_status: str = '', limit: int = 10, o
             ],
             "total": total
         }
+
     finally:
         session.close()
 

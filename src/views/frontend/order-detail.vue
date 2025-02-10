@@ -197,7 +197,7 @@ export default {
   data() {
     return {
       baseUrl: __BASE_URL__,
-      apiUrl: "http://127.0.0.1:8000/",
+      apiUrl:__API_URL__,
 
       order: {
         id: "",

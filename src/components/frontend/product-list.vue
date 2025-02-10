@@ -132,7 +132,7 @@ export default {
   data() {
     return {
       baseUrl: __BASE_URL__,
-      apiUrl: "http://127.0.0.1:8000/",
+      apiUrl: __API_URL__,
       products: [],
       searchText:"",
       categorys: {
@@ -166,6 +166,7 @@ export default {
             category_id: this.categoryId,
             limit: this.dataPaging.rows,
             offset: this.dataPaging.pageNumber,
+            page: this.dataPaging.pageNumber,
             q: this.searchText,
           },
         })

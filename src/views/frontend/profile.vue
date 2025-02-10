@@ -180,7 +180,7 @@ export default {
   data() {
     return {
       baseUrl: __BASE_URL__,
-      apiUrl: "http://127.0.0.1:8000/",
+      apiUrl:__API_URL__,
 
       orders: [],
       order: {
@@ -197,6 +197,13 @@ export default {
         details: "",
         info: "",
         products: [],
+      },
+
+      dataPaging: {
+        pageNumber: 0,
+        rows: 10,
+        totalPage: 0,
+        status: "",
       },
 
       order_status: "",
@@ -232,6 +239,8 @@ export default {
           params: {
             member_id: this.member_id,
             orders_status: this.orders_status,
+            limit: this.dataPaging.rows,
+            offset: this.dataPaging.pageNumber,
           },
         })
         .then((response) => {
