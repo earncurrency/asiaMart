@@ -26,7 +26,7 @@ import Modal from "@/components/frontend/modal.vue";
           v-model="code"
           ref="employeeCode"
           :class="{
-            'bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block focus:border-gray-300 w-full pt-2 pl-3 ': true,
+            'bg-white border border-gray-300 text-gray-900 text-sm rounded-lg block focus:border-gray-300 w-full p-2 ': true,
             'focus:border-blue-500 focus:ring-2 focus:ring-blue-500 ': !code,
           }"
           placeholder="ใส่รหัสพนักงาน"

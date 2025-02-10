@@ -30,32 +30,29 @@ import pagination from "@/components/backend/paging.vue";
             <!-- sort -->
             <div class="lg:flex lg:justify-between mb-4 mt-4 items-center">
               <!-- ช่องค้นหา -->
-              <div class="bg-white lg:justify-start">
-                <div class="relative mt-1">
+              <div class="flex items-center w-1/4">
+                <label for="voice-search" class="sr-only">Search</label>
+
+                <div class="relative w-full">
                   <div
-                    class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none"
+                    class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
                   >
-                    <svg
-                      class="w-4 h-4 text-gray-500"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                      />
-                    </svg>
+                    <i class="fa-solid fa-magnifying-glass"></i>
                   </div>
                   <input
                     type="text"
-                    class="block ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-full lg:w-80 bg-white focus:border-gray-300 h-full py-2.5"
-                    placeholder="ค้นหา"
+                    v-model="searchText"
+                    @input="getListProduct"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 pr-10 p-2.5 focus:border-gray-300"
+                    placeholder="ค้นหา..."
                   />
+
+                  <button
+                    @click="xmark"
+                    class="absolute inset-y-0 end-0 flex items-center ps-3 p-3 pointer"
+                  >
+                    <i class="fa-solid fa-xmark"></i>
+                  </button>
                 </div>
               </div>
 
@@ -244,7 +241,6 @@ import pagination from "@/components/backend/paging.vue";
                         />
                       </div>
                     </th>
-
 
                     <td class="px-6 py-4 whitespace-nowrap font-semibold">
                       {{ product.code }}
@@ -724,7 +720,7 @@ export default {
     return {
       baseUrl: __BASE_URL__,
       apiUrl: __API_URL__,
-
+      searchText: "",
       products: [],
       productId: "",
       product: {
@@ -743,8 +739,8 @@ export default {
       previewImages: [],
 
       dataPaging: {
-        pageNumber: 0,
-        rows: 10,
+        pageNumber: 1,
+        rows: 5,
         totalPage: 0,
         status: "",
       },
@@ -802,11 +798,14 @@ export default {
 
     //เเสดงข้อมูลสินค้าบนตาราง
     async getListProduct() {
+      this.page = this.dataPaging.pageNumber * this.dataPaging.rows - this.dataPaging.rows;
       await axios
         .get(`${this.apiUrl}products/`, {
           params: {
+            category_id: this.categoryId,
             limit: this.dataPaging.rows,
-            offset: this.dataPaging.pageNumber,
+            page: this.page,
+            q: this.searchText,
           },
         })
         .then((response) => {
@@ -832,11 +831,15 @@ export default {
     pageSize(row) {
       // ตรวจสอบว่าค่า row ใหม่ไม่เท่ากับค่าเดิม
       if (this.dataPaging.rows !== row) {
-        this.dataPaging.pageNumber = 0;
+        this.dataPaging.pageNumber = 1;
         this.dataPaging.rows = row;
         this.getListProduct();
         this.pageSizeOpen = false;
       }
+    },
+    xmark() {
+      this.searchText = "";
+      this.getListProduct();
     },
 
     async showFormEdit(productId) {
@@ -868,6 +871,14 @@ export default {
             this.product.status = product.status;
             this.product.detail = product.detail;
             this.product.images = product.images;
+
+            if (
+              !this.categorys.some(
+                (category) => category.id === this.product.category_id
+              )
+            ) {
+              this.product.category_id = "";
+            }
 
             // แสดงข้อมูลสินค้าใน console
             console.log("Product Data:", product);
@@ -905,13 +916,7 @@ export default {
           const data = response.data;
           this.categorys = data.rows;
 
-          // ตรวจสอบว่า category_id ของสินค้าไม่ตรงกับ id ใน categorys
-          const isCategoryValid = this.categorys.some(
-            (category) => category.id === this.product.category_id
-          );
-          if (!isCategoryValid) {
-            this.product.category_id = ""; // ถ้าไม่ตรงกัน ให้ category_id เป็น ""
-          }
+          console.log("categorys =", this.categorys);
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error);

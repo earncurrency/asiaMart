@@ -14,13 +14,19 @@ router = APIRouter(
 
 #เเสดง admin ทั้งหมด
 @router.get("/")
-def list_admins(limit: int = 10, offset: int = 0):
+def list_admins(limit: int = 10, page: int = '', q: str = ''):
     session = SessionLocal()
     try:
 
-        query = session.query(AdminSchema).filter(AdminSchema.status != 'remove').order_by(desc(AdminSchema.id)).limit(limit).offset(offset)
-        admins = query.all()
-        total = session.query(AdminSchema).filter(AdminSchema.status != 'remove').count()
+        query = session.query(AdminSchema).filter(AdminSchema.status != 'remove')
+
+        if q:
+            query = query.filter(AdminSchema.name.ilike(f'%{q}%'))
+            page = 0  
+
+        admins = query.order_by(desc(AdminSchema.id)).limit(limit).offset(page).all()
+
+        total = query.count()
 
         return {
             "message": "Get admins successfully",

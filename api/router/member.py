@@ -15,11 +15,19 @@ router = APIRouter(
 
 # ดึงข้อมูลทั้งหมดจากตาราง tb_member
 @router.get("/")
-def get_members(limit: int = 10, offset: int = 0):
+def get_members(limit: int = 10 , q: str = '', page: int = 0):
     session = SessionLocal()
     try:
-        members = session.query(MemberSchema).order_by(desc(MemberSchema.id)).limit(limit).offset(offset).all()
-        total = session.query(MemberSchema).count()
+        query = session.query(MemberSchema)
+
+        if q:
+            query = query.filter(MemberSchema.name.ilike(f'%{q}%'))
+            page = 0  
+
+        members = query.order_by(desc(MemberSchema.id)).limit(limit).offset(page).all()    
+
+        total = query.count()
+        
         return {
             "message": "Get all members",
             "rows": [{"id": member.id, "code": member.code, "name": member.name, "phone": member.phone, "status": member.status} for member in members],

@@ -13,10 +13,7 @@ import { RouterLink, RouterView } from "vue-router";
     >
       <!-- โลโก้ -->
       <RouterLink to="/">
-        <a
-          href=""
-          class="flex items-center space-x-3 rtl:space-x-reverse"
-        >
+        <a href="" class="flex items-center space-x-3 rtl:space-x-reverse">
           <img src="@/assets/image/asia/icon.png" class="h-10" alt="Logo" />
           <span
             class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white text-gray-600"
@@ -129,7 +126,7 @@ import { RouterLink, RouterView } from "vue-router";
               <RouterLink to="/profile">
                 <a
                   @click="closeiconUserMenu"
-                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 >
                   <span class="mr-2 text-gray-500">
                     <i class="fa-solid fa-user"></i
@@ -142,7 +139,7 @@ import { RouterLink, RouterView } from "vue-router";
               <RouterLink to="/profile">
                 <a
                   @click="closeiconUserMenu"
-                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 >
                   <span class="mr-2 text-gray-500">
                     <i class="fa-solid fa-box"></i
@@ -156,7 +153,7 @@ import { RouterLink, RouterView } from "vue-router";
               <RouterLink to="/history">
                 <a
                   @click="closeiconUserMenu"
-                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 >
                   <span class="mr-2 text-gray-500">
                     <i class="fa-solid fa-clock-rotate-left"></i
@@ -168,7 +165,7 @@ import { RouterLink, RouterView } from "vue-router";
             <li>
               <a
                 @click="logout()"
-                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 "
               >
                 <span class="mr-2 text-red-500">
                   <i class="fa-solid fa-arrow-right-from-bracket"></i

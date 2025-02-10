@@ -152,8 +152,8 @@ export default {
       if (pageNo === "..." || pageNo < 1 || pageNo > this.totalPagination)
         return;
       this.currentPage = pageNo;
-      this.offset = (pageNo - 1) * this.pageSize;
-      this.$emit("reloadData", this.offset);
+      // this.offset = (pageNo - 1) * this.pageSize;
+      this.$emit("reloadData", pageNo);
       this.changeShowRowNumber();
     },
     changeShowRowNumber() {

@@ -15,16 +15,22 @@ router = APIRouter(
 
 # ดึงข้อมูลทั้งหมดจากตาราง tb_category ที่ status ส่งมา ยกเว้นที่ status remove
 @router.get("/")
-def list_category(category_status: str = '', limit: int = 10, offset: int = 0):
+def list_category(category_status: str = '', limit: int = 10, page: int = 0, q: str = ''):
     session = SessionLocal()
     try:
-        if category_status:  # ถ้ามี category_status
-            categorys = session.query(CategorySchema).filter(CategorySchema.status == category_status, CategorySchema.status != 'remove').order_by(desc(CategorySchema.id)).all()
-
-        else:  # ถ้าไม่มี category_status หรือเป็นค่าว่าง
-            categorys = session.query(CategorySchema).filter(CategorySchema.status != 'remove').order_by(desc(CategorySchema.id)).limit(limit).offset(offset).all()
         
-        total = session.query(CategorySchema).filter(CategorySchema.status != 'remove').count()
+        query = session.query(CategorySchema).filter(CategorySchema.status != 'remove')
+
+        if category_status:
+            query = query.filter(CategorySchema.status == category_status)
+
+        if q:
+            query = query.filter(CategorySchema.name.ilike(f'%{q}%'))
+            page = 0    
+
+        categorys = query.order_by(desc(CategorySchema.id)).limit(limit).offset(page).all()
+        
+        total = query.count()
 
         return {
             "message": "Get all category",

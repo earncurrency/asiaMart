@@ -8,7 +8,7 @@ import pagination from "@/components/backend/paging.vue";
 <template>
   <div class="lg:flex items-center justify-between font-medium p-4 lg:p-0">
     <!-- ปุ่มนี้จะแสดงเมื่อจอใหญ่ -->
-    <div class="flex items-center max-w-xl lg:w-full">
+    <div class="flex items-center max-w-xl lg:w-1/3">
       <label for="voice-search" class="sr-only">Search</label>
 
       <div class="relative w-full">
@@ -25,7 +25,7 @@ import pagination from "@/components/backend/paging.vue";
           placeholder="ค้นหา..."
         />
 
-        <button
+        <button @click="xmark"
           class="absolute inset-y-0 end-0 flex items-center ps-3 p-3 pointer"
         >
           <i class="fa-solid fa-xmark"></i>
@@ -140,7 +140,7 @@ export default {
         name: "",
       },
       dataPaging: {
-        pageNumber: 0,
+        pageNumber: 1,
         rows: 4,
         totalPage: 0,
         status: "",
@@ -160,13 +160,17 @@ export default {
   },
   methods: {
     async getListProduct() {
+
+      this.page = (this.dataPaging.pageNumber * this.dataPaging.rows) - this.dataPaging.rows;
+      
       await axios
+
         .get(`${this.apiUrl}products/cat/`, {
           params: {
             category_id: this.categoryId,
             limit: this.dataPaging.rows,
-            offset: this.dataPaging.pageNumber,
-            page: this.dataPaging.pageNumber,
+            // offset: this.dataPaging.pageNumber,
+            page: this.page,
             q: this.searchText,
           },
         })
@@ -187,7 +191,7 @@ export default {
 
       this.getListProduct();
 
-      // console.log("pageNo", pageNo);
+      console.log("pageNo", pageNo);
     },
 
     async getListCategory() {
@@ -208,10 +212,14 @@ export default {
     },
     clickCategory(id) {
       // this.$router.push(`/category/${categoryId}`);
-      this.dataPaging.pageNumber = 0;
+      this.dataPaging.pageNumber = 1;
       this.currentNum = id;
 
       console.log("currentNum", this.currentNum);
+    },
+    xmark(){
+      this.searchText = "";
+      this.getListProduct();
     },
   },
 };

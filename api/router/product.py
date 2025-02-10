@@ -18,25 +18,35 @@ router = APIRouter(
 
 # ดึงข้อมูลทั้งหมดจากตาราง tb_product
 @router.get("/")
-def list_products(category_id: str = '', limit: int = 10, offset: int = 0):
+def get_products_by_category_id(category_id: str = '', limit: int = 10, q: str = '', page: int = ''):  
     session = SessionLocal()
+
+    # คำนวณ offset จาก page และ limit
+    # offset = (page - 1) * limit if page else 0  # คำนวณ offset
+
     try:
+        print(f"category_id = {category_id} limit = {limit} page = {page} q = {q}")
+
+        query = session.query(ProductSchema).filter(ProductSchema.status != 'remove')
 
         if category_id:
-              products = session.query(ProductSchema).filter(ProductSchema.category_id == category_id, ProductSchema.status != 'remove').order_by(desc(ProductSchema.id)).limit(limit).offset(offset).all()
+            query = query.filter(ProductSchema.category_id == category_id)
 
-        else:
-            # ทำการ query และ join ข้อมูลจาก tb_product และ tb_product_image โดยกรองเฉพาะสินค้าที่มี status เป็น 'active'
-            products = session.query(ProductSchema).filter(ProductSchema.status != 'remove').order_by(desc(ProductSchema.id)).limit(limit).offset(offset).all()
+        if q:
+            query = query.filter(ProductSchema.name.ilike(f'%{q}%'))
+            page = 0  
 
-        total = session.query(ProductSchema).filter(ProductSchema.status != 'remove').count()
+        products = query.order_by(desc(ProductSchema.id)).limit(limit).offset(page).all()
 
-        # สร้างผลลัพธ์ที่จะส่งกลับ
+        total = query.count()
+
+        # สร้างผลลัพธ์ที่ต้องการส่งกลับ
         result = []
-        
         for product in products:
-            # ดึงข้อมูลภาพ (ถ้ามี)
-            product_images = session.query(ProductImageSchema).filter(ProductImageSchema.product_id == product.id, ProductImageSchema.status == 'active').all()
+            product_images = session.query(ProductImageSchema).filter(
+                ProductImageSchema.product_id == product.id,
+                ProductImageSchema.status == 'active'
+            ).all()
             image_paths = [image.path for image in product_images]
 
             result.append({
@@ -48,17 +58,18 @@ def list_products(category_id: str = '', limit: int = 10, offset: int = 0):
                 "status": product.status,
                 "category_id": product.category_id,
                 "detail": product.detail,
-                "images": image_paths  
+                "images": image_paths
             })
 
         return {
-            "message": "Get active products",
+            "message": "Get active products by category",
             "rows": result,
             "total": total
         }
 
     finally:
         session.close()
+
 
 #ดึงข้อมูลสินค้าตามไอดีจากตาราง tb_product
 @router.get("/{product_id}")
@@ -289,25 +300,29 @@ def save_image_from_base64(base64_str: str, folder: str ) -> str:
         raise HTTPException(status_code=400, detail="ไม่สามารถบันทึกรูปภาพได้")
 
 @router.get("/cat/")
-def get_products_by_category_id(category_id: str = '', limit: int = 10, offset: int = 0, q: str = '', page:int = 1):
+def get_products_by_category_id(category_id: str = '', limit: int = 10, q: str = '', page: int = ''):  # ตั้งค่า page เริ่มต้นเป็น 1
     session = SessionLocal()
 
-    # offset = (page*limit)-limit
-    # print(f"offset = {offset}")
-    
+    # คำนวณ offset จาก page และ limit
+    # offset = (page - 1) * limit if page else 0  # คำนวณ offset
+
     try:
+        print(f"category_id = {category_id} limit = {limit} page = {page} q = {q}")
+
         query = session.query(ProductSchema).filter(ProductSchema.status == 'active')
 
         if category_id:
             query = query.filter(ProductSchema.category_id == category_id)
 
-        if q: 
+        if q:
             query = query.filter(ProductSchema.name.ilike(f'%{q}%'))
+            page = 0  
 
-        products = query.order_by(desc(ProductSchema.id)).limit(limit).offset(offset).all()
+        products = query.order_by(desc(ProductSchema.id)).limit(limit).offset(page).all()
 
         total = query.count()
 
+        # สร้างผลลัพธ์ที่ต้องการส่งกลับ
         result = []
         for product in products:
             product_images = session.query(ProductImageSchema).filter(
@@ -336,3 +351,4 @@ def get_products_by_category_id(category_id: str = '', limit: int = 10, offset: 
 
     finally:
         session.close()
+

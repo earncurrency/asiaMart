@@ -31,32 +31,29 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
             <!-- sort -->
             <div class="lg:flex lg:justify-between mb-4 mt-4 items-center">
               <!-- ช่องค้นหา -->
-              <div class="bg-white lg:justify-start">
-                <div class="relative mt-1">
+              <div class="flex items-center w-1/4">
+                <label for="voice-search" class="sr-only">Search</label>
+
+                <div class="relative w-full">
                   <div
-                    class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none"
+                    class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
                   >
-                    <svg
-                      class="w-4 h-4 text-gray-500"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                      />
-                    </svg>
+                    <i class="fa-solid fa-magnifying-glass"></i>
                   </div>
                   <input
                     type="text"
-                    class="block ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-full lg:w-80 bg-white focus:border-gray-300 h-full py-2.5"
-                    placeholder="ค้นหา"
+                    v-model="searchText"
+                    @input="getListCategory"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 pr-10 p-2.5 focus:border-gray-300"
+                    placeholder="ค้นหา..."
                   />
+
+                  <button
+                    @click="xmark"
+                    class="absolute inset-y-0 end-0 flex items-center ps-3 p-3 pointer"
+                  >
+                    <i class="fa-solid fa-xmark"></i>
+                  </button>
                 </div>
               </div>
 
@@ -126,6 +123,14 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
                     class="z-50 absolute right-0 mt-2 text-base list-none w-full bg-white divide-y divide-gray-100 rounded-lg shadow border border-gray-300"
                   >
                     <ul class="py-2">
+                      <li>
+                        <a
+                          href="#"
+                          @click="pageSize(5)"
+                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >5</a
+                        >
+                      </li>
                       <li>
                         <a
                           href="#"
@@ -361,7 +366,7 @@ export default {
   data() {
     return {
       apiUrl: __API_URL__,
-
+      searchText: "",
       categorys: [],
       categoryStatus: "",
       category: {
@@ -371,8 +376,8 @@ export default {
       },
 
       dataPaging: {
-        pageNumber: 0,
-        rows: 10,
+        pageNumber: 1,
+        rows: 5,
         totalPage: 0,
         status: "",
       },
@@ -425,12 +430,17 @@ export default {
 
     //เเสดงข้อมูลประเภทสินค้าบนตาราง
     async getListCategory() {
+      this.page =
+        this.dataPaging.pageNumber * this.dataPaging.rows -
+        this.dataPaging.rows;
+
       await axios
         .get(`${this.apiUrl}category/`, {
           params: {
             category_status: this.categoryStatus,
             limit: this.dataPaging.rows,
-            offset: this.dataPaging.pageNumber,
+            page: this.page,
+            q: this.searchText,
           },
         })
         .then((response) => {
@@ -451,13 +461,17 @@ export default {
       console.log("pageNo", pageNo);
     },
     pageSize(row) {
-      this.dataPaging.pageNumber = 0;
-      this.currentNum = row;
-      this.dataPaging.rows = row;
+      // ตรวจสอบว่าค่า row ใหม่ไม่เท่ากับค่าเดิม
+      if (this.dataPaging.rows !== row) {
+        this.dataPaging.pageNumber = 1;
+        this.dataPaging.rows = row;
+        this.getListCategory();
+        this.pageSizeOpen = false;
+      }
+    },
+    xmark() {
+      this.searchText = "";
       this.getListCategory();
-      this.pageSizeOpen = false;
-
-      console.log("row", row);
     },
 
     async showFormEdit(productTypeId) {
