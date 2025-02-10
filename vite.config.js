@@ -16,7 +16,11 @@ export default defineConfig({
     },
   },
   define: {
-    __BASE_URL__: JSON.stringify('http://localhost/asiaMart'),
+    __BASE_URL__: JSON.stringify(
+      mode === 'production'
+      ?'https://app.asiagroup1999.co.th/asiaMart'
+      :'http://localhost/asiaMart'
+    ),
     __API_URL__: JSON.stringify(
       mode === 'production'
         ? 'https://app.asiagroup1999.co.th/asiaMart/api/' // Production API URL
