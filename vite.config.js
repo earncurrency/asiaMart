@@ -17,14 +17,14 @@ export default defineConfig({
   },
   define: {
     __BASE_URL__: JSON.stringify(
-      mode === 'production'
+      process.env.NODE_ENV === 'production'
       ?'https://app.asiagroup1999.co.th/asiaMart'
       :'http://localhost/asiaMart'
     ),
     __API_URL__: JSON.stringify(
-      mode === 'production'
-        ? 'https://app.asiagroup1999.co.th/asiaMart/api/' // Production API URL
-        : 'http://127.0.0.1:8000/'   // Development API URL
+      process.env.NODE_ENV === 'production'
+      ? 'https://app.asiagroup1999.co.th/asiaMart/api/' // Production API URL
+      : 'http://127.0.0.1:8000/'   // Development API URL
     ),
   },
 })
