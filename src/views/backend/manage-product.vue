@@ -798,13 +798,14 @@ export default {
 
     //เเสดงข้อมูลสินค้าบนตาราง
     async getListProduct() {
-      this.page = this.dataPaging.pageNumber * this.dataPaging.rows - this.dataPaging.rows;
+      // this.page = this.dataPaging.pageNumber * this.dataPaging.rows - this.dataPaging.rows; 
+
       await axios
         .get(`${this.apiUrl}products/`, {
           params: {
             category_id: this.categoryId,
             limit: this.dataPaging.rows,
-            page: this.page,
+            page: this.dataPaging.pageNumber,
             q: this.searchText,
           },
         })

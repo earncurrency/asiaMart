@@ -18,11 +18,12 @@ router = APIRouter(
 
 # ดึงข้อมูลทั้งหมดจากตาราง tb_product
 @router.get("/")
-def get_products_by_category_id(category_id: str = '', limit: int = 10, q: str = '', page: int = ''):  
+def get_products_by_category_id(category_id: str = '', limit: int = 10, q: str = '', page: int = 1):  
     session = SessionLocal()
 
     # คำนวณ offset จาก page และ limit
     # offset = (page - 1) * limit if page else 0  # คำนวณ offset
+    offset = (page * limit) - limit; 
 
     try:
         print(f"category_id = {category_id} limit = {limit} page = {page} q = {q}")
@@ -36,7 +37,7 @@ def get_products_by_category_id(category_id: str = '', limit: int = 10, q: str =
             query = query.filter(ProductSchema.name.ilike(f'%{q}%'))
             page = 0  
 
-        products = query.order_by(desc(ProductSchema.id)).limit(limit).offset(page).all()
+        products = query.order_by(desc(ProductSchema.id)).limit(limit).offset(offset).all()
 
         total = query.count()
 
