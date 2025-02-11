@@ -14,17 +14,21 @@ router = APIRouter(
 
 #เเสดง admin ทั้งหมด
 @router.get("/")
-def list_admins(limit: int = 10, page: int = '', q: str = ''):
+def list_admins(limit: int = 10, page: int = 1, q: str = ''):
     session = SessionLocal()
+        
+    offset = (page * limit) - limit; 
+
     try:
+        # คำนวณ offset จาก page และ limit
+        offset = (page * limit) - limit; 
 
         query = session.query(AdminSchema).filter(AdminSchema.status != 'remove')
 
         if q:
             query = query.filter(AdminSchema.name.ilike(f'%{q}%'))
-            page = 0  
 
-        admins = query.order_by(desc(AdminSchema.id)).limit(limit).offset(page).all()
+        admins = query.order_by(desc(AdminSchema.id)).limit(limit).offset(offset).all()
 
         total = query.count()
 

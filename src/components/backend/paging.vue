@@ -148,6 +148,9 @@ export default {
     //   }
     // },
     // ฟังก์ชั่นที่ทำงานเมื่อผู้ใช้คลิกที่หมายเลขหน้า
+    resetPage() {
+      this.currentPage = 1; 
+    },
     clickPage(pageNo) {
       if (pageNo === "..." || pageNo < 1 || pageNo > this.totalPagination)
         return;
