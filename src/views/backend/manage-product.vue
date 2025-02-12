@@ -42,7 +42,7 @@ import pagination from "@/components/backend/paging.vue";
                   <input
                     type="text"
                     v-model="searchText"
-                    @input="getListProduct"
+                    @input="searchProduct"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 pr-10 p-2.5 focus:border-gray-300"
                     placeholder="ค้นหา..."
                   />
@@ -798,7 +798,6 @@ export default {
 
     //เเสดงข้อมูลสินค้าบนตาราง
     async getListProduct() {
-      // this.page = this.dataPaging.pageNumber * this.dataPaging.rows - this.dataPaging.rows; 
 
       await axios
         .get(`${this.apiUrl}products/`, {
@@ -837,6 +836,10 @@ export default {
         this.getListProduct();
         this.pageSizeOpen = false;
       }
+    },
+    searchProduct(){
+      this.dataPaging.pageNumber = 1;
+      this.getListProduct();
     },
     xmark() {
       this.searchText = "";

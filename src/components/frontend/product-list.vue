@@ -20,12 +20,13 @@ import pagination from "@/components/backend/paging.vue";
         <input
           type="text"
           v-model="searchText"
-          @input="getListProduct"
+          @input="searchProduct"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 pr-10 p-2.5 focus:border-gray-300"
           placeholder="ค้นหา..."
         />
 
-        <button @click="xmark"
+        <button
+          @click="xmark"
           class="absolute inset-y-0 end-0 flex items-center ps-3 p-3 pointer"
         >
           <i class="fa-solid fa-xmark"></i>
@@ -109,6 +110,7 @@ import pagination from "@/components/backend/paging.vue";
   <div v-if="products.length === 0" class=""></div>
   <div v-else class="">
     <pagination
+      ref="pagination"
       :pageSize="dataPaging.rows"
       :totalList="totalList"
       :currentNum="currentNum"
@@ -118,7 +120,12 @@ import pagination from "@/components/backend/paging.vue";
 </template>
 
 <script>
+import pagination from "@/components/backend/paging.vue";
+
 export default {
+  components: {
+    pagination,
+  },
   props: {
     categoryId: {
       type: String,
@@ -134,7 +141,7 @@ export default {
       baseUrl: __BASE_URL__,
       apiUrl: __API_URL__,
       products: [],
-      searchText:"",
+      searchText: "",
       categorys: {
         id: "",
         name: "",
@@ -160,17 +167,13 @@ export default {
   },
   methods: {
     async getListProduct() {
-
-      this.page = (this.dataPaging.pageNumber * this.dataPaging.rows) - this.dataPaging.rows;
-      
       await axios
 
         .get(`${this.apiUrl}products/cat/`, {
           params: {
             category_id: this.categoryId,
             limit: this.dataPaging.rows,
-            // offset: this.dataPaging.pageNumber,
-            page: this.page,
+            page: this.dataPaging.pageNumber,
             q: this.searchText,
           },
         })
@@ -192,6 +195,18 @@ export default {
       this.getListProduct();
 
       console.log("pageNo", pageNo);
+    },
+
+    searchProduct() {
+      this.dataPaging.pageNumber = 1;
+      this.getListProduct();
+      this.$refs.pagination.resetPage();
+    },
+    xmark() {
+      this.searchText = "";
+      this.dataPaging.pageNumber = 1;
+      this.getListProduct();
+      this.currentNum = 1;
     },
 
     async getListCategory() {
@@ -216,10 +231,6 @@ export default {
       this.currentNum = id;
 
       console.log("currentNum", this.currentNum);
-    },
-    xmark(){
-      this.searchText = "";
-      this.getListProduct();
     },
   },
 };

@@ -36,7 +36,7 @@ import pagination from "@/components/backend/paging.vue";
                   <input
                     type="text"
                     v-model="searchText"
-                    @input="getListMember"
+                    @input="searchMember"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 pr-10 p-2.5 focus:border-gray-300"
                     placeholder="ค้นหา..."
                   />
@@ -413,14 +413,12 @@ export default {
 
     //เเสดงข้อมูลสมาชิกบนตาราง
     async getListMember() {
-      this.page =
-        this.dataPaging.pageNumber * this.dataPaging.rows -
-        this.dataPaging.rows;
+
       await axios
         .get(`${this.apiUrl}members`, {
           params: {
             limit: this.dataPaging.rows,
-            page: this.page,
+            page: this.dataPaging.pageNumber,
             q: this.searchText,
           },
         })
@@ -448,6 +446,10 @@ export default {
         this.getListMember();
         this.pageSizeOpen = false;
       }
+    },
+    searchMember(){
+      this.dataPaging.pageNumber = 1;
+      this.getListMember();
     },
     xmark() {
       this.searchText = "";

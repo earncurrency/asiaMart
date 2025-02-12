@@ -42,7 +42,7 @@ import pagination from "@/components/backend/paging.vue";
                   <input
                     type="text"
                     v-model="searchText"
-                    @input="getListAdmin"
+                    @input="searchAdmin"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 pr-10 p-2.5 focus:border-gray-300"
                     placeholder="ค้นหา..."
                   />
@@ -519,14 +519,12 @@ export default {
     },
 
     async getListAdmin() {
-      this.page =
-        this.dataPaging.pageNumber * this.dataPaging.rows -
-        this.dataPaging.rows;
+
       await axios
         .get(`${this.apiUrl}admins`, {
           params: {
             limit: this.dataPaging.rows,
-            page: this.page,
+            page: this.dataPaging.pageNumber,
             q: this.searchText,
           },
         })
@@ -554,6 +552,10 @@ export default {
         this.getListAdmin();
         this.pageSizeOpen = false;
       }
+    },
+    searchAdmin(){
+      this.dataPaging.pageNumber = 1;
+      this.getListAdmin();
     },
     xmark() {
       this.searchText = "";

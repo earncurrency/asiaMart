@@ -43,7 +43,7 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
                   <input
                     type="text"
                     v-model="searchText"
-                    @input="getListCategory"
+                    @input="searchCategory"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 pr-10 p-2.5 focus:border-gray-300"
                     placeholder="ค้นหา..."
                   />
@@ -430,16 +430,12 @@ export default {
 
     //เเสดงข้อมูลประเภทสินค้าบนตาราง
     async getListCategory() {
-      this.page =
-        this.dataPaging.pageNumber * this.dataPaging.rows -
-        this.dataPaging.rows;
 
       await axios
         .get(`${this.apiUrl}category/`, {
           params: {
-            category_status: this.categoryStatus,
             limit: this.dataPaging.rows,
-            page: this.page,
+            page: this.dataPaging.pageNumber,
             q: this.searchText,
           },
         })
@@ -468,6 +464,10 @@ export default {
         this.getListCategory();
         this.pageSizeOpen = false;
       }
+    },
+    searchCategory(){
+      this.dataPaging.pageNumber = 1;
+      this.getListCategory();
     },
     xmark() {
       this.searchText = "";

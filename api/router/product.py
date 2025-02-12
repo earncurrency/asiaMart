@@ -21,12 +21,10 @@ router = APIRouter(
 def get_products_by_category_id(category_id: str = '', limit: int = 10, q: str = '', page: int = 1):  
     session = SessionLocal()
 
-    # คำนวณ offset จาก page และ limit
-    # offset = (page - 1) * limit if page else 0  # คำนวณ offset
-    offset = (page * limit) - limit; 
+    offset = (page * limit) - limit
 
     try:
-        print(f"category_id = {category_id} limit = {limit} page = {page} q = {q}")
+        print(f"category_id = {category_id} limit = {limit} page = {page} q = {q} offset = {offset}")
 
         query = session.query(ProductSchema).filter(ProductSchema.status != 'remove')
 
@@ -35,7 +33,6 @@ def get_products_by_category_id(category_id: str = '', limit: int = 10, q: str =
 
         if q:
             query = query.filter(ProductSchema.name.ilike(f'%{q}%'))
-            page = 0  
 
         products = query.order_by(desc(ProductSchema.id)).limit(limit).offset(offset).all()
 
@@ -70,6 +67,7 @@ def get_products_by_category_id(category_id: str = '', limit: int = 10, q: str =
 
     finally:
         session.close()
+
 
 
 #ดึงข้อมูลสินค้าตามไอดีจากตาราง tb_product
@@ -301,11 +299,10 @@ def save_image_from_base64(base64_str: str, folder: str ) -> str:
         raise HTTPException(status_code=400, detail="ไม่สามารถบันทึกรูปภาพได้")
 
 @router.get("/cat/")
-def get_products_by_category_id(category_id: str = '', limit: int = 10, q: str = '', page: int = ''):  # ตั้งค่า page เริ่มต้นเป็น 1
+def get_products_by_category_id(category_id: str = '', limit: int = 10, q: str = '', page: int = 1):  
     session = SessionLocal()
 
-    # คำนวณ offset จาก page และ limit
-    # offset = (page - 1) * limit if page else 0  # คำนวณ offset
+    offset = (page * limit) - limit; 
 
     try:
         print(f"category_id = {category_id} limit = {limit} page = {page} q = {q}")
@@ -317,9 +314,8 @@ def get_products_by_category_id(category_id: str = '', limit: int = 10, q: str =
 
         if q:
             query = query.filter(ProductSchema.name.ilike(f'%{q}%'))
-            page = 0  
 
-        products = query.order_by(desc(ProductSchema.id)).limit(limit).offset(page).all()
+        products = query.order_by(desc(ProductSchema.id)).limit(limit).offset(offset).all()
 
         total = query.count()
 
