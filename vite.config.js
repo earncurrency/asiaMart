@@ -10,7 +10,11 @@ export default defineConfig({
     vue(),
     // vueDevTools(),
   ],
+<<<<<<< HEAD
   // base: '/asiaMart/',
+=======
+  base: process.env.NODE_ENV === 'production'?'/asiaMart/':'',
+>>>>>>> 4ec904cc3b2c7611b414be6a00b5830b212d73b5
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
