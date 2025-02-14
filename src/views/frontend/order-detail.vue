@@ -1,9 +1,3 @@
-<script setup>
-import frontend_navbar from "../../components/frontend/navbar.vue";
-import Modal from "@/components/frontend/modal.vue";
-import axios from "axios";
-</script>
-
 <template>
   <frontend_navbar />
   <div class="flex justify-center pt-24 p-4">
@@ -144,7 +138,9 @@ import axios from "axios";
 
                     <div class="w-full">
                       <div class="flex justify-between">
-                        <p class="text-mb mb-1 lg:mb-2">{{ product.product_name }}</p>
+                        <p class="text-mb mb-1 lg:mb-2">
+                          {{ product.product_name }}
+                        </p>
                         <p
                           class="font-semibold text-mb text-orange-500 mb-2 lg:mb-3"
                         >
@@ -152,7 +148,9 @@ import axios from "axios";
                         </p>
                       </div>
                       <div class="flex justify-end">
-                        <p class="text-mb mb-2 lg:mb-3">จำนวน X{{ product.qty }}</p>
+                        <p class="text-mb mb-2 lg:mb-3">
+                          จำนวน X{{ product.qty }}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -188,7 +186,10 @@ import axios from "axios";
 </template>
 
 <script>
+import frontend_navbar from "../../components/frontend/navbar.vue";
+import axios from "axios";
 export default {
+  components: { frontend_navbar },
   props: {
     orderId: {
       required: true,
@@ -197,7 +198,7 @@ export default {
   data() {
     return {
       baseUrl: __BASE_URL__,
-      apiUrl:__API_URL__,
+      apiUrl: __API_URL__,
 
       order: {
         id: "",
@@ -217,10 +218,19 @@ export default {
     };
   },
   mounted() {
-    this.getOrder();
+    this.checkAuth();
   },
 
   methods: {
+    checkAuth() {
+      const storedHash = localStorage.getItem("hash");
+
+      if (!storedHash || storedHash === "") {
+        this.$router.push("/login");
+      } else {
+        this.getOrder();
+      }
+    },
     async getOrder() {
       try {
         const response = await axios.get(

@@ -1,8 +1,3 @@
-<script setup>
-import frontend_navbar from "../../components/frontend/navbar.vue";
-import axios from "axios";
-</script>
-
 <template>
   <frontend_navbar />
   <div class="flex justify-center pt-24 p-4">
@@ -148,11 +143,14 @@ import axios from "axios";
 </template>
 
 <script>
+import frontend_navbar from "../../components/frontend/navbar.vue";
+import axios from "axios";
 export default {
+  components: { frontend_navbar },
   data() {
     return {
       baseUrl: __BASE_URL__,
-      apiUrl:__API_URL__,
+      apiUrl: __API_URL__,
 
       orders: [],
       order: {
@@ -171,19 +169,30 @@ export default {
         products: [],
       },
 
-      member_id: "",
+      member: {
+        id: "",
+      },
     };
   },
   mounted() {
-    this.setdata();
-    this.getListOrder();
+    this.checkAuth();
   },
 
   methods: {
+    checkAuth() {
+      const storedHash = localStorage.getItem("hash");
+
+      if (!storedHash || storedHash === "") {
+        this.$router.push("/login");
+      } else {
+        this.setdata();
+        this.getListOrder();
+      }
+    },
     setdata() {
       let storedHash = localStorage.getItem("hash");
-      const firstNumber = storedHash.split("-")[0];
-      this.member_id = firstNumber;
+      const idNumber = storedHash.split("-")[0];
+      this.member.id = idNumber;
     },
 
     async getListOrder() {
@@ -192,7 +201,7 @@ export default {
       await axios
         .get(`${this.apiUrl}orders/`, {
           params: {
-            member_id: this.member_id,
+            member_id: this.member.id,
           },
         })
         .then((response) => {

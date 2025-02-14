@@ -1,10 +1,3 @@
-<script setup>
-import { useRoute } from "vue-router";
-import axios from "axios";
-import frontend_navbar from "../../components/frontend/navbar.vue";
-import productList from "../../components/frontend/product-list.vue";
-</script>
-
 <template>
   <frontend_navbar />
 
@@ -14,7 +7,9 @@ import productList from "../../components/frontend/product-list.vue";
     >
       <div>
         <div class="flex justify-center">
-          <p class="text-3xl font-semibold mt-8 mb-4 lg:mb-16">{{ categoryName}}</p>
+          <p class="text-3xl font-semibold mt-8 mb-4 lg:mb-16">
+            {{ categoryName }}
+          </p>
         </div>
         <!-- content -->
         <productList :categoryId="categoryId" />
@@ -24,7 +19,10 @@ import productList from "../../components/frontend/product-list.vue";
 </template>
 
 <script>
+import frontend_navbar from "../../components/frontend/navbar.vue";
+import productList from "../../components/frontend/product-list.vue";
 export default {
+  components: { frontend_navbar, productList },
   props: {
     categoryId: {
       type: String,
@@ -33,12 +31,22 @@ export default {
     categoryName: {
       type: String,
       required: false,
-    }
+    },
   },
   data() {
     return {};
   },
+  mounted() {
+    this.checkAuth();
+  },
+  methods: {
+    checkAuth() {
+      const storedHash = localStorage.getItem("hash");
 
-  methods: {},
+      if (!storedHash || storedHash === "") {
+        this.$router.push("/login");
+      }
+    },
+  },
 };
 </script>

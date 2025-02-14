@@ -64,11 +64,7 @@ def get_member_by_code(member_code: str):
         return {
             "message": "Get member by Code", 
             "row": {
-                "id": member.id,
-                "code": member.code,
-                "name": member.name,
                 "phone": member.phone,
-                "status": member.status
             }
         }
     finally:

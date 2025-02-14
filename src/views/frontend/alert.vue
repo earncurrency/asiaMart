@@ -1,6 +1,3 @@
-<script setup>
-import frontend_navbar from "../../components/frontend/navbar.vue";
-</script>
 <template>
   <frontend_navbar />
   <div class="flex justify-center pt-24 p-4">
@@ -50,3 +47,25 @@ import frontend_navbar from "../../components/frontend/navbar.vue";
     </div>
   </div>
 </template>
+<script>
+import frontend_navbar from "@/components/frontend/navbar.vue";
+export default {
+  components: { frontend_navbar },
+  data() {
+    return {};
+  },
+  mounted() {
+    this.checkAuth();
+  },
+
+  methods: {
+    checkAuth() {
+      const storedHash = localStorage.getItem("hash");
+
+      if (!storedHash || storedHash === "") {
+        this.$router.push("/login");
+      }
+    },
+  },
+};
+</script>

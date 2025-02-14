@@ -1,10 +1,3 @@
-<script setup>
-import { parse } from "vue/compiler-sfc";
-import frontend_navbar from "../../components/frontend/navbar.vue";
-import Modal from "@/components/frontend/modal.vue";
-import axios from "axios";
-</script>
-
 <template>
   <frontend_navbar :cartsLength="cartsLength" />
   <Modal ref="modal" " />
@@ -17,10 +10,8 @@ import axios from "axios";
         <!-- Title -->
         <!-- เปุ่มนี้เสดงเมื่อจอเล็ก -->
 
-
-
         <div
-          class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8 "
+          class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8"
         >
           <div>
             <!-- รูปใหญ่ด้านบนที่จะแสดงภาพที่เลือก -->
@@ -118,8 +109,12 @@ import axios from "axios";
 </template>
 
 <script>
+import { parse } from "vue/compiler-sfc";
+import frontend_navbar from "../../components/frontend/navbar.vue";
+import Modal from "@/components/frontend/modal.vue";
+import axios from "axios";
 export default {
-  components: { frontend_navbar },
+  components: { frontend_navbar, Modal },
   props: {
     productId: {
       required: true,
@@ -128,7 +123,7 @@ export default {
 
   data() {
     return {
-      apiUrl:__API_URL__,
+      apiUrl: __API_URL__,
       baseUrl: __BASE_URL__,
       product: {
         id: "",
@@ -150,15 +145,19 @@ export default {
     };
   },
   mounted() {
-    this.getProduct();
+    this.checkAuth();
   },
 
   methods: {
-    // ฟังก์ชันในการเปลี่ยนภาพเมื่อคลิก
-    selectImage(imageUrl) {
-      this.selectedImage = imageUrl;
-    },
+    checkAuth() {
+      const storedHash = localStorage.getItem("hash");
 
+      if (!storedHash || storedHash === "") {
+        this.$router.push("/login");
+      } else {
+        this.getProduct();
+      }
+    },
     async getProduct() {
       try {
         const response = await axios.get(
@@ -175,8 +174,11 @@ export default {
         console.error("Error fetching product:", error);
       }
     },
+    // ฟังก์ชันในการเปลี่ยนภาพเมื่อคลิก
+    selectImage(imageUrl) {
+      this.selectedImage = imageUrl;
+    },
     addToCart(product) {
-
       let storedHash = localStorage.getItem("hash");
       const firstNumber = storedHash.split("-")[0];
       this.member_id = firstNumber;
@@ -194,7 +196,9 @@ export default {
       let carts = JSON.parse(localStorage.getItem("carts")) || [];
 
       // ตรวจสอบว่าสินค้าที่ต้องการเพิ่มมีอยู่ใน carts อยู่แล้วหรือไม่
-      let existingItem = carts.find((item) => item.id === product.id && item.member_id === this.member_id);
+      let existingItem = carts.find(
+        (item) => item.id === product.id && item.member_id === this.member_id
+      );
 
       if (existingItem) {
         // หากมีอยู่แล้วให้เพิ่ม quantity ของสินค้านี้
@@ -228,7 +232,6 @@ export default {
       console.log("ตะกร้าสินค้า:", carts);
       console.log("รายการ:", carts.length);
     },
-
     decrementQuantity() {
       if (this.qty > 1) {
         this.qty--;

@@ -1,8 +1,3 @@
-<script setup>
-import frontend_navbar from "../../components/frontend/navbar.vue";
-import Modal from "@/components/frontend/modal.vue";
-</script>
-
 <template>
   <frontend_navbar :cartsLength="cartsLength" />
   <Modal ref="modal" />
@@ -91,7 +86,7 @@ import Modal from "@/components/frontend/modal.vue";
 
                             <!-- ช่องกรอกจำนวนสินค้า -->
                             <input
-                              @change="inputQuantity(item.id , item.qty)"
+                              @change="inputQuantity(item.id, item.qty)"
                               type="text"
                               class="w-14 text-center border-none focus:outline-none p-2 pr-3 pl-3"
                               v-model.number="item.qty"
@@ -116,7 +111,7 @@ import Modal from "@/components/frontend/modal.vue";
               <!--สรุปคำสั่งซื้อ-->
               <div
                 class="w-full lg:w-1/4 bg-gray-100 rounded-md lg:rounded-t-md shadow-md p-8 text-md cursor-pointer h-60 z-50"
-                >
+              >
                 <p class="text-xl font-semibold text-gray-600">รวมทั้งหมด</p>
 
                 <hr class="my-2 text-gray-600" />
@@ -171,7 +166,10 @@ import Modal from "@/components/frontend/modal.vue";
 </style>
 
 <script>
+import frontend_navbar from "../../components/frontend/navbar.vue";
+import Modal from "@/components/frontend/modal.vue";
 export default {
+  components: { frontend_navbar, Modal },
   data() {
     return {
       baseUrl: __BASE_URL__,
@@ -179,8 +177,6 @@ export default {
       cartsLength: 0,
       member_id: "",
     };
-
-
   },
   computed: {
     totalAmount() {
@@ -193,7 +189,7 @@ export default {
     },
   },
   mounted() {
-    this.setdata();
+    this.checkAuth();
   },
   watch: {
     // คอยติดตามการเปลี่ยนแปลงของ carts และอัพเดต cartsLength
@@ -202,6 +198,15 @@ export default {
     },
   },
   methods: {
+    checkAuth() {
+      const storedHash = localStorage.getItem("hash");
+
+      if (!storedHash || storedHash === "") {
+        this.$router.push("/login");
+      } else {
+        this.setdata();
+      }
+    },
     setdata() {
       let carts = localStorage.getItem("carts");
       this.carts = JSON.parse(carts) || [];
@@ -257,7 +262,7 @@ export default {
         console.log(this.carts);
       }
     },
-    inputQuantity(itemId ,itemQty) {
+    inputQuantity(itemId, itemQty) {
       // ดึงข้อมูลจาก localStorage
       let carts = localStorage.getItem("carts");
       this.carts = JSON.parse(carts) || [];
@@ -277,7 +282,6 @@ export default {
         // แสดงผลในคอนโซลเพื่อดีบัก
         console.log(this.carts);
       }
-
     },
     removeItem(itemId) {
       // ดึงข้อมูลจาก localStorage

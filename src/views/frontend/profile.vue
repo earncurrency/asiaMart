@@ -30,8 +30,8 @@ import axios from "axios";
             </div>
             <div class="lg:flex gap-4 mb-2">
               <div class="flex gap-2 justify-center lg:justify-start">
-                <p class="font-semibold">เบอร์มือถือ :</p>
-                <p></p>
+                <p class="font-semibold">เบอร์โทรศัพท์ :</p>
+                <p>{{ member.phone }}</p>
               </div>
               <!-- <div class="flex gap-2 justify-center lg:justify-start">
                 <p class="font-semibold">ไลน์ :</p>
@@ -39,6 +39,7 @@ import axios from "axios";
               </div> -->
             </div>
             <button
+              @click="logout()"
               class="p-2 pr-4 pl-4 rounded-lg bg-red-600 text-white mt-2 hover:bg-red-500 transition"
             >
               ออกจากระบบ
@@ -215,19 +216,29 @@ export default {
     };
   },
   mounted() {
-    this.setdata();
-    this.getMember();
-    this.getListOrder();
+    this.checkAuth();
   },
 
   methods: {
+    checkAuth() {
+      const storedHash = localStorage.getItem("hash");
+
+      if (!storedHash || storedHash === "") {
+        this.$router.push("/login");
+      } else {
+        this.setdata();
+        this.getMember();
+        this.getListOrder();
+      }
+    },
+    
     setdata() {
       let storedHash = localStorage.getItem("hash");
-      const firstNumber = storedHash.split("-")[0];
-      this.member.id = firstNumber;
+      const idNumber = storedHash.split("-")[0];
+      this.member.id = idNumber;
 
-      const twoNumber = storedHash.split("-")[1];
-      this.member.code = twoNumber;
+      const codeNumber = storedHash.split("-")[1];
+      this.member.code = codeNumber;
 
       let fullname = localStorage.getItem("fullname");
       this.member.name = fullname;
@@ -238,7 +249,9 @@ export default {
         .get(`${this.apiUrl}members/code/${this.member.code}`)
         .then((response) => {
           const data = response.data;
-          // this.orders = data.rows;
+          // this.member.name = data.row.name
+          this.member.phone = data.row.phone;
+
           console.log("member", data.row);
         })
         .catch((error) => {
@@ -250,7 +263,7 @@ export default {
       this.setdata();
       this.order.status = "pending";
 
-      await axios                   
+      await axios
         .get(`${this.apiUrl}orders/`, {
           params: {
             member_id: this.member.id,
@@ -267,6 +280,13 @@ export default {
         .catch((error) => {
           console.error("There was an error fetching the data:", error);
         });
+    },
+
+    async logout() {
+      localStorage.setItem("hash", "");
+      localStorage.setItem("fullname", "");
+      this.$router.push("/login");
+      this.closeiconUserMenu();
     },
   },
 };

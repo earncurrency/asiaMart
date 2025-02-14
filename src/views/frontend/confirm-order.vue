@@ -1,12 +1,10 @@
-<script setup>
-import axios from "axios";
-import frontend_navbar from "../../components/frontend/navbar.vue";
-import Modal from "@/components/frontend/modal.vue";
-</script>
-
 <template>
   <frontend_navbar :cartsLength="cartsLength" />
-  <Modal ref="modal" @clearLocalStorage="clearLocalStorage" />
+  <Modal
+    ref="modal"
+    @setPhone="setPhone"
+    @clearLocalStorage="clearLocalStorage"
+  />
 
   <div class="flex justify-center pt-24">
     <div
@@ -47,9 +45,10 @@ import Modal from "@/components/frontend/modal.vue";
                     <div class="mb-5">
                       <div class="flex justify-between mb-2 items-center">
                         <label class="block text-md font-medium text-gray-900"
-                          >เบอร์โทร</label
+                          >เบอร์โทรศัพท์</label
                         >
                         <button
+                          @click="changePhone"
                           class="py-1 px-2 bg-white shadow-md rounded-md text-orange-500"
                         >
                           <i class="fa-regular fa-pen-to-square"></i>
@@ -233,7 +232,11 @@ import Modal from "@/components/frontend/modal.vue";
 </style>
 
 <script>
+import axios from "axios";
+import frontend_navbar from "../../components/frontend/navbar.vue";
+import Modal from "@/components/frontend/modal.vue";
 export default {
+  components: { frontend_navbar, Modal },
   data() {
     return {
       apiUrl: __API_URL__,
@@ -243,13 +246,14 @@ export default {
       cartsLength: 0,
 
       member: {
-        // id: "",
+        id: "",
         code: "",
         name: "",
         phone: "",
       },
-      // member_name: "",
-      code: "",
+      order: {
+        code: "",
+      },
     };
   },
   computed: {
@@ -263,7 +267,7 @@ export default {
     },
   },
   mounted() {
-    this.setdata();
+    this.checkAuth();
   },
   watch: {
     // คอยติดตามการเปลี่ยนแปลงของ carts และอัพเดต cartsLength
@@ -272,9 +276,20 @@ export default {
     },
   },
   methods: {
+    checkAuth() {
+      const storedHash = localStorage.getItem("hash");
+
+      if (!storedHash || storedHash === "") {
+        this.$router.push("/login");
+      } else {
+        this.setdata();
+        this.getMember();
+      }
+    },
     setdata() {
       let carts = localStorage.getItem("carts");
       this.carts = JSON.parse(carts) || [];
+      // console.log(this.carts)
 
       //ข้อมูลจาก hash
       let storedHash = localStorage.getItem("hash");
@@ -291,10 +306,36 @@ export default {
       let fullname = localStorage.getItem("fullname");
       this.member.name = fullname;
 
-      // กรองข้อมูลใน carts เฉพาะที่ member_id ตรงกับ this.member_id
+      // กรองข้อมูลใน carts เฉพาะที่ member_id ใน this.carts ตรงกับ this.member.id
       this.carts = this.carts.filter(
         (item) => item.member_id === this.member.id
       );
+    },
+
+    async getMember() {
+      await axios
+        .get(`${this.apiUrl}members/code/${this.member.code}`)
+        .then((response) => {
+          const data = response.data;
+          // this.member.name = data.row.name
+          this.member.phone = data.row.phone;
+
+          console.log("member", data.row);
+        })
+        .catch((error) => {
+          console.error("There was an error fetching the data:", error);
+        });
+    },
+
+    setPhone(phone) {
+      this.member.phone = phone;
+    },
+
+    changePhone() {
+      this.$refs.modal.showPhoneModal({
+        swlIcon: "info",
+        swlTitle: "กรุณากรอกเบอร์โทรศัพท์",
+      });
     },
 
     async confirmOrder() {
@@ -311,6 +352,13 @@ export default {
           swlIcon: "warning",
           swlTitle: "ไม่มีสินค้าในตระกร้า",
           swlText: "กรุณาเพิ่มสินค้าลงในตะกร้าก่อนยืนยันรายการ",
+        });
+        return;
+      }
+      if (!this.member.phone) {
+        this.$refs.modal.showPhoneModal({
+          swlIcon: "info",
+          swlTitle: "กรุณากรอกเบอร์โทรศัพท์",
         });
         return;
       }
@@ -339,7 +387,7 @@ export default {
 
         if (memberResponse.status === 200) {
           const order = {
-            code: this.code,
+            code: this.order.code,
             member_id: this.member.id,
             member_name: this.member.name,
             member_phone: this.member.phone,
@@ -383,7 +431,7 @@ export default {
       let carts = localStorage.getItem("carts");
       this.carts = JSON.parse(carts) || [];
 
-      // กรองออก item ที่ตรงกับ member_id
+      // กรองออก item ที่ member_id ใน carts ตรงกับ this.member.id
       this.carts = this.carts.filter(
         (item) => !(item.member_id === this.member.id) // ลบ item ที่ตรงกับเงื่อนไข
       );
@@ -419,7 +467,7 @@ export default {
         randomDigits.toString() +
         randomChars2.join("");
 
-      this.code = code;
+      this.order.code = code;
       console.log(code);
     },
   },

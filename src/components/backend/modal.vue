@@ -38,11 +38,12 @@ export default {
         })
         .then((result) => {
           if (result.isConfirmed) {
-            // ถ้าผู้ใช้ยืนยันการลบ จะเรียกใช้ฟังก์ชัน onConfirm 
+            // ถ้าผู้ใช้ยืนยันการลบ จะเรียกใช้ฟังก์ชัน onConfirm
             if (onConfirm) onConfirm();
           }
         });
     },
+
   },
 };
 </script>

@@ -57,7 +57,7 @@ def total():
         product = session.query(ProductSchema).filter(ProductSchema.status != 'remove').count()
 
         results = session.query(func.sum(OrderSchema.total).label('total_sum')).filter(OrderSchema.status == 'success').all()
-        total_sales = sum(result.total_sum for result in results)
+        total_sales = sum(result.total_sum or 0 for result in results) 
 
         return {
             "order": order,
