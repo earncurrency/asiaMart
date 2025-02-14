@@ -28,5 +28,5 @@ coverage
 *.sw?
 
 *.tsbuildinfo
-/api/__pycache__/*
-/api/router/__pycache__/*
+/api/__pycache__/
+/api/router/__pycache__/
