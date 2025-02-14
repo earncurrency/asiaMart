@@ -15,7 +15,7 @@ else:
     DATABASE_URL = "mysql+mysqlconnector://root:password@localhost/db_asiamart"
 
 # สร้าง Engine และ SessionLocal
-engine = create_engine(DATABASE_URL, echo=True)
+engine = create_engine(DATABASE_URL, echo=False)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 session = SessionLocal()
