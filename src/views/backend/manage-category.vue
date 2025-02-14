@@ -1,11 +1,3 @@
-<script setup>
-import axios from "axios";
-import backend_navbar from "@/components/backend/navbar.vue";
-import Modal from "@/components/backend/modal.vue";
-import pagination from "@/components/backend/paging.vue";
-import { fas } from "@fortawesome/free-solid-svg-icons";
-</script>
-
 <template class="">
   <backend_navbar @showFormTable="showFormTable" />
   <Modal ref="modal" @showFormTable="showFormTable" />
@@ -228,9 +220,9 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
                 </tbody>
               </table>
               <pagination
+                ref="paginationRef"
                 :pageSize="dataPaging.rows"
                 :totalList="totalList"
-                :currentNum="currentNum"
                 @reloadData="reloadData"
               />
             </div>
@@ -361,8 +353,13 @@ import { fas } from "@fortawesome/free-solid-svg-icons";
 </template>
 
 <script>
+import axios from "axios";
+import backend_navbar from "@/components/backend/navbar.vue";
+import Modal from "@/components/backend/modal.vue";
+import pagination from "@/components/backend/paging.vue";
+
 export default {
-  components: { pagination },
+  components: { backend_navbar, Modal, pagination },
   data() {
     return {
       apiUrl: __API_URL__,
@@ -382,7 +379,6 @@ export default {
         status: "",
       },
       totalList: [],
-      currentNum: 0,
 
       isFocus: false,
       formTable: true,
@@ -430,7 +426,6 @@ export default {
 
     //เเสดงข้อมูลประเภทสินค้าบนตาราง
     async getListCategory() {
-
       await axios
         .get(`${this.apiUrl}category/`, {
           params: {
@@ -465,13 +460,16 @@ export default {
         this.pageSizeOpen = false;
       }
     },
-    searchCategory(){
+    searchCategory() {
       this.dataPaging.pageNumber = 1;
       this.getListCategory();
+      this.$refs.paginationRef.resetPage();
     },
     xmark() {
       this.searchText = "";
+      this.dataPaging.pageNumber = 1;
       this.getListCategory();
+      this.$refs.paginationRef.resetPage();
     },
 
     async showFormEdit(productTypeId) {

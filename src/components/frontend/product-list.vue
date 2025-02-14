@@ -1,10 +1,3 @@
-<script setup>
-import { useRoute } from "vue-router";
-
-import axios from "axios";
-import pagination from "@/components/backend/paging.vue";
-</script>
-
 <template>
   <div class="lg:flex items-center justify-between font-medium p-4 lg:p-0">
     <!-- ปุ่มนี้จะแสดงเมื่อจอใหญ่ -->
@@ -110,16 +103,17 @@ import pagination from "@/components/backend/paging.vue";
   <div v-if="products.length === 0" class=""></div>
   <div v-else class="">
     <pagination
-      ref="pagination"
+      ref="paginationRef"
       :pageSize="dataPaging.rows"
       :totalList="totalList"
-      :currentNum="currentNum"
       @reloadData="reloadData"
     />
   </div>
 </template>
 
 <script>
+import { useRoute } from "vue-router";
+import axios from "axios";
 import pagination from "@/components/backend/paging.vue";
 
 export default {
@@ -153,7 +147,6 @@ export default {
         status: "",
       },
       totalList: [],
-      currentNum: 1,
     };
   },
   mounted() {
@@ -200,13 +193,13 @@ export default {
     searchProduct() {
       this.dataPaging.pageNumber = 1;
       this.getListProduct();
-      this.$refs.pagination.resetPage();
+      this.$refs.paginationRef.resetPage();
     },
     xmark() {
       this.searchText = "";
       this.dataPaging.pageNumber = 1;
       this.getListProduct();
-      this.currentNum = 1;
+      this.$refs.paginationRef.resetPage();
     },
 
     async getListCategory() {
@@ -228,9 +221,7 @@ export default {
     clickCategory(id) {
       // this.$router.push(`/category/${categoryId}`);
       this.dataPaging.pageNumber = 1;
-      this.currentNum = id;
-
-      console.log("currentNum", this.currentNum);
+      this.$refs.paginationRef.resetPage();0
     },
   },
 };

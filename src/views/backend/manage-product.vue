@@ -1,10 +1,3 @@
-<script setup>
-import axios from "axios";
-import backend_navbar from "@/components/backend/navbar.vue";
-import Modal from "@/components/backend/modal.vue";
-import pagination from "@/components/backend/paging.vue";
-</script>
-
 <template class="">
   <backend_navbar @showFormTable="showFormTable" />
   <Modal ref="modal" @showFormTable="showFormTable" />
@@ -281,6 +274,7 @@ import pagination from "@/components/backend/paging.vue";
                 </tbody>
               </table>
               <pagination
+                ref="paginationRef"
                 :pageSize="dataPaging.rows"
                 :totalList="totalList"
                 @reloadData="reloadData"
@@ -714,8 +708,13 @@ import pagination from "@/components/backend/paging.vue";
 </template>
 
 <script>
+import axios from "axios";
+import backend_navbar from "@/components/backend/navbar.vue";
+import Modal from "@/components/backend/modal.vue";
+import pagination from "@/components/backend/paging.vue";
+
 export default {
-  components: { pagination },
+  components: { backend_navbar, Modal, pagination },
   data() {
     return {
       baseUrl: __BASE_URL__,
@@ -769,6 +768,7 @@ export default {
         this.$router.push("/backend/login");
       } else {
         this.getListProduct();
+        this.getListCategory();
       }
     },
     showFormAdd() {
@@ -798,7 +798,6 @@ export default {
 
     //เเสดงข้อมูลสินค้าบนตาราง
     async getListProduct() {
-
       await axios
         .get(`${this.apiUrl}products/`, {
           params: {
@@ -837,13 +836,16 @@ export default {
         this.pageSizeOpen = false;
       }
     },
-    searchProduct(){
+    searchProduct() {
       this.dataPaging.pageNumber = 1;
       this.getListProduct();
+      this.$refs.paginationRef.resetPage();
     },
     xmark() {
       this.searchText = "";
+      this.dataPaging.pageNumber = 1;
       this.getListProduct();
+      this.$refs.paginationRef.resetPage();
     },
 
     async showFormEdit(productId) {
@@ -1029,7 +1031,6 @@ export default {
               product_images: this.previewImages,
             }
           );
-
           if (response.status === 200) {
             this.$refs.modal.showAlertModal({
               swlIcon: "success",

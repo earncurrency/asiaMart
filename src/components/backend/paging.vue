@@ -1,12 +1,3 @@
-<script setup>
-import { last } from "lodash";
-
-const normalClass =
-  "flex items-center justify-center px-2 lg:px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 transition";
-const activeClass =
-  "flex items-center justify-center px-2 lg:px-3 h-8 leading-tight text-gray-700 bg-gray-300 border border-gray-300 hover:bg-gray-100 hover:text-gray-700 transition";
-</script>
-
 <template>
   <!-- Pagination -->
   <nav
@@ -66,15 +57,15 @@ export default {
       required: false,
       default: 1,
     },
-    currentNum: {
-      type: Number,
-      required: false,
-    },
+
   },
   data() {
     return {
+      normalClass:
+        "flex items-center justify-center px-2 lg:px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 transition",
+      activeClass:
+        "flex items-center justify-center px-2 lg:px-3 h-8 leading-tight text-gray-700 bg-gray-300 border border-gray-300 hover:bg-gray-100 hover:text-gray-700 transition",
       currentPage: 1,
-      // pageList: [10, 20, 50, 100, 200],
       firstRowNumber: 1,
       lastRowNumber: null,
     };
@@ -84,10 +75,6 @@ export default {
   },
   watch: {
     pageSize(newPageSize) {
-      this.currentPage = 1;
-      this.changeShowRowNumber();
-    },
-    currentNum(NewcurrentNum) {
       this.currentPage = 1;
       this.changeShowRowNumber();
     },
@@ -149,7 +136,7 @@ export default {
     // },
     // ฟังก์ชั่นที่ทำงานเมื่อผู้ใช้คลิกที่หมายเลขหน้า
     resetPage() {
-      this.currentPage = 1; 
+      this.currentPage = 1;
     },
     clickPage(pageNo) {
       if (pageNo === "..." || pageNo < 1 || pageNo > this.totalPagination)

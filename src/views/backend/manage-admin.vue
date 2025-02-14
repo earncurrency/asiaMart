@@ -1,10 +1,3 @@
-<script setup>
-import axios from "axios";
-import backend_navbar from "@/components/backend/navbar.vue";
-import Modal from "@/components/backend/modal.vue";
-import pagination from "@/components/backend/paging.vue";
-</script>
-
 <template class="">
   <backend_navbar @showFormTable="showFormTable" />
   <Modal ref="modal" @showFormTable="showFormTable" />
@@ -246,6 +239,7 @@ import pagination from "@/components/backend/paging.vue";
                 </tbody>
               </table>
               <pagination
+                ref="paginationRef"
                 :pageSize="dataPaging.rows"
                 :totalList="totalList"
                 @reloadData="reloadData"
@@ -459,7 +453,12 @@ import pagination from "@/components/backend/paging.vue";
 </template>
 
 <script>
+import axios from "axios";
+import backend_navbar from "@/components/backend/navbar.vue";
+import Modal from "@/components/backend/modal.vue";
+import pagination from "@/components/backend/paging.vue";
 export default {
+  components: { backend_navbar, Modal, pagination },
   data() {
     return {
       apiUrl: __API_URL__,
@@ -519,7 +518,6 @@ export default {
     },
 
     async getListAdmin() {
-
       await axios
         .get(`${this.apiUrl}admins`, {
           params: {
@@ -553,13 +551,16 @@ export default {
         this.pageSizeOpen = false;
       }
     },
-    searchAdmin(){
+    searchAdmin() {
       this.dataPaging.pageNumber = 1;
       this.getListAdmin();
+      this.$refs.paginationRef.resetPage();
     },
     xmark() {
       this.searchText = "";
+      this.dataPaging.pageNumber = 1;
       this.getListAdmin();
+      this.$refs.paginationRef.resetPage();
     },
 
     showFormAdd() {
