@@ -54,12 +54,39 @@ def get_member(member_id: int):
     finally:
         session.close()
 
+@router.get("/code/{member_code}")
+def get_member_by_code(member_code: str):
+    session = SessionLocal()
+    try:
+        member = session.query(MemberSchema).filter(MemberSchema.code == member_code).first()
+        if not member:
+            raise HTTPException(status_code=404, detail="ไม่พบข้อมูลสมาชิก")
+        return {
+            "message": "Get member by Code", 
+            "row": {
+                "id": member.id,
+                "code": member.code,
+                "name": member.name,
+                "phone": member.phone,
+                "status": member.status
+            }
+        }
+    finally:
+        session.close()
+
 # เพิ่มข้อมูลสมาชิก
 @router.post("/")
 def add_member(member: MemberModel):
     session = SessionLocal()
     try:
-        # สร้างสมาชิกใหม่จากข้อมูลที่รับมา
+        # ตรวจสอบว่า member.code มีอยู่ในฐานข้อมูลแล้วหรือยัง
+        existing_member = session.query(MemberSchema).filter_by(code=member.code).first()
+
+        if existing_member:
+            # ถ้ามีแล้วก็ไม่ต้องเพิ่ม
+            return {"message": "สมาชิกนี้มีอยู่แล้ว", "id": existing_member.id}
+        
+        # ถ้ายังไม่มีสมาชิกที่ตรงกับ member.code ให้เพิ่มสมาชิกใหม่
         new_member = MemberSchema(
             code=member.code,
             name=member.name,
@@ -75,6 +102,7 @@ def add_member(member: MemberModel):
         return {"message": "เพิ่มสมาชิกสำเร็จ", "id": new_member.id}
     finally:
         session.close()
+
 
 # API สำหรับอัปเดทข้อมูลสมาชิก
 @router.put("/{member_id}")

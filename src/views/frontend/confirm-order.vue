@@ -58,7 +58,7 @@ import Modal from "@/components/frontend/modal.vue";
                       <input
                         v-model="member.phone"
                         type="text"
-                        class="bg-gray-50 border border-gray-300 text-orange-500 text-md rounded-lg focus:border-gray-300 block w-full p-2"
+                        class="bg-gray-50 border border-gray-300 text-orange-500 text-md rounded-lg focus:border-gray-300 block w-full p-2 focus"
                         value=""
                         disabled
                       />
@@ -236,18 +236,19 @@ import Modal from "@/components/frontend/modal.vue";
 export default {
   data() {
     return {
-      apiUrl:__API_URL__,
+      apiUrl: __API_URL__,
       baseUrl: __BASE_URL__,
       deliveryOption: "",
       carts: [],
       cartsLength: 0,
 
       member: {
-        id: "",
+        // id: "",
+        code: "",
         name: "",
-        phone: "0xxxxxxxxx",
+        phone: "",
       },
-      member_name: "",
+      // member_name: "",
       code: "",
     };
   },
@@ -275,12 +276,20 @@ export default {
       let carts = localStorage.getItem("carts");
       this.carts = JSON.parse(carts) || [];
 
+      //ข้อมูลจาก hash
       let storedHash = localStorage.getItem("hash");
-      const firstNumber = storedHash.split("-")[0];
-      this.member.id = firstNumber;
 
-      let storedFullname = localStorage.getItem("fullname");
-      this.member.name = storedFullname;
+      //ไอดีพนักงาน
+      const idNumber = storedHash.split("-")[0];
+      this.member.id = idNumber;
+
+      //รหัสพนักงาน
+      const codeNumber = storedHash.split("-")[1];
+      this.member.code = codeNumber;
+
+      //ชื่อสมาชิก
+      let fullname = localStorage.getItem("fullname");
+      this.member.name = fullname;
 
       // กรองข้อมูลใน carts เฉพาะที่ member_id ตรงกับ this.member_id
       this.carts = this.carts.filter(
@@ -316,36 +325,49 @@ export default {
       try {
         this.generateRandomCode();
 
-        const order = {
-          code: this.code,
-          member_id: this.member.id,
-          member_name: this.member.name,
-          member_phone: this.member.phone,
-          address: this.deliveryOption,
-          total: this.totalAmount,
-          status: "new",
-          length: this.carts.length,
+        const member = {
+          code: this.member.code,
+          name: this.member.name,
+          phone: this.member.phone,
+          status: "active",
         };
 
-        // เอาข้อมูลสินค้าจากตะกร้าเพื่อส่งไปใน API
-        const orderDetails = this.carts.map((item) => ({
-          product_id: item.id,
-          product_name: item.name,
-          product_price: item.price,
-          qty: item.qty,
-        }));
+        const memberResponse = await axios.post(
+          `${this.apiUrl}members/`,
+          member
+        );
 
-        const response = await axios.post(`${this.apiUrl}orders/`, {
-          order: order,
-          orderDetails: orderDetails, // ส่งข้อมูลสินค้าพร้อมออเดอร์
-        });
+        if (memberResponse.status === 200) {
+          const order = {
+            code: this.code,
+            member_id: this.member.id,
+            member_name: this.member.name,
+            member_phone: this.member.phone,
+            address: this.deliveryOption,
+            total: this.totalAmount,
+            status: "new",
+            length: this.carts.length,
+          };
 
-        if (response.status === 200) {
-          this.$refs.modal.showSuccessModal({
-            swlIcon: "success",
-            swlTitle: "ทำรายการสั่งซื้อสำเร็จ",
-            swlText: "",
+          const orderDetails = this.carts.map((item) => ({
+            product_id: item.id,
+            product_name: item.name,
+            product_price: item.price,
+            qty: item.qty,
+          }));
+
+          const orderResponse = await axios.post(`${this.apiUrl}orders/`, {
+            order: order,
+            orderDetails: orderDetails,
           });
+
+          if (orderResponse.status === 200) {
+            this.$refs.modal.showSuccessModal({
+              swlIcon: "success",
+              swlTitle: "ทำรายการสั่งซื้อสำเร็จ",
+              swlText: "",
+            });
+          }
         }
       } catch (error) {
         this.$refs.modal.showAlertModal({
@@ -370,7 +392,7 @@ export default {
       localStorage.removeItem("carts");
 
       // อัพเดท localStorage ด้วยข้อมูลใหม่ที่กรองแล้ว
-      localStorage.setItem("carts", JSON.stringify(this.carts)); 
+      localStorage.setItem("carts", JSON.stringify(this.carts));
       this.cartsLength = this.carts.length;
     },
 

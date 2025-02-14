@@ -77,9 +77,11 @@ export default {
               localStorage.setItem("fullname", response.data.fullname);
               this.$router.push("/");
 
-              const firstNumber = response.data.hash.split("-")[0]; // แยกตัวเลขชุดเเรก
+              const idNumber = response.data.hash.split("-")[0];
+              const codeNumber = response.data.hash.split("-")[1];
 
-              console.log("ตัวเลขชุดแรกก่อนเข้าสู่ระบบ:", firstNumber);
+              console.log("ตัวเลขชุดแรก:", idNumber);
+              console.log("ตัวเลขชุดที่สอง:", codeNumber);
               console.log("เข้าสู่ระบบ :", response.data);
             } else {
               this.$refs.modal.showAlertModal({

@@ -21,17 +21,17 @@ import axios from "axios";
           />
 
           <div class="text-gray-600 text-md">
-            <p class="text-2xl lg:text-3xl font-semibold">{{ fullname }}</p>
+            <p class="text-2xl lg:text-3xl font-semibold">{{ member.name }}</p>
             <div class="lg:flex gap-4 mt-2">
               <div class="flex gap-2 justify-center lg:justify-start">
                 <p class="font-semibold">รหัสพนักงาน :</p>
-                <p>{{ member_code }}</p>
+                <p>{{ member.code }}</p>
               </div>
             </div>
             <div class="lg:flex gap-4 mb-2">
               <div class="flex gap-2 justify-center lg:justify-start">
                 <p class="font-semibold">เบอร์มือถือ :</p>
-                <p>0xx xxx xxxx</p>
+                <p></p>
               </div>
               <!-- <div class="flex gap-2 justify-center lg:justify-start">
                 <p class="font-semibold">ไลน์ :</p>
@@ -180,7 +180,7 @@ export default {
   data() {
     return {
       baseUrl: __BASE_URL__,
-      apiUrl:__API_URL__,
+      apiUrl: __API_URL__,
 
       orders: [],
       order: {
@@ -206,14 +206,17 @@ export default {
         status: "",
       },
 
-      order_status: "",
-      fullname: "",
-      member_id: "",
-      member_code:"",
+      member: {
+        id: "",
+        code: "",
+        name: "",
+        phone: "",
+      },
     };
   },
   mounted() {
     this.setdata();
+    this.getMember();
     this.getListOrder();
   },
 
@@ -221,24 +224,37 @@ export default {
     setdata() {
       let storedHash = localStorage.getItem("hash");
       const firstNumber = storedHash.split("-")[0];
-      this.member_id = firstNumber;
+      this.member.id = firstNumber;
 
       const twoNumber = storedHash.split("-")[1];
-      this.member_code = twoNumber;
+      this.member.code = twoNumber;
 
-      let storedFullname = localStorage.getItem("fullname");
-      this.fullname = storedFullname;
+      let fullname = localStorage.getItem("fullname");
+      this.member.name = fullname;
+    },
+
+    async getMember() {
+      await axios
+        .get(`${this.apiUrl}members/code/${this.member.code}`)
+        .then((response) => {
+          const data = response.data;
+          // this.orders = data.rows;
+          console.log("member", data.row);
+        })
+        .catch((error) => {
+          console.error("There was an error fetching the data:", error);
+        });
     },
 
     async getListOrder() {
       this.setdata();
-      this.orders_status = "pending";
+      this.order.status = "pending";
 
-      await axios
+      await axios                   
         .get(`${this.apiUrl}orders/`, {
           params: {
-            member_id: this.member_id,
-            orders_status: this.orders_status,
+            member_id: this.member.id,
+            orders_status: this.order.status,
             limit: this.dataPaging.rows,
             offset: this.dataPaging.pageNumber,
           },
