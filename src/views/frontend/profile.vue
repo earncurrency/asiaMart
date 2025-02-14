@@ -220,10 +220,10 @@ export default {
   methods: {
     setdata() {
       let storedHash = localStorage.getItem("hash");
-      const firstNumber = storedHash.split("-")[0];
+      const firstNumber = storedHash ? storedHash.split("-")[0] : 0;
       this.member_id = firstNumber;
 
-      const twoNumber = storedHash.split("-")[1];
+      const twoNumber = storedHash ? storedHash.split("-")[1] : 0;
       this.member_code = twoNumber;
 
       let storedFullname = localStorage.getItem("fullname");

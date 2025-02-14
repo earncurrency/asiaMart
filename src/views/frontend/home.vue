@@ -11,7 +11,6 @@ import promotion from '@/components/frontend/promotion.vue';
 
     <frontend_navbar />
 
-
     <imageBanner />
 
     <div class="flex justify-center pt-18 p-4 ">

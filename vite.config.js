@@ -10,7 +10,7 @@ export default defineConfig({
     vue(),
     // vueDevTools(),
   ],
-  base: process.env.NODE_ENV === 'production'?'/asiaMart/':'',
+  base: process.env.NODE_ENV === 'production'?'/asiaMartLive/':'',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
@@ -21,7 +21,7 @@ export default defineConfig({
       process.env.NODE_ENV === 'production'
       // ?'https://app.asiagroup1999.co.th/asiaMart'
       ?'http://192.168.3.8/asiaMart'
-      :'http://localhost/asiaMart'
+      :''
     ),
     __API_URL__: JSON.stringify(
       process.env.NODE_ENV === 'production'

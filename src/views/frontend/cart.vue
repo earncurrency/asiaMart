@@ -207,7 +207,7 @@ export default {
       this.carts = JSON.parse(carts) || [];
 
       let storedHash = localStorage.getItem("hash");
-      const firstNumber = storedHash.split("-")[0];
+      const firstNumber = storedHash ? storedHash.split("-")[0] : 0;
       this.member_id = firstNumber;
 
       // กรองข้อมูลใน carts เฉพาะที่ member_id ตรงกับ this.member_id
