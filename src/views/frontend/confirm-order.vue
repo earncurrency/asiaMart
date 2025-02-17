@@ -278,7 +278,7 @@ export default {
   methods: {
     checkAuth() {
       const storedHash = localStorage.getItem("hash");
-
+      
       if (!storedHash || storedHash === "") {
         this.$router.push("/login");
       } else {
@@ -295,11 +295,11 @@ export default {
       let storedHash = localStorage.getItem("hash");
 
       //ไอดีพนักงาน
-      const idNumber = storedHash.split("-")[0];
+      const idNumber = storedHash ? storedHash.split("-")[0] : 0;
       this.member.id = idNumber;
 
       //รหัสพนักงาน
-      const codeNumber = storedHash.split("-")[1];
+      const codeNumber = storedHash ? storedHash.split("-")[1] : 0;
       this.member.code = codeNumber;
 
       //ชื่อสมาชิก
@@ -326,7 +326,6 @@ export default {
           console.error("There was an error fetching the data:", error);
         });
     },
-
     setPhone(phone) {
       this.member.phone = phone;
     },

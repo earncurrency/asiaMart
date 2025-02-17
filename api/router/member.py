@@ -99,7 +99,6 @@ def add_member(member: MemberModel):
     finally:
         session.close()
 
-
 # API สำหรับอัปเดทข้อมูลสมาชิก
 @router.put("/{member_id}")
 def update_member(member_id: int, member: MemberModel):
