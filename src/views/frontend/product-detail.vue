@@ -165,11 +165,11 @@ export default {
         );
         this.product = response.data.row;
 
-        console.log(this.product);
-
-        this.selectedImage = `${this.baseUrl}/api/uploads/${Math.ceil(
-          this.productId / 100
-        )}/${this.product.images[0].path}`;
+        if(this.product.images[0]){
+          this.selectedImage = `${this.baseUrl}/api/uploads/${Math.ceil(
+            this.productId / 100
+          )}/${this.product.images[0].path}`;
+        }
       } catch (error) {
         console.error("Error fetching product:", error);
       }
@@ -180,7 +180,7 @@ export default {
     },
     addToCart(product) {
       let storedHash = localStorage.getItem("hash");
-      const firstNumber = storedHash.split("-")[0];
+      const firstNumber = storedHash ? storedHash.split("-")[0] : 0;
       this.member_id = firstNumber;
 
       if (!this.member_id) {

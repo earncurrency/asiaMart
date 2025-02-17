@@ -10,7 +10,7 @@ export default defineConfig({
     vue(),
     // vueDevTools(),
   ],
-  base: process.env.NODE_ENV === 'production'?'/asiaMart/':'',
+  base: process.env.NODE_ENV === 'production'?'/asiaMartLive/':'',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
@@ -19,12 +19,14 @@ export default defineConfig({
   define: {
     __BASE_URL__: JSON.stringify(
       process.env.NODE_ENV === 'production'
-      ?'https://app.asiagroup1999.co.th/asiaMart'
-      :'http://localhost/asiaMart'
+      // ?'https://app.asiagroup1999.co.th/asiaMart'
+      ?'http://192.168.3.8/asiaMart'
+      :''
     ),
     __API_URL__: JSON.stringify(
       process.env.NODE_ENV === 'production'
-      ? 'https://app.asiagroup1999.co.th/asiaMart/api/' // Production API URL
+      // ? 'https://app.asiagroup1999.co.th/asiaMart/api/' // Production API URL
+      ? 'http://192.168.3.8:8001/' // Production API URL
       : 'http://127.0.0.1:8000/'   // Development API URL
     ),
   },

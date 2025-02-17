@@ -281,7 +281,7 @@ export default {
       this.carts = JSON.parse(carts) || [];
 
       let storedHash = localStorage.getItem("hash");
-      const firstNumber = storedHash.split("-")[0];
+      const firstNumber = storedHash ? storedHash.split("-")[0] : 0;
       this.member_id = firstNumber;
 
       let storedFullname = localStorage.getItem("fullname");
