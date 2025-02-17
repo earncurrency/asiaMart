@@ -3,15 +3,6 @@
 
   <imageBanner />
 
-<<<<<<< HEAD
-  <div class="flex justify-center pt-18 p-4">
-    <div
-      class="w-full max-w-screen-2xl lg:p-12 lg:border border-gray-200 rounded-lg mb-16 lg:mb-4 bg-white z-40"
-    >
-      <div>
-        <!-- Title -->
-        <!-- <div class="title-content lg:flex items-center justify-between font-medium mt-4 gap-4 p-4 lg:p-0">
-=======
     <imageBanner />
 
     <div class="flex justify-center pt-18 p-4 ">
@@ -19,7 +10,6 @@
             <div>
                 <!-- Title -->
                 <!-- <div class="title-content lg:flex items-center justify-between font-medium mt-4 gap-4 p-4 lg:p-0">
->>>>>>> 8679861501b1e7763bd2929b0bf1f6f1bf466d7b
                     <div class="hidden lg:flex justify-center">
                         <p class="text-3xl font-semibold ">Asia Mart</p>
                     </div>
