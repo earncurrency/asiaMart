@@ -29,6 +29,12 @@ export default defineConfig({
       ? 'http://192.168.3.8:8001/' // Production API URL
       : 'http://127.0.0.1:8000/'   // Development API URL
     ),
+    __AUTH_URL__: JSON.stringify(
+      process.env.NODE_ENV === "production"
+      ? "https://app.asiagroup1999.co.th/app/hr/employee?"
+      // : "http://localhost/asiagroup_app/hr/employee?",
+      : "https://app.asiagroup1999.co.th/app/hr/employee?"
+    ),
   },
 })
 

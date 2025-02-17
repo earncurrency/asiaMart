@@ -245,18 +245,17 @@ export default {
     },
 
     async getMember() {
-      await axios
+      if(this.member.code){
+        await axios
         .get(`${this.apiUrl}members/code/${this.member.code}`)
         .then((response) => {
           const data = response.data;
-          // this.member.name = data.row.name
           this.member.phone = data.row.phone;
-
-          console.log("member", data.row);
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error);
         });
+      }
     },
 
     async getListOrder() {
@@ -275,7 +274,6 @@ export default {
         .then((response) => {
           const data = response.data;
           this.orders = data.rows;
-          console.log(this.orders);
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error);
