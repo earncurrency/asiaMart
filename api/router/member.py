@@ -54,22 +54,6 @@ def get_member(member_id: int):
     finally:
         session.close()
 
-@router.get("/code/{member_code}")
-def get_member_by_code(member_code: str):
-    session = SessionLocal()
-    try:
-        member = session.query(MemberSchema).filter(MemberSchema.code == member_code).first()
-        if not member:
-            raise HTTPException(status_code=404, detail="ไม่พบข้อมูลสมาชิก")
-        return {
-            "message": "Get member by Code", 
-            "row": {
-                "phone": member.phone,
-            }
-        }
-    finally:
-        session.close()
-
 # เพิ่มข้อมูลสมาชิก
 @router.post("/")
 def add_member(member: MemberModel):
@@ -86,7 +70,6 @@ def add_member(member: MemberModel):
         new_member = MemberSchema(
             code=member.code,
             name=member.name,
-            phone=member.phone,
             status=member.status,
         )
 
@@ -98,7 +81,6 @@ def add_member(member: MemberModel):
         return {"message": "เพิ่มสมาชิกสำเร็จ", "id": new_member.id}
     finally:
         session.close()
-
 
 # API สำหรับอัปเดทข้อมูลสมาชิก
 @router.put("/{member_id}")
@@ -132,3 +114,48 @@ def update_member(member_id: int, member: MemberModel):
     finally:
         session.close()
 
+# ดึงข้อมูลตาม code จากตาราง tb_member
+@router.get("/code/{member_code}")
+def get_member_by_code(member_code: str):
+    session = SessionLocal()
+    try:
+        member = session.query(MemberSchema).filter(MemberSchema.code == member_code).first()
+        if not member:
+            raise HTTPException(status_code=404, detail="ไม่พบข้อมูลสมาชิก")
+        return {
+            "message": "Get member by Code", 
+            "row": {
+                "code":member.code,
+                "name":member.name,
+                "phone": member.phone,
+            }
+        }
+    finally:
+        session.close()
+
+# อัพเดทข้อมูลตาม code จากตาราง tb_member
+@router.put("/code/{member_code}")
+def update_member(member_code: str, member: MemberModel):
+    session: Session = SessionLocal()
+    try:
+        existing_member = session.query(MemberSchema).filter(MemberSchema.code == member_code).first()
+
+        if not existing_member:
+            raise HTTPException(status_code=404, detail="ไม่พบข้อมูลสมาชิก")
+
+        if member.phone is not None:
+            existing_member.phone = member.phone
+
+
+        updated_fields = {} 
+        updated_fields = existing_member
+        session.commit()
+
+        return {
+            "success": True,
+            "message": "เเก้ไขข้อมูลสมาชิกสำเร็จ!",
+            "code": member_code,
+            "updated_data": updated_fields  
+        }
+    finally:
+        session.close()

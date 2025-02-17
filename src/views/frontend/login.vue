@@ -55,7 +55,14 @@ export default {
           ? "https://app.asiagroup1999.co.th/app/hr/employee?"
           : "http://localhost/asiagroup_app/hr/employee?",
 
+      apiUrl: __API_URL__,
+
       code: "",
+      
+      member: {
+        code: "",
+        name: "",
+      },
       isFocus: false,
     };
   },
@@ -77,12 +84,18 @@ export default {
               localStorage.setItem("fullname", response.data.fullname);
               this.$router.push("/");
 
-              const idNumber = response.data.hash.split("-")[0];
-              const codeNumber = response.data.hash.split("-")[1];
+              // const idNumber = response.data.hash.split("-")[0];
+              this.member.code = response.data.hash.split("-")[1];
+              this.member.name = response.data.fullname;
 
-              console.log("ตัวเลขชุดแรก:", idNumber);
-              console.log("ตัวเลขชุดที่สอง:", codeNumber);
-              console.log("เข้าสู่ระบบ :", response.data);
+              const member = {
+                code: this.member.code,
+                name: this.member.name,
+                status: "active",
+              };
+
+              axios.post(`${this.apiUrl}members/`, member);
+     
             } else {
               this.$refs.modal.showAlertModal({
                 swlIcon: "warning",

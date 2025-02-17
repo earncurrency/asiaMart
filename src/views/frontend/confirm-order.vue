@@ -49,18 +49,46 @@
                         >
                         <button
                           @click="changePhone"
-                          class="py-1 px-2 bg-white shadow-md rounded-md text-orange-500"
+                          class="py-1 px-2 shadow-md rounded-md bg-gray-800 text-white"
                         >
                           <i class="fa-regular fa-pen-to-square"></i>
+                          เเก้ไขเบอร์
                         </button>
                       </div>
                       <input
+                        v-if="inputNowPhone"
                         v-model="member.phone"
                         type="text"
-                        class="bg-gray-50 border border-gray-300 text-orange-500 text-md rounded-lg focus:border-gray-300 block w-full p-2 focus"
+                        class="bg-gray-50 border border-gray-300 text-orange-500 text-md rounded-lg focus:border-gray-300 block w-full p-2"
                         value=""
                         disabled
                       />
+                      <input
+                        v-show="inputNewPhone"
+                        v-model="newPhone"
+                        ref="inputNewPhone"
+                        type="text"
+                        :class="{
+                          'bg-white border border-gray-300 text-orange-500 text-md rounded-lg focus:border-gray-300 block w-full p-2 focus': true,
+                          'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
+                            !newPhone,
+                        }"
+                        value=""
+                      />
+                      <div v-show="boxBtn" class="flex justify-end mt-2 gap-1">
+                        <button
+                          @click="saveNewPhone"
+                          class="py-1 px-2 rounded-md bg-orange-500 text-white"
+                        >
+                          บันทึก
+                        </button>
+                        <button
+                          @click="cancelChangePhone"
+                          class="py-1 px-2 rounded-md bg-white text-gray-500 ring-1 ring-gray-300"
+                        >
+                          ยกเลิก
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -254,6 +282,13 @@ export default {
       order: {
         code: "",
       },
+
+      // isFocus: false,
+      inputNowPhone: true,
+
+      newPhone: "",
+      inputNewPhone: false,
+      boxBtn: false,
     };
   },
   computed: {
@@ -302,10 +337,6 @@ export default {
       const codeNumber = storedHash.split("-")[1];
       this.member.code = codeNumber;
 
-      //ชื่อสมาชิก
-      let fullname = localStorage.getItem("fullname");
-      this.member.name = fullname;
-
       // กรองข้อมูลใน carts เฉพาะที่ member_id ใน this.carts ตรงกับ this.member.id
       this.carts = this.carts.filter(
         (item) => item.member_id === this.member.id
@@ -317,8 +348,16 @@ export default {
         .get(`${this.apiUrl}members/code/${this.member.code}`)
         .then((response) => {
           const data = response.data;
-          // this.member.name = data.row.name
+          this.member.name = data.row.name
           this.member.phone = data.row.phone;
+
+          if (!this.member.phone) {
+            this.inputNowPhone = false;
+            this.inputNewPhone = true;
+          } else {
+            this.inputNowPhone = true;
+            this.inputNewPhone = false;
+          }
 
           console.log("member", data.row);
         })
@@ -332,10 +371,51 @@ export default {
     },
 
     changePhone() {
-      this.$refs.modal.showPhoneModal({
-        swlIcon: "info",
-        swlTitle: "กรุณากรอกเบอร์โทรศัพท์",
+      this.inputNowPhone = false;
+      this.inputNewPhone = true;
+      this.boxBtn = true;
+      this.$nextTick(() => {
+        this.$refs.inputNewPhone.focus();
       });
+      return;
+    },
+
+    async saveNewPhone() {
+      if (!this.newPhone) {
+        this.$refs.inputNewPhone.focus();
+      } else {
+        try {
+          const dataMember = {
+            phone: this.newPhone,
+          };
+
+          const response = await axios.put(
+            `${this.apiUrl}members/code/${this.member.code}`,
+            dataMember
+          );
+          if (response.status === 200) {
+            this.getMember();
+            this.inputNowPhone = true;
+            this.inputNewPhone = false;
+            this.boxBtn = false;
+          }
+        } catch (error) {
+          console.error("เกิดข้อผิดพลาดในการบันทึกเบอร์โทรศัพท์ใหม่:", error);
+          this.$refs.modal.showAlertModal({
+            swlIcon: "error",
+            swlTitle: "เกิดข้อผิดพลาด",
+            swlText: "ไม่สามารถบันทึกได้",
+          });
+        }
+      }
+
+
+    },
+    cancelChangePhone() {
+      this.newPhone = "";
+      this.inputNowPhone = true;
+      this.inputNewPhone = false;
+      this.boxBtn = false;
     },
 
     async confirmOrder() {
@@ -356,10 +436,9 @@ export default {
         return;
       }
       if (!this.member.phone) {
-        this.$refs.modal.showPhoneModal({
-          swlIcon: "info",
-          swlTitle: "กรุณากรอกเบอร์โทรศัพท์",
-        });
+        this.inputNowPhone = false;
+        this.inputNewPhone = true;
+        this.$refs.inputNewPhone.focus();
         return;
       }
       if (!this.deliveryOption) {
@@ -373,49 +452,35 @@ export default {
       try {
         this.generateRandomCode();
 
-        const member = {
-          code: this.member.code,
-          name: this.member.name,
-          phone: this.member.phone,
-          status: "active",
+        const order = {
+          code: this.order.code,
+          member_id: this.member.id,
+          member_name: this.member.name,
+          member_phone: this.member.phone,
+          address: this.deliveryOption,
+          total: this.totalAmount,
+          status: "new",
+          length: this.carts.length,
         };
 
-        const memberResponse = await axios.post(
-          `${this.apiUrl}members/`,
-          member
-        );
+        const orderDetails = this.carts.map((item) => ({
+          product_id: item.id,
+          product_name: item.name,
+          product_price: item.price,
+          qty: item.qty,
+        }));
 
-        if (memberResponse.status === 200) {
-          const order = {
-            code: this.order.code,
-            member_id: this.member.id,
-            member_name: this.member.name,
-            member_phone: this.member.phone,
-            address: this.deliveryOption,
-            total: this.totalAmount,
-            status: "new",
-            length: this.carts.length,
-          };
+        const orderResponse = await axios.post(`${this.apiUrl}orders/`, {
+          order: order,
+          orderDetails: orderDetails,
+        });
 
-          const orderDetails = this.carts.map((item) => ({
-            product_id: item.id,
-            product_name: item.name,
-            product_price: item.price,
-            qty: item.qty,
-          }));
-
-          const orderResponse = await axios.post(`${this.apiUrl}orders/`, {
-            order: order,
-            orderDetails: orderDetails,
+        if (orderResponse.status === 200) {
+          this.$refs.modal.showSuccessModal({
+            swlIcon: "success",
+            swlTitle: "ทำรายการสั่งซื้อสำเร็จ",
+            swlText: "",
           });
-
-          if (orderResponse.status === 200) {
-            this.$refs.modal.showSuccessModal({
-              swlIcon: "success",
-              swlTitle: "ทำรายการสั่งซื้อสำเร็จ",
-              swlText: "",
-            });
-          }
         }
       } catch (error) {
         this.$refs.modal.showAlertModal({

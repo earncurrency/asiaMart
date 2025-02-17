@@ -254,6 +254,7 @@ export default {
   data() {
     return {
       fullname: "",
+      member_id:"",
       iconUserOpen: false,
       carts: [],
     };

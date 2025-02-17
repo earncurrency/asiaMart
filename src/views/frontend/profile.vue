@@ -235,13 +235,11 @@ export default {
     setdata() {
       let storedHash = localStorage.getItem("hash");
       const firstNumber = storedHash ? storedHash.split("-")[0] : 0;
-      this.member_id = firstNumber;
+      this.member.id = firstNumber;
 
       const twoNumber = storedHash ? storedHash.split("-")[1] : 0;
-      this.member_code = twoNumber;
+      this.member.code = twoNumber;
 
-      let fullname = localStorage.getItem("fullname");
-      this.member.name = fullname;
     },
 
     async getMember() {
@@ -249,7 +247,8 @@ export default {
         .get(`${this.apiUrl}members/code/${this.member.code}`)
         .then((response) => {
           const data = response.data;
-          // this.member.name = data.row.name
+          this.member.code = data.row.code
+          this.member.name = data.row.name
           this.member.phone = data.row.phone;
 
           console.log("member", data.row);
