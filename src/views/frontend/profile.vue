@@ -234,19 +234,11 @@ export default {
     
     setdata() {
       let storedHash = localStorage.getItem("hash");
-<<<<<<< HEAD
-      const idNumber = storedHash.split("-")[0];
-      this.member.id = idNumber;
-
-      const codeNumber = storedHash.split("-")[1];
-      this.member.code = codeNumber;
-=======
       const firstNumber = storedHash ? storedHash.split("-")[0] : 0;
       this.member_id = firstNumber;
 
       const twoNumber = storedHash ? storedHash.split("-")[1] : 0;
       this.member_code = twoNumber;
->>>>>>> 8679861501b1e7763bd2929b0bf1f6f1bf466d7b
 
       let fullname = localStorage.getItem("fullname");
       this.member.name = fullname;
