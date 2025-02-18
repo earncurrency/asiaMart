@@ -1,6 +1,6 @@
 <template class="">
   <backend_navbar @showFormTable="showFormTable" />
-  <Modal ref="modal" @showFormTable="showFormTable" />
+  <Modal ref="modal" @showFormTable="showFormTable" @reloadFormEdit="reloadFormEdit" />
   <div class="p-4 lg:pr-24 lg:pl-24 pt-6 sm:ml-64">
     <div
       class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14"
@@ -589,7 +589,7 @@ export default {
     showFormTable() {
       this.formTable = true;
       this.formEdit = false;
-
+      this.dataPaging.pageNumber = 1;
       this.getListOrders();
     },
 
@@ -639,6 +639,10 @@ export default {
       this.$refs.paginationRef.resetPage();
     },
 
+    reloadFormEdit(orderId) {
+      this.showFormEdit(orderId);
+    },
+    
     async showFormEdit(orderId) {
       this.formTable = false;
       this.formEdit = true;
@@ -710,10 +714,11 @@ export default {
         );
 
         if (response.status === 200) {
-          this.$refs.modal.showAlertModal({
+          this.$refs.modal.showFormEditModal({
             swlIcon: "success",
             swlTitle: "สำเร็จ",
             swlText: response.data.message,
+            orderId: orderId,
           });
         }
       } catch (error) {

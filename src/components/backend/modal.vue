@@ -2,6 +2,44 @@
 <script>
 export default {
   methods: {
+    showSuccessModal({ swlTitle, swlText, swlIcon }) {
+      this.$swal
+        .fire({
+          title: swlTitle,
+          text: swlText,
+          icon: swlIcon,
+          confirmButtonText: "ยืนยัน",
+          customClass: {
+            confirmButton:
+              "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400",
+          },
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+
+          }
+        });
+    },
+
+    showFormEditModal({ swlTitle, swlText, swlIcon ,orderId}) {
+      this.$swal
+        .fire({
+          title: swlTitle,
+          text: swlText,
+          icon: swlIcon,
+          confirmButtonText: "ยืนยัน",
+          customClass: {
+            confirmButton:
+              "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400",
+          },
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            this.$emit("reloadFormEdit", orderId);
+          }
+        });
+    },
+
     showAlertModal({ swlTitle, swlText, swlIcon }) {
       this.$swal
         .fire({
@@ -43,7 +81,6 @@ export default {
           }
         });
     },
-
   },
 };
 </script>

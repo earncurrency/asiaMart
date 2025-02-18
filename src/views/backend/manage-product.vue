@@ -792,7 +792,7 @@ export default {
       this.formTable = true;
       this.formAdd = false;
       this.formEdit = false;
-
+      this.dataPaging.pageNumber = 1;
       this.getListProduct();
     },
 
@@ -1032,7 +1032,7 @@ export default {
             }
           );
           if (response.status === 200) {
-            this.$refs.modal.showAlertModal({
+            this.$refs.modal.showSuccessModal({
               swlIcon: "success",
               swlTitle: "สำเร็จ",
               swlText: response.data.message,
