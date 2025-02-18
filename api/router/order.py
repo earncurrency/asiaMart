@@ -19,11 +19,7 @@ def list_orders(member_id: str = '', orders_status: str = '', limit: int = 10 , 
     """ List Orders """
     session = SessionLocal()
 
-    if limit is None or page is None:
-        limit = None
-        offset = 0
-    else:
-        offset = (page * limit) - limit
+    offset = (page * limit) - limit
 
     try:
         print(f"member_id = {member_id} limit = {limit} page = {page} q = {q} offset = {offset}")
@@ -40,7 +36,11 @@ def list_orders(member_id: str = '', orders_status: str = '', limit: int = 10 , 
         if q:
             query = query.filter(OrderSchema.code.ilike(f'%{q}%'))  
 
-        orders = query.order_by(desc(OrderSchema.id)).limit(limit).offset(offset).all()
+        if member_id:
+            orders = query.order_by(desc(OrderSchema.id)).all()
+
+        else:
+            orders = query.order_by(desc(OrderSchema.id)).limit(limit).offset(offset).all()
 
         total = query.count()
 

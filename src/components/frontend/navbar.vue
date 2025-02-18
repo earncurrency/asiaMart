@@ -246,7 +246,7 @@ export default {
   watch: {
     // ติดตามการเปลี่ยนแปลงของ prop 'cartsLength' ทุกครั้งที่มันเปลี่ยน
     cartsLength(newLength) {
-      this.getProductInCart(); // เรียก setdata เมื่อ prop เปลี่ยน
+      this.getProductInCart();
     },
   },
 
@@ -264,22 +264,24 @@ export default {
     },
     getProductInCart() {
       //ดึง สินค้าใน localStorage carts ที่ id member ตรงกัน
-      axios
-        .get(`${this.apiUrl}members/code/${this.member.code}`)
-        .then((response) => {
-          const data = response.data;
-          this.member.id = data.row.id;
+      if (this.member.code) {
+        axios
+          .get(`${this.apiUrl}members/code/${this.member.code}`)
+          .then((response) => {
+            const data = response.data;
+            this.member.id = data.row.id;
 
-          let carts = localStorage.getItem("carts");
-          this.carts = JSON.parse(carts) || [];
+            let carts = localStorage.getItem("carts");
+            this.carts = JSON.parse(carts) || [];
 
-          this.carts = this.carts.filter(
-            (item) => item.member_id === this.member.id
-          );
-        })
-        .catch((error) => {
-          console.error("There was an error fetching the data:", error);
-        });
+            this.carts = this.carts.filter(
+              (item) => item.member_id === this.member.id
+            );
+          })
+          .catch((error) => {
+            console.error("There was an error fetching the data:", error);
+          });
+      }
     },
 
     async logout() {

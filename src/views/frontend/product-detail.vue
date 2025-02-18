@@ -175,15 +175,17 @@ export default {
       this.member.code = codeNumber;
     },
     async getMember() {
-      await axios
-        .get(`${this.apiUrl}members/code/${this.member.code}`)
-        .then((response) => {
-          const data = response.data;
-          this.member.id = data.row.id;
-        })
-        .catch((error) => {
-          console.error("There was an error fetching the data:", error);
-        });
+      if (this.member.code) {
+        await axios
+          .get(`${this.apiUrl}members/code/${this.member.code}`)
+          .then((response) => {
+            const data = response.data;
+            this.member.id = data.row.id;
+          })
+          .catch((error) => {
+            console.error("There was an error fetching the data:", error);
+          });
+      }
     },
     async getProduct() {
       try {
@@ -206,7 +208,6 @@ export default {
       this.selectedImage = imageUrl;
     },
     addToCart(product) {
-
       if (!this.member.id) {
         this.$refs.modal.showAlertModal({
           swlIcon: "warning",

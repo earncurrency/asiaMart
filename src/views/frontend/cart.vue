@@ -222,24 +222,26 @@ export default {
       this.member.code = codeNumber;
     },
     getProductInCart() {
-      axios
-        .get(`${this.apiUrl}members/code/${this.member.code}`)
-        .then((response) => {
-          const data = response.data;
-          this.member.id = data.row.id;
+      if (this.member.code) {
+        axios
+          .get(`${this.apiUrl}members/code/${this.member.code}`)
+          .then((response) => {
+            const data = response.data;
+            this.member.id = data.row.id;
 
-          //เรียก localStorage carts
-          let carts = localStorage.getItem("carts");
-          this.carts = JSON.parse(carts) || [];
+            //เรียก localStorage carts
+            let carts = localStorage.getItem("carts");
+            this.carts = JSON.parse(carts) || [];
 
-          // กรองข้อมูลเฉพาะของสมาชิกที่กำลังใช้งาน
-          this.carts = this.carts.filter(
-            (item) => item.member_id === this.member.id
-          );
-        })
-        .catch((error) => {
-          console.error("There was an error fetching the data:", error);
-        });
+            // กรองข้อมูลเฉพาะของสมาชิกที่กำลังใช้งาน
+            this.carts = this.carts.filter(
+              (item) => item.member_id === this.member.id
+            );
+          })
+          .catch((error) => {
+            console.error("There was an error fetching the data:", error);
+          });
+      }
     },
 
     decrementQuantity(itemId) {

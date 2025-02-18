@@ -47,7 +47,7 @@
                 <div class="relative">
                   <!-- ปุ่มเลือกสถานะ-->
                   <button
-                    class="border border-gray-300 bg-gray-50 font-medium rounded-lg text-sm px-16 py-2.5 text-center inline-flex items-center"
+                    class="border border-gray-300 bg-gray-50 font-medium rounded-lg text-sm px-16 p-2.5 text-center inline-flex items-center"
                     type="button"
                     @click="dropdownStatus"
                   >
@@ -110,7 +110,7 @@
                 <div class="relative">
                   <!-- ปุ่มเลือกขนาดเเถวในตาราง -->
                   <button
-                    class="border border-gray-300 bg-gray-50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center"
+                    class="border border-gray-300 bg-gray-50 font-medium rounded-lg text-sm px-5 p-2.5 text-center inline-flex items-center"
                     type="button"
                     @click="togglePageSize"
                   >
@@ -287,7 +287,7 @@
                     v-model="order.code"
                     ref="inputCodeOrder"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !order.code,
                     }"
@@ -302,7 +302,7 @@
                     v-model="order.order_date"
                     ref="inputDateOrder"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !order.order_date,
                     }"
@@ -317,7 +317,7 @@
                     v-model="order.status"
                     ref="inputDateOrder"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !order.status,
                     }"
@@ -352,7 +352,7 @@
                     v-model="order.member_name"
                     ref="inputMemberOrder"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !order.member_name,
                     }"
@@ -367,7 +367,7 @@
                     v-model="order.member_phone"
                     ref="inputPhoneMemberOrder"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !order.member_phone,
                     }"
@@ -382,7 +382,7 @@
                     v-model="order.address"
                     ref="inputAddressOrder"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !order.address,
                     }"
@@ -478,7 +478,7 @@
                 ref="inputInfoOrder"
                 rows="4"
                 :class="{
-                  'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                  'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                   'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                     !order.info,
                 }"
@@ -490,7 +490,7 @@
               <button
                 v-if="order.status !== 'cancel'"
                 @click="updateStatus(order.id, order.status)"
-                class="text-white font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center h-full"
+                class="text-white font-medium rounded-lg text-sm px-3 p-2.5 text-center inline-flex items-center h-full"
                 :class="{
                   'bg-blue-500 border-blue-500': order.status === 'new',
                   'bg-blue-400 border-blue-400': order.status === 'pending',
@@ -505,14 +505,14 @@
 
               <button
                 @click="showFormTable"
-                class="text-black bg-gray-200 border border-gray-400 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center h-full"
+                class="text-black bg-gray-200 border border-gray-400 font-medium rounded-lg text-sm px-3 p-2.5 text-center inline-flex items-center h-full"
               >
                 ยกเลิก
               </button>
               <button
                 v-if="order.status !== 'cancel' && order.status !== 'success'"
                 @click="cancelStatus(order.id)"
-                class="text-white bg-red-500 border border-red-500 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center h-full"
+                class="text-white bg-red-500 border border-red-500 font-medium rounded-lg text-sm px-3 p-2.5 text-center inline-flex items-center h-full"
               >
                 ยกเลิกคำสั่งซื้อ
               </button>

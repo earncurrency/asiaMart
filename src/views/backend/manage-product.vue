@@ -54,7 +54,7 @@
                 <div class="relative">
                   <!-- ปุ่มเลือกสถานะ-->
                   <button
-                    class="border border-gray-300 bg-gray-50 font-medium rounded-lg text-sm px-16 py-2.5 text-center inline-flex items-center h-full"
+                    class="border border-gray-300 bg-gray-50 font-medium rounded-lg text-sm px-16 p-2.5 text-center inline-flex items-center h-full"
                     type="button"
                     @click="dropdownStatus"
                   >
@@ -117,7 +117,7 @@
                 <div class="relative">
                   <!-- ปุ่มเลือกขนาดเเถวในตาราง -->
                   <button
-                    class="border border-gray-300 bg-gray-50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center h-full"
+                    class="border border-gray-300 bg-gray-50 font-medium rounded-lg text-sm px-5 p-2.5 text-center inline-flex items-center h-full"
                     type="button"
                     @click="togglePageSize"
                   >
@@ -295,7 +295,7 @@
                   v-model="product.code"
                   ref="inputCodeProduct"
                   :class="{
-                    'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                    'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                     'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                       !product.code,
                   }"
@@ -309,7 +309,7 @@
                   v-model="product.name"
                   ref="inputNameProduct"
                   :class="{
-                    'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                    'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                     'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                       !product.name,
                   }"
@@ -327,7 +327,7 @@
                     v-model="product.cost"
                     ref="inputCostProduct"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !product.cost,
                     }"
@@ -343,7 +343,7 @@
                     v-model="product.price"
                     ref="inputPriceProduct"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !product.price,
                     }"
@@ -360,7 +360,7 @@
                     v-model="product.category_id"
                     ref="inputTypeProduct"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !product.category_id,
                     }"
@@ -378,7 +378,7 @@
                     v-model="product.status"
                     ref="inputStatusProduct"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !product.status,
                     }"
@@ -401,7 +401,7 @@
                     ref="inputDetailProduct"
                     rows="4"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !product.detail,
                     }"
@@ -448,7 +448,7 @@
                   <!-- ปุ่มลบภาพ -->
                   <button
                     @click="delImage(imageIndex)"
-                    class="absolute text-white bg-red-500 font-medium rounded-lg text-md text-center inline-flex items-center -top-2 -right-3 px-4 py-2.5"
+                    class="absolute text-white bg-red-500 font-medium rounded-lg text-md text-center inline-flex items-center -top-2 -right-3 px-4 p-2.5"
                   >
                     <i class="fa-solid fa-trash-can"></i>
                   </button>
@@ -461,13 +461,13 @@
             <div class="flex gap-2 justify-center mt-4 md:mt-4">
               <button
                 @click="btnAdd"
-                class="text-white bg-blue-500 border border-blue-500 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center h-full"
+                class="text-white bg-blue-500 border border-blue-500 font-medium rounded-lg text-sm px-3 p-2.5 text-center inline-flex items-center h-full"
               >
                 ยืนยัน
               </button>
               <button
                 @click="showFormTable"
-                class="text-black bg-gray-200 border border-gray-400 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center h-full"
+                class="text-black bg-gray-200 border border-gray-400 font-medium rounded-lg text-sm px-3 p-2.5 text-center inline-flex items-center h-full"
               >
                 ยกเลิก
               </button>
@@ -493,7 +493,7 @@
                   v-model="product.code"
                   ref="inputCodeProduct"
                   :class="{
-                    'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                    'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                     'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                       !product.code,
                   }"
@@ -507,7 +507,7 @@
                   v-model="product.name"
                   ref="inputNameProduct"
                   :class="{
-                    'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                    'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                     'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                       !product.name,
                   }"
@@ -525,7 +525,7 @@
                     v-model="product.cost"
                     ref="inputCostProduct"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !product.cost,
                     }"
@@ -541,7 +541,7 @@
                     v-model="product.price"
                     ref="inputPriceProduct"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !product.price,
                     }"
@@ -558,7 +558,7 @@
                     v-model="product.category_id"
                     ref="inputTypeProduct"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !product.category_id,
                     }"
@@ -576,7 +576,7 @@
                     v-model="product.status"
                     ref="inputStatusProduct"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !product.status,
                     }"
@@ -599,7 +599,7 @@
                     ref="inputDetailProduct"
                     rows="4"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !product.detail,
                     }"
@@ -647,7 +647,7 @@
                   <!-- ปุ่มลบภาพ -->
                   <button
                     @click="delImage(imageIndex)"
-                    class="absolute text-white bg-red-500 font-medium rounded-lg text-md text-center inline-flex items-center -top-2 -right-3 px-4 py-2.5"
+                    class="absolute text-white bg-red-500 font-medium rounded-lg text-md text-center inline-flex items-center -top-2 -right-3 px-4 p-2.5"
                   >
                     <i class="fa-solid fa-trash-can"></i>
                   </button>
@@ -676,7 +676,7 @@
                   <!-- ปุ่มลบภาพ -->
                   <button
                     @click="btnRemoveImage(image.id)"
-                    class="absolute text-white bg-red-500 font-medium rounded-lg text-md text-center inline-flex items-center -top-2 -right-3 px-4 py-2.5"
+                    class="absolute text-white bg-red-500 font-medium rounded-lg text-md text-center inline-flex items-center -top-2 -right-3 px-4 p-2.5"
                   >
                     <i class="fa-solid fa-trash-can"></i>
                   </button>
@@ -689,13 +689,13 @@
             <div class="flex gap-2 justify-center mt-4 md:mt-6">
               <button
                 @click="btnEdit"
-                class="text-white bg-blue-500 border border-blue-500 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center h-full"
+                class="text-white bg-blue-500 border border-blue-500 font-medium rounded-lg text-sm px-3 p-2.5 text-center inline-flex items-center h-full"
               >
                 ยืนยัน
               </button>
               <button
                 @click="showFormTable"
-                class="text-black bg-gray-200 border border-gray-400 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center h-full"
+                class="text-black bg-gray-200 border border-gray-400 font-medium rounded-lg text-sm px-3 p-2.5 text-center inline-flex items-center h-full"
               >
                 ยกเลิก
               </button>

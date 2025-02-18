@@ -43,7 +43,7 @@ import backend_navbar from "@/components/backend/navbar.vue";
                 </div>
                 <input
                   type="text"
-                  class="block ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-60 lg:w-80 bg-gray-50 focus:border-gray-300 h-full py-2.5"
+                  class="block ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-60 lg:w-80 bg-gray-50 focus:border-gray-300 h-full p-2.5"
                   placeholder="ค้นหา"
                 />
               </div>
@@ -54,7 +54,7 @@ import backend_navbar from "@/components/backend/navbar.vue";
               <div class="relative">
                 <!-- ปุ่มเลือกสถานะ-->
                 <button
-                  class="border border-gray-300 bg-gray-50 font-medium rounded-lg text-sm px-16 py-2.5 text-center inline-flex items-center h-full"
+                  class="border border-gray-300 bg-gray-50 font-medium rounded-lg text-sm px-16 p-2.5 text-center inline-flex items-center h-full"
                   type="button"
                   @click="dropdownStatus"
                 >
@@ -101,7 +101,7 @@ import backend_navbar from "@/components/backend/navbar.vue";
               <div class="relative">
                 <!-- ปุ่มเลือกขนาดเเถวในตาราง -->
                 <button
-                  class="border border-gray-300 bg-gray-50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center h-full"
+                  class="border border-gray-300 bg-gray-50 font-medium rounded-lg text-sm px-5 p-2.5 text-center inline-flex items-center h-full"
                   type="button"
                   @click="togglePageSize"
                 >

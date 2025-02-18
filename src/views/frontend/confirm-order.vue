@@ -324,39 +324,40 @@ export default {
       //รหัสพนักงาน
       const codeNumber = storedHash ? storedHash.split("-")[1] : 0;
       this.member.code = codeNumber;
-
     },
 
     async getMember() {
-      await axios
-        .get(`${this.apiUrl}members/code/${this.member.code}`)
-        .then((response) => {
-          const data = response.data;
-          this.member.id = data.row.id;
-          this.member.name = data.row.name;
-          this.member.phone = data.row.phone;
+      if (this.member.code) {
+        await axios
+          .get(`${this.apiUrl}members/code/${this.member.code}`)
+          .then((response) => {
+            const data = response.data;
+            this.member.id = data.row.id;
+            this.member.name = data.row.name;
+            this.member.phone = data.row.phone;
 
-          if (!this.member.phone) {
-            this.inputNowPhone = false;
-            this.inputNewPhone = true;
-            this.boxBtn = true;
-          } else {
-            this.inputNowPhone = true;
-            this.inputNewPhone = false;
-          }
+            if (!this.member.phone) {
+              this.inputNowPhone = false;
+              this.inputNewPhone = true;
+              this.boxBtn = true;
+            } else {
+              this.inputNowPhone = true;
+              this.inputNewPhone = false;
+            }
 
-          //เรียก localStorage carts
-          let carts = localStorage.getItem("carts");
-          this.carts = JSON.parse(carts) || [];
+            //เรียก localStorage carts
+            let carts = localStorage.getItem("carts");
+            this.carts = JSON.parse(carts) || [];
 
-          // กรองข้อมูลเฉพาะของสมาชิกที่กำลังใช้งาน
-          this.carts = this.carts.filter(
-            (item) => item.member_id === this.member.id
-          );
-        })
-        .catch((error) => {
-          console.error("There was an error fetching the data:", error);
-        });
+            // กรองข้อมูลเฉพาะของสมาชิกที่กำลังใช้งาน
+            this.carts = this.carts.filter(
+              (item) => item.member_id === this.member.id
+            );
+          })
+          .catch((error) => {
+            console.error("There was an error fetching the data:", error);
+          });
+      }
     },
 
     changePhone() {

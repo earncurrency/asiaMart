@@ -270,7 +270,7 @@
                     v-model="admin.code"
                     ref="inputCodeAdmin"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !admin.code,
                     }"
@@ -284,7 +284,7 @@
                     v-model="admin.name"
                     ref="inputNameAdmin"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !admin.name,
                     }"
@@ -300,7 +300,7 @@
                     v-model="admin.phone"
                     ref="inputPhoneAdmin"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !admin.phone,
                     }"
@@ -313,7 +313,7 @@
                     v-model="admin.status"
                     ref="inputStatusAdmin"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-200 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-200 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !admin.status,
                     }"
@@ -373,7 +373,7 @@
                     v-model="admin.code"
                     ref="inputCodeAdmin"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !admin.code,
                     }"
@@ -387,7 +387,7 @@
                     v-model="admin.name"
                     ref="inputNameAdmin"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !admin.name,
                     }"
@@ -403,7 +403,7 @@
                     v-model="admin.phone"
                     ref="inputPhoneAdmin"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !admin.phone,
                     }"
@@ -416,7 +416,7 @@
                     v-model="admin.status"
                     ref="inputStatusAdmin"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-200 h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-200 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !admin.status,
                     }"

@@ -54,7 +54,7 @@
                 <div class="relative">
                   <!-- ปุ่มเลือกสถานะ-->
                   <button
-                    class="border border-gray-300 bg-gray-50 font-medium rounded-lg text-sm px-16 py-2.5 text-center inline-flex items-center h-full"
+                    class="border border-gray-300 bg-gray-50 font-medium rounded-lg text-sm px-16 p-2.5 text-center inline-flex items-center h-full"
                     type="button"
                     @click="dropdownStatus"
                   >
@@ -101,7 +101,7 @@
                 <div class="relative">
                   <!-- ปุ่มเลือกขนาดเเถวในตาราง -->
                   <button
-                    class="border border-gray-300 bg-gray-50 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center h-full"
+                    class="border border-gray-300 bg-gray-50 font-medium rounded-lg text-sm px-5 p-2.5 text-center inline-flex items-center h-full"
                     type="button"
                     @click="togglePageSize"
                   >
@@ -241,7 +241,7 @@
                     v-model="category.name"
                     ref="inputNameProductType"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !category.name,
                     }"
@@ -254,7 +254,7 @@
                     v-model="category.status"
                     ref="inputStatusProductType"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !category.status,
                     }"
@@ -270,13 +270,13 @@
               <div class="flex gap-2 justify-center mt-4 md:mt-0">
                 <button
                   @click="btnAdd"
-                  class="text-white bg-blue-500 border border-blue-500 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center h-full"
+                  class="text-white bg-blue-500 border border-blue-500 font-medium rounded-lg text-sm px-3 p-2.5 text-center inline-flex items-center h-full"
                 >
                   ยืนยัน
                 </button>
                 <button
                   @click="showFormTable"
-                  class="text-black bg-gray-200 border border-gray-400 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center h-full"
+                  class="text-black bg-gray-200 border border-gray-400 font-medium rounded-lg text-sm px-3 p-2.5 text-center inline-flex items-center h-full"
                 >
                   ยกเลิก
                 </button>
@@ -304,7 +304,7 @@
                     v-model="category.name"
                     ref="inputNameProductType"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !category.name,
                     }"
@@ -317,7 +317,7 @@
                     v-model="category.status"
                     ref="inputStatusProductType"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full py-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !category.status,
                     }"
@@ -333,13 +333,13 @@
               <div class="flex gap-2 justify-center mt-4 md:mt-0">
                 <button
                   @click="btnEdit"
-                  class="text-white bg-blue-500 border border-blue-500 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center h-full"
+                  class="text-white bg-blue-500 border border-blue-500 font-medium rounded-lg text-sm px-3 p-2.5 text-center inline-flex items-center h-full"
                 >
                   ยืนยัน
                 </button>
                 <button
                   @click="showFormTable"
-                  class="text-black bg-gray-200 border border-gray-400 font-medium rounded-lg text-sm px-3 py-2.5 text-center inline-flex items-center h-full"
+                  class="text-black bg-gray-200 border border-gray-400 font-medium rounded-lg text-sm px-3 p-2.5 text-center inline-flex items-center h-full"
                 >
                   ยกเลิก
                 </button>
