@@ -1,10 +1,6 @@
 <template>
   <frontend_navbar :cartsLength="cartsLength" />
-  <Modal
-    ref="modal"
-    @setPhone="setPhone"
-    @clearLocalStorage="clearLocalStorage"
-  />
+  <Modal ref="modal" @clearLocalStorage="clearLocalStorage" />
 
   <div class="flex justify-center pt-24">
     <div
@@ -284,9 +280,9 @@ export default {
       },
 
       // isFocus: false,
-      inputNowPhone: true,
 
       newPhone: "",
+      inputNowPhone: true,
       inputNewPhone: false,
       boxBtn: false,
     };
@@ -313,7 +309,7 @@ export default {
   methods: {
     checkAuth() {
       const storedHash = localStorage.getItem("hash");
-      
+
       if (!storedHash || storedHash === "") {
         this.$router.push("/login");
       } else {
@@ -322,25 +318,13 @@ export default {
       }
     },
     setdata() {
-      let carts = localStorage.getItem("carts");
-      this.carts = JSON.parse(carts) || [];
-      // console.log(this.carts)
-
       //ข้อมูลจาก hash
       let storedHash = localStorage.getItem("hash");
-
-      //ไอดีพนักงาน
-      const idNumber = storedHash ? storedHash.split("-")[0] : 0;
-      this.member.id = idNumber;
 
       //รหัสพนักงาน
       const codeNumber = storedHash ? storedHash.split("-")[1] : 0;
       this.member.code = codeNumber;
 
-      // กรองข้อมูลใน carts เฉพาะที่ member_id ใน this.carts ตรงกับ this.member.id
-      this.carts = this.carts.filter(
-        (item) => item.member_id === this.member.id
-      );
     },
 
     async getMember() {
@@ -348,25 +332,31 @@ export default {
         .get(`${this.apiUrl}members/code/${this.member.code}`)
         .then((response) => {
           const data = response.data;
-          this.member.name = data.row.name
+          this.member.id = data.row.id;
+          this.member.name = data.row.name;
           this.member.phone = data.row.phone;
 
           if (!this.member.phone) {
             this.inputNowPhone = false;
             this.inputNewPhone = true;
+            this.boxBtn = true;
           } else {
             this.inputNowPhone = true;
             this.inputNewPhone = false;
           }
 
-          console.log("member", data.row);
+          //เรียก localStorage carts
+          let carts = localStorage.getItem("carts");
+          this.carts = JSON.parse(carts) || [];
+
+          // กรองข้อมูลเฉพาะของสมาชิกที่กำลังใช้งาน
+          this.carts = this.carts.filter(
+            (item) => item.member_id === this.member.id
+          );
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error);
         });
-    },
-    setPhone(phone) {
-      this.member.phone = phone;
     },
 
     changePhone() {
@@ -407,9 +397,8 @@ export default {
           });
         }
       }
-
-
     },
+
     cancelChangePhone() {
       this.newPhone = "";
       this.inputNowPhone = true;

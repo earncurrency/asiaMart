@@ -136,6 +136,12 @@ export default {
         detail: "",
         images: [],
       },
+
+      member: {
+        id: "",
+        code: "",
+      },
+
       member_id: "",
       qty: 1,
       cartsLength: 0,
@@ -156,7 +162,28 @@ export default {
         this.$router.push("/login");
       } else {
         this.getProduct();
+        this.setdata();
+        this.getMember();
       }
+    },
+    setdata() {
+      //ข้อมูลจาก hash
+      let storedHash = localStorage.getItem("hash");
+
+      //รหัสพนักงาน
+      const codeNumber = storedHash ? storedHash.split("-")[1] : 0;
+      this.member.code = codeNumber;
+    },
+    async getMember() {
+      await axios
+        .get(`${this.apiUrl}members/code/${this.member.code}`)
+        .then((response) => {
+          const data = response.data;
+          this.member.id = data.row.id;
+        })
+        .catch((error) => {
+          console.error("There was an error fetching the data:", error);
+        });
     },
     async getProduct() {
       try {
@@ -165,7 +192,7 @@ export default {
         );
         this.product = response.data.row;
 
-        if(this.product.images[0]){
+        if (this.product.images[0]) {
           this.selectedImage = `${this.baseUrl}/api/uploads/${Math.ceil(
             this.productId / 100
           )}/${this.product.images[0].path}`;
@@ -179,11 +206,8 @@ export default {
       this.selectedImage = imageUrl;
     },
     addToCart(product) {
-      let storedHash = localStorage.getItem("hash");
-      const firstNumber = storedHash ? storedHash.split("-")[0] : 0;
-      this.member_id = firstNumber;
 
-      if (!this.member_id) {
+      if (!this.member.id) {
         this.$refs.modal.showAlertModal({
           swlIcon: "warning",
           swlTitle: "กรุณาเข้าสู่ระบบ",
@@ -197,7 +221,7 @@ export default {
 
       // ตรวจสอบว่าสินค้าที่ต้องการเพิ่มมีอยู่ใน carts อยู่แล้วหรือไม่
       let existingItem = carts.find(
-        (item) => item.id === product.id && item.member_id === this.member_id
+        (item) => item.id === product.id && item.member_id === this.member.id
       );
 
       if (existingItem) {
@@ -205,17 +229,18 @@ export default {
         existingItem.qty += parseFloat(this.qty);
       } else {
         // หากยังไม่มีให้เพิ่มรายการสินค้าใหม่
-        console.log('=========================')
-        console.log(this.product)
-        console.log('=========================')
+        console.log("=========================");
+        console.log(this.product);
+        console.log("=========================");
 
         carts.push({
-          member_id: this.member_id,
+          member_id: this.member.id,
           id: product.id,
           name: product.name,
           price: product.price,
           qty: parseFloat(this.qty),
-          image: (this.product.images.length>0 ? this.product.images[0].path : ''),
+          image:
+            this.product.images.length > 0 ? this.product.images[0].path : "",
         });
       }
       // บันทึก carts กลับไปยัง localStorage

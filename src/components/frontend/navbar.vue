@@ -1,6 +1,7 @@
 <script setup>
 import router from "@/router";
 import { RouterLink, RouterView } from "vue-router";
+import axios from "axios";
 </script>
 
 <template>
@@ -22,39 +23,6 @@ import { RouterLink, RouterView } from "vue-router";
           >
         </a>
       </RouterLink>
-      <!-- <RouterLink to="/">
-        <a
-          href=""
-          class="flex lg:hidden items-center space-x-3 rtl:space-x-reverse"
-        >
-          <img src="../../assets/image/asia/icon.png" class="h-10" alt="Logo" />
-        </a>
-      </RouterLink> -->
-
-      <!-- ช้องค้นหา -->
-      <!-- <div class="flex items-center max-w-xl lg:w-full mx-auto">
-        <label for="voice-search" class="sr-only">Search</label>
-
-        <div class="relative w-full">
-          <div
-            class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
-          >
-            <i class="fa-solid fa-magnifying-glass"></i>
-          </div>
-          <input
-            type="text"
-            id="voice-search"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 pr-10 p-2.5 focus:border-gray-300"
-            placeholder="ค้นหา..."
-          />
-
-          <button
-            class="absolute inset-y-0 end-0 flex items-center ps-3 p-3 pointer"
-          >
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-      </div> -->
 
       <div
         class="hidden lg:flex relative flex gap-1 lg:gap-4 justify-center items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse"
@@ -165,7 +133,7 @@ import { RouterLink, RouterView } from "vue-router";
             <li>
               <a
                 @click="logout()"
-                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 "
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               >
                 <span class="mr-2 text-red-500">
                   <i class="fa-solid fa-arrow-right-from-bracket"></i
@@ -253,10 +221,15 @@ export default {
   },
   data() {
     return {
+      apiUrl: __API_URL__,
       fullname: "",
-      member_id:"",
       iconUserOpen: false,
       carts: [],
+
+      member: {
+        id: "",
+        code: "",
+      },
     };
   },
   computed: {
@@ -268,30 +241,44 @@ export default {
   mounted() {
     document.addEventListener("click", this.closeIconUser);
     this.setdata();
+    this.getProductInCart();
   },
   watch: {
     // ติดตามการเปลี่ยนแปลงของ prop 'cartsLength' ทุกครั้งที่มันเปลี่ยน
     cartsLength(newLength) {
-      this.setdata(); // เรียก setdata เมื่อ prop เปลี่ยน
+      this.getProductInCart(); // เรียก setdata เมื่อ prop เปลี่ยน
     },
   },
 
   methods: {
     setdata() {
-      let carts = localStorage.getItem("carts");
-      this.carts = JSON.parse(carts) || [];
-
       let storedHash = localStorage.getItem("hash");
-      const firstNumber = storedHash ? storedHash.split("-")[0] : 0;
-      this.member_id = firstNumber;
 
+      //รหัสพนักงาน
+      const codeNumber = storedHash ? storedHash.split("-")[1] : 0;
+      this.member.code = codeNumber;
+
+      //ชื่อพนักงาน
       let storedFullname = localStorage.getItem("fullname");
       this.fullname = storedFullname;
+    },
+    getProductInCart() {
+      axios
+        .get(`${this.apiUrl}members/code/${this.member.code}`)
+        .then((response) => {
+          const data = response.data;
+          this.member.id = data.row.id;
 
-      // กรองข้อมูลใน carts เฉพาะที่ member_id ตรงกับ this.member_id
-      this.carts = this.carts.filter(
-        (item) => item.member_id === this.member_id
-      );
+          let carts = localStorage.getItem("carts");
+          this.carts = JSON.parse(carts) || [];
+
+          this.carts = this.carts.filter(
+            (item) => item.member_id === this.member.id
+          );
+        })
+        .catch((error) => {
+          console.error("There was an error fetching the data:", error);
+        });
     },
 
     async logout() {

@@ -166,16 +166,22 @@
 </style>
 
 <script>
+import axios from "axios";
 import frontend_navbar from "../../components/frontend/navbar.vue";
 import Modal from "@/components/frontend/modal.vue";
 export default {
   components: { frontend_navbar, Modal },
   data() {
     return {
+      apiUrl: __API_URL__,
       baseUrl: __BASE_URL__,
       carts: [],
       cartsLength: 0,
       member_id: "",
+      member: {
+        id: "",
+        code: "",
+      },
     };
   },
   computed: {
@@ -205,28 +211,44 @@ export default {
         this.$router.push("/login");
       } else {
         this.setdata();
+        this.getProductInCart();
       }
     },
     setdata() {
-      let carts = localStorage.getItem("carts");
-      this.carts = JSON.parse(carts) || [];
-
       let storedHash = localStorage.getItem("hash");
-      const firstNumber = storedHash ? storedHash.split("-")[0] : 0;
-      this.member_id = firstNumber;
 
-      // กรองข้อมูลใน carts เฉพาะที่ member_id ตรงกับ this.member_id
-      this.carts = this.carts.filter(
-        (item) => item.member_id === this.member_id
-      );
+      //รหัสพนักงาน
+      const codeNumber = storedHash ? storedHash.split("-")[1] : 0;
+      this.member.code = codeNumber;
     },
+    getProductInCart() {
+      axios
+        .get(`${this.apiUrl}members/code/${this.member.code}`)
+        .then((response) => {
+          const data = response.data;
+          this.member.id = data.row.id;
+
+          //เรียก localStorage carts
+          let carts = localStorage.getItem("carts");
+          this.carts = JSON.parse(carts) || [];
+
+          // กรองข้อมูลเฉพาะของสมาชิกที่กำลังใช้งาน
+          this.carts = this.carts.filter(
+            (item) => item.member_id === this.member.id
+          );
+        })
+        .catch((error) => {
+          console.error("There was an error fetching the data:", error);
+        });
+    },
+
     decrementQuantity(itemId) {
       let carts = localStorage.getItem("carts");
       this.carts = JSON.parse(carts) || [];
 
       // ค้นหารายการในตะกร้าที่ตรงกับ itemId
       let item = this.carts.find(
-        (item) => item.id === itemId && item.member_id === this.member_id
+        (item) => item.id === itemId && item.member_id === this.member.id
       );
 
       if (item && item.qty > 1) {
@@ -235,9 +257,13 @@ export default {
 
         // อัพเดท localStorage
         localStorage.setItem("carts", JSON.stringify(this.carts));
-        this.setdata();
+        // กรองข้อมูลเฉพาะของสมาชิกที่กำลังใช้งาน
+        this.carts = this.carts.filter(
+          (item) => item.member_id === this.member.id
+        );
+
         // แสดงผลในคอนโซลเพื่อดีบัก
-        console.log(this.carts);
+        // console.log(this.carts);
       }
     },
 
@@ -248,7 +274,7 @@ export default {
 
       // ค้นหารายการในตะกร้าที่ตรงกับ itemId
       let item = this.carts.find(
-        (item) => item.id === itemId && item.member_id === this.member_id
+        (item) => item.id === itemId && item.member_id === this.member.id
       );
 
       if (item) {
@@ -257,9 +283,10 @@ export default {
 
         // อัพเดท localStorage
         localStorage.setItem("carts", JSON.stringify(this.carts));
-        this.setdata();
-        // แสดงผลในคอนโซลเพื่อดีบัก
-        console.log(this.carts);
+        // กรองข้อมูลเฉพาะของสมาชิกที่กำลังใช้งาน
+        this.carts = this.carts.filter(
+          (item) => item.member_id === this.member.id
+        );
       }
     },
     inputQuantity(itemId, itemQty) {
@@ -269,7 +296,7 @@ export default {
 
       // ค้นหารายการในตะกร้าที่ตรงกับ itemId
       let item = this.carts.find(
-        (item) => item.id === itemId && item.member_id === this.member_id
+        (item) => item.id === itemId && item.member_id === this.member.id
       );
 
       if (item) {
@@ -278,9 +305,10 @@ export default {
 
         // อัพเดท localStorage
         localStorage.setItem("carts", JSON.stringify(this.carts));
-        this.setdata();
-        // แสดงผลในคอนโซลเพื่อดีบัก
-        console.log(this.carts);
+        // กรองข้อมูลเฉพาะของสมาชิกที่กำลังใช้งาน
+        this.carts = this.carts.filter(
+          (item) => item.member_id === this.member.id
+        );
       }
     },
     removeItem(itemId) {
@@ -290,20 +318,23 @@ export default {
 
       // กรองออก item ที่ตรงกับ itemId และ member_id
       this.carts = this.carts.filter(
-        (item) => !(item.id === itemId && item.member_id === this.member_id) // ลบ item ที่ตรงกับเงื่อนไข
+        (item) => !(item.id === itemId && item.member_id === this.member.id) // ลบ item ที่ตรงกับเงื่อนไข
       );
 
       // อัพเดท localStorage ด้วยข้อมูลใหม่ที่กรองแล้ว
       localStorage.setItem("carts", JSON.stringify(this.carts));
       this.cartsLength = this.carts.length;
-      this.setdata();
+      // กรองข้อมูลเฉพาะของสมาชิกที่กำลังใช้งาน
+      this.carts = this.carts.filter(
+        (item) => item.member_id === this.member.id
+      );
 
       console.log("cartsLength:", this.cartsLength);
       console.log("ข้อมูลใน localStorage (ตะกร้าสินค้า):", this.carts);
     },
 
     confirmOrder() {
-      if (!this.member_id) {
+      if (!this.member.id) {
         this.$refs.modal.showAlertModal({
           swlIcon: "warning",
           swlTitle: "กรุณาเข้าสู่ระบบ",
