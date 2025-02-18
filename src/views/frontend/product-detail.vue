@@ -205,13 +205,17 @@ export default {
         existingItem.qty += parseFloat(this.qty);
       } else {
         // หากยังไม่มีให้เพิ่มรายการสินค้าใหม่
+        console.log('=========================')
+        console.log(this.product)
+        console.log('=========================')
+
         carts.push({
           member_id: this.member_id,
           id: product.id,
           name: product.name,
           price: product.price,
           qty: parseFloat(this.qty),
-          image: this.product.images[0].path,
+          image: (this.product.images.length>0 ? this.product.images[0].path : ''),
         });
       }
       // บันทึก carts กลับไปยัง localStorage
