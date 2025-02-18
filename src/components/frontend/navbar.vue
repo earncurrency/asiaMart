@@ -263,6 +263,7 @@ export default {
       this.fullname = storedFullname;
     },
     getProductInCart() {
+      //ดึง สินค้าใน localStorage carts ที่ id member ตรงกัน
       axios
         .get(`${this.apiUrl}members/code/${this.member.code}`)
         .then((response) => {

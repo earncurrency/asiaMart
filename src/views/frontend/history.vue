@@ -171,6 +171,9 @@ export default {
 
       member: {
         id: "",
+        code: "",
+        name: "",
+        phone: "",
       },
     };
   },
@@ -191,28 +194,41 @@ export default {
     },
     setdata() {
       let storedHash = localStorage.getItem("hash");
-      const idNumber = storedHash.split("-")[0];
-      this.member.id = idNumber;
+
+      const codeNumber = storedHash ? storedHash.split("-")[1] : 0;
+      this.member.code = codeNumber;
     },
 
+    async getMember() {
+      if (this.member.code) {
+        await axios
+          .get(`${this.apiUrl}members/code/${this.member.code}`)
+          .then((response) => {
+            const data = response.data;
+            this.member.id = data.row.id;
+          })
+          .catch((error) => {
+            console.error("There was an error fetching the data:", error);
+          });
+      }
+    },
     async getListOrder() {
-      this.setdata();
+      // รอให้ getMember ทำงานเสร็จก่อน
+      await this.getMember();
 
-      await axios
-        .get(`${this.apiUrl}orders/`, {
+      try {
+        const response = await axios.get(`${this.apiUrl}orders/`, {
           params: {
-            member_id: this.member.id,
+            member_id: this.member.id, 
           },
-        })
-        .then((response) => {
-          const data = response.data;
-          this.orders = data.rows;
-
-          console.log(this.orders);
-        })
-        .catch((error) => {
-          console.error("There was an error fetching the data:", error);
         });
+        const data = response.data;
+        this.orders = data.rows;
+      } catch (error) {
+        console.error("There was an error fetching the data:", error);
+      }
+
+      console.log(this.orders);
     },
   },
 };

@@ -22,6 +22,7 @@ def list_orders(member_id: str = '', orders_status: str = '', limit: int = 10 , 
     offset = (page * limit) - limit; 
 
     try:
+        print(f"member_id = {member_id} limit = {limit} page = {page} q = {q} offset = {offset}")
         offset = (page * limit) - limit; 
         
         query = session.query(OrderSchema).filter(OrderSchema.status != 'remove')

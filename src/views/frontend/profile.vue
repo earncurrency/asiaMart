@@ -231,53 +231,51 @@ export default {
         this.getListOrder();
       }
     },
-    
+
     setdata() {
       let storedHash = localStorage.getItem("hash");
-      const firstNumber = storedHash ? storedHash.split("-")[0] : 0;
-      this.member.id = firstNumber;
 
-      const twoNumber = storedHash ? storedHash.split("-")[1] : 0;
-      this.member.code = twoNumber;
-
+      const codeNumber = storedHash ? storedHash.split("-")[1] : 0;
+      this.member.code = codeNumber;
     },
 
     async getMember() {
-      if(this.member.code){
+      if (this.member.code) {
         await axios
-        .get(`${this.apiUrl}members/code/${this.member.code}`)
-        .then((response) => {
-          const data = response.data;
-          this.member.code = data.row.code
-          this.member.name = data.row.name
-          this.member.phone = data.row.phone;
-        })
-        .catch((error) => {
-          console.error("There was an error fetching the data:", error);
-        });
+          .get(`${this.apiUrl}members/code/${this.member.code}`)
+          .then((response) => {
+            const data = response.data;
+            this.member.id = data.row.id;
+            this.member.name = data.row.name;
+            this.member.phone = data.row.phone;
+          })
+          .catch((error) => {
+            console.error("There was an error fetching the data:", error);
+          });
       }
     },
 
     async getListOrder() {
-      this.setdata();
+      // รอให้ getMember ทำงานเสร็จก่อน
+      await this.getMember();
+
+      // ตั้งค่าสถานะคำสั่งซื้อ
       this.order.status = "pending";
 
-      await axios
-        .get(`${this.apiUrl}orders/`, {
+      try {
+        const response = await axios.get(`${this.apiUrl}orders/`, {
           params: {
-            member_id: this.member.id,
+            member_id: this.member.id, // ใช้ member.id ที่ได้จาก getMember
             orders_status: this.order.status,
-            limit: this.dataPaging.rows,
-            offset: this.dataPaging.pageNumber,
           },
-        })
-        .then((response) => {
-          const data = response.data;
-          this.orders = data.rows;
-        })
-        .catch((error) => {
-          console.error("There was an error fetching the data:", error);
         });
+        const data = response.data;
+        this.orders = data.rows;
+      } catch (error) {
+        console.error("There was an error fetching the data:", error);
+      }
+
+      console.log(this.orders);
     },
 
     async logout() {
