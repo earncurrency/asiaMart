@@ -19,7 +19,11 @@ def list_orders(member_id: str = '', orders_status: str = '', limit: int = 10 , 
     """ List Orders """
     session = SessionLocal()
 
-    offset = (page * limit) - limit; 
+    if limit is None or page is None:
+        limit = None
+        offset = 0
+    else:
+        offset = (page * limit) - limit
 
     try:
         print(f"member_id = {member_id} limit = {limit} page = {page} q = {q} offset = {offset}")
