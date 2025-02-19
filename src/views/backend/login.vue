@@ -76,8 +76,9 @@ export default {
         const postData = {
           code: this.code,
         };
+
         axios
-          .post(`${this.apiUrl}admins/login/`,postData)
+          .post(`${this.apiUrl}admins/login`,postData)
 
           .then((response) => {
             if (response.data.success) {
