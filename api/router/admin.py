@@ -131,10 +131,10 @@ def update_admin(admin_id: int, admin: AdminModel):
 @router.post("/login")
 async def login(admin: AdminModel):
     session = SessionLocal()
+
     try:
         query = session.query(AdminSchema).filter(AdminSchema.code == admin.code)
         admin = query.first()  
-
 
         if admin is None:
             return {

@@ -102,7 +102,7 @@ export default {
 
   data() {
     return {
-      apiUrl: "http://127.0.0.1:8000/",
+      apiUrl: __API_URL__,
 
       productTotal: "",
       memberTotal: "",

@@ -68,8 +68,6 @@ def get_products_by_category_id(category_id: str = '', limit: int = 10, q: str =
     finally:
         session.close()
 
-
-
 #ดึงข้อมูลสินค้าตามไอดีจากตาราง tb_product
 @router.get("/{product_id}")
 def get_product(product_id: int):

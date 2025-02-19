@@ -1,0 +1,10 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # ถ้าไฟล์หรือโฟลเดอร์มีอยู่จริง ก็ให้ส่งตรงไปเลย
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+
+  # ถ้าไฟล์หรือโฟลเดอร์ไม่มีอยู่จริง ให้ส่งไปที่ index.html
+  RewriteRule . /index.html [L]
+</IfModule>

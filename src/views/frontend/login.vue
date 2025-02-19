@@ -50,15 +50,9 @@ import Modal from "@/components/frontend/modal.vue";
 export default {
   data() {
     return {
-      authUrl:
-        process.env.NODE_ENV !== "production"
-          ? "https://app.asiagroup1999.co.th/app/hr/employee?"
-          : "http://localhost/asiagroup_app/hr/employee?",
-
       apiUrl: __API_URL__,
-
-      code: "",
-      
+      authUrl: __AUTH_URL__,
+      code: "",     
       member: {
         code: "",
         name: "",
