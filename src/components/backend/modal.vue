@@ -58,6 +58,7 @@ export default {
           }
         });
     },
+    
     showDeleteModal({ swlTitle, swlText, swlIcon, onConfirm }) {
       this.$swal
         .fire({

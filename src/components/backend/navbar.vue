@@ -143,6 +143,19 @@ import { faL } from "@fortawesome/free-solid-svg-icons";
           </RouterLink>
         </li>
         <li @click="showFormTable">
+          <RouterLink to="/backend/manage-recommend-product">
+            <a
+              href="#"
+              class="flex items-center p-2 text-white rounded-lg group"
+            >
+              <div class="text-xl text-white">
+                <i class="fa-regular fa-thumbs-up"></i>
+              </div>
+              <span class="flex-1 ms-3 whitespace-nowrap">รายการสินค้าเเนะนำ</span>
+            </a>
+          </RouterLink>
+        </li>
+        <li @click="showFormTable">
           <RouterLink to="/backend/manage-admin">
             <a
               href="#"

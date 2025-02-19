@@ -85,6 +85,17 @@ class AdminSchema(Base):
     name = Column(String(50))
     phone = Column(String(15))
     status = Column(String(15))
+
+
+class RecommendSchema(Base):
+
+    __tablename__ = "tb_recommend"
+
+    id = Column(Integer, primary_key=True, index=True)
+    product_id = Column(Integer)
+    start_date = Column(TIMESTAMP)
+    end_date = Column(TIMESTAMP)
+    status = Column(String(15))
     
 # สร้างตารางในฐานข้อมูล (หากยังไม่มี)
 Base.metadata.create_all(bind=engine)

@@ -81,6 +81,11 @@ const router = createRouter({
             component: () => import('../views/backend/manage-product.vue'),
         },
         {
+            path: '/backend/manage-recommend-product',
+            name: 'backend/manage-recommend-product',
+            component: () => import('../views/backend/manage-recommend-product.vue'),
+        },
+        {
             path: '/backend/manage-admin',
             name: 'backend/manage-admin',
             component: () => import('../views/backend/manage-admin.vue'),

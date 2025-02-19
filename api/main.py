@@ -8,6 +8,7 @@ from router import category
 from router import order
 from router import admin
 from router import dashboard
+from router import recommend
 # from router import product_image
 
 # สร้างแอปพลิเคชัน FastAPI
@@ -34,3 +35,4 @@ app.include_router(category.router)
 app.include_router(order.router)
 app.include_router(admin.router)
 app.include_router(dashboard.router)
+app.include_router(recommend.router)
