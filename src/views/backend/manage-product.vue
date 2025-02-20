@@ -222,7 +222,7 @@
                       >
                         <img
                           class="w-full h-full rounded-md object-cover ring-4 ring-gray-300 shadow-md"
-                          :src="`${baseUrl}/api/uploads/${Math.ceil(
+                          :src="`${imageUrl}/api/uploads/${Math.ceil(
                             product.id / 100
                           )}/${product.images[0]}`"
                         />
@@ -719,6 +719,7 @@ export default {
     return {
       baseUrl: __BASE_URL__,
       apiUrl: __API_URL__,
+      imageUrl: __IMAGE_URL__,
       searchText: "",
       products: [],
       productId: "",

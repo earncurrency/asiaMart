@@ -72,7 +72,7 @@
         >
           <div class="h-48 lg:h-72">
             <img
-              :src="`${baseUrl}/api/uploads/${Math.ceil(product.id / 100)}/${
+              :src="`${imageUrl}/api/uploads/${Math.ceil(product.id / 100)}/${
                 product.images[0]
               }`"
               alt="Card 1"
@@ -134,6 +134,7 @@ export default {
     return {
       baseUrl: __BASE_URL__,
       apiUrl: __API_URL__,
+      imageUrl: __IMAGE_URL__,
       products: [],
       searchText: "",
       categorys: {
