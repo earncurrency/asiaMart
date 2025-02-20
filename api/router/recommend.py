@@ -2,7 +2,6 @@
 from fastapi import APIRouter, HTTPException
 from sqlalchemy.orm import Session ,aliased
 from sqlalchemy import asc, desc
-
 import os ,base64 ,uuid, math
 from typing import List
 
@@ -56,8 +55,8 @@ def get_reccomend(limit: int = 10, q: str = '', page: int = 1):
                 "code": product.code,
                 "name": product.name,
                 "images": image_paths,
-                "start_date": start_date.strftime("%Y-%m-%d %H:%M:%S"),  
-                "end_date": end_date.strftime("%Y-%m-%d %H:%M:%S"),
+                "start_date": start_date.strftime("%Y-%m-%d"),  
+                "end_date": end_date.strftime("%Y-%m-%d"),
                 "recommend_status" : recommend_status ,
             })
 
@@ -67,5 +66,29 @@ def get_reccomend(limit: int = 10, q: str = '', page: int = 1):
             "total": total
         }
 
+    finally:
+        session.close()
+
+
+@router.post("/")
+async def add_reccomend(recommend: RecommendModel):
+    session = SessionLocal()
+    try:
+        
+        new_recommend = RecommendSchema(
+            product_id = recommend.product_id,
+            start_date=recommend.start_date,
+            end_date=recommend.end_date,
+            status=recommend.status,
+        )
+        session.add(new_recommend)
+        session.commit()  
+        session.refresh(new_recommend)
+
+        return {
+            "success": True,
+            "message": "บันทึกข้อมูลสำเร็จ",
+            "updated_data": new_recommend
+        }
     finally:
         session.close()

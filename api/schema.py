@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, TIMESTAMP  
+from sqlalchemy import Column, Integer, String, Float, TIMESTAMP ,Date
 from sqlalchemy.ext.declarative import declarative_base
 from database import engine
 
@@ -93,8 +93,8 @@ class RecommendSchema(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     product_id = Column(Integer)
-    start_date = Column(TIMESTAMP)
-    end_date = Column(TIMESTAMP)
+    start_date = Column(Date)
+    end_date = Column(Date)
     status = Column(String(15))
     
 # สร้างตารางในฐานข้อมูล (หากยังไม่มี)

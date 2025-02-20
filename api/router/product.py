@@ -32,7 +32,7 @@ def get_products_by_category_id(page: int = 1, limit: int = 10, category_id: str
             query = query.filter(ProductSchema.category_id == category_id)
 
         if q:
-            query = query.filter(ProductSchema.name.ilike(f'%{q}%'))
+            query = query.filter(ProductSchema.name.ilike(f'%{q}%') ,ProductSchema.status == 'active')
 
         products = query.order_by(desc(ProductSchema.id)).limit(limit).offset(offset).all()
 

@@ -217,12 +217,14 @@
                   >
                     <th scope="row" class="px-6 py-4">
                       <div
-                        v-if="recommend.images.length > 0 && recommend.images[0]"
+                        v-if="
+                          recommend.images.length > 0 && recommend.images[0]
+                        "
                         class="w-24 h-24 lg:w-24 lg:h-24"
                       >
                         <img
                           class="w-full h-full rounded-md object-cover ring-4 ring-gray-300 shadow-md"
-                          :src="`${baseUrl}/api/uploads/${Math.ceil(
+                          :src="`${imageUrl}/api/uploads/${Math.ceil(
                             recommend.id / 100
                           )}/${recommend.images[0]}`"
                         />
@@ -230,7 +232,7 @@
                       <div v-else class="w-24 h-24 lg:w-24 lg:h-24">
                         <img
                           class="w-full h-full rounded-md object-cover ring-4 ring-gray-300 shadow-md"
-                          :src="`${baseUrl}/src/assets/image/system/product.png`"
+                          :src="`${imageUrl}/src/assets/image/system/product.png`"
                         />
                       </div>
                     </th>
@@ -285,34 +287,77 @@
           <div v-if="formAdd">
             <!-- title -->
             <div class="flex gap-2 items-center mb-2">
-              <p class="text-3xl font-semibold">เพิ่มสินค้า</p>
+              <p class="text-3xl font-semibold">เพิ่มสินค้าเเนะนำ</p>
             </div>
 
             <div class="flex w-full gap-2 mb-2 pt-1 mt-4">
-              <div class="relative w-full lg:w-1/4">
+              <div class="relative w-full lg:w-1/3">
                 <input
                   type="text"
                   v-model="searchCodeProduct"
                   @input="searchProduct"
-                  ref="inputCodeProduct"
-                  :class="{
-                    'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
-                    'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
-                      !product.code,
-                  }"
-                  placeholder="รหัสสินค้า"
+                  class="block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300"
+                  placeholder="ค้นหาสินค้า"
                   required
                 />
                 <div
                   class="absolute z-10 bg-white border border-gray-300 shadow-md rounded-lg w-full"
-                   v-show="products.length > 0"
+                  v-if="searchCodeProduct != ''"
                 >
                   <option
+                    v-for="product in products"
+                    :key="product.id"
+                    @click="clickProduct(product)"
                     class="cursor-pointer p-2 bg-white hover:bg-gray-50 text-black border-gray-300 hover:border-gray-50 rounded-lg whitespace-nowrap overflow-hidden overflow-ellipsis"
                   >
-                    รหัส ชื่อ
+                    {{ product.code }} {{ product.name }}
                   </option>
                 </div>
+              </div>
+              <div class="w-full lg:w-1/3">
+                <flat-pickr
+                  v-model="recommend.start_date"
+                  ref="inputStart_date"
+                  :config="startDateConfig"
+                  :class="{
+                    'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                    'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
+                      !recommend.start_date,
+                  }"
+                  placeholder="วันเริ่มต้น"
+                  required
+                />
+              </div>
+              <div class="w-full lg:w-1/3">
+                <flat-pickr
+                  v-model="recommend.end_date"
+                  ref="inputEnd_date"
+                  :config="endDateConfig"
+                  :class="{
+                    'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                    'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
+                      !recommend.end_date,
+                  }"
+                  placeholder="วันสิ้นสุด"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="flex w-full gap-2 mb-2 pt-1 mt-4">
+              <div class="w-full lg:w-1/4">
+                <input
+                  type="text"
+                  v-model="product.code"
+                  ref="inputNameProduct"
+                  :class="{
+                    'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                    'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
+                      !product.code,
+                  }"
+                  placeholder="รหัสสินค้า"
+                  disabled
+                />
               </div>
               <div class="w-full lg:w-3/4">
                 <input
@@ -320,12 +365,12 @@
                   v-model="product.name"
                   ref="inputNameProduct"
                   :class="{
-                    'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                    'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                     'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                       !product.name,
                   }"
-                  placeholder="ใส่ชื่อสินค้า"
-                  required
+                  placeholder="ชื่อสินค้า"
+                  disabled
                 />
               </div>
             </div>
@@ -423,41 +468,28 @@
               </div>
             </div>
 
-            <div class="md:flex w-full gap-2 mb-2 pt-1 mt-4">
-              <input
-                type="file"
-                id="fileInput"
-                @change="inputImage"
-                accept="image/*"
-                multiple
-                hidden
-              />
-              <label
-                for="fileInput"
-                class="cursor-pointer bg-gray-100 border border-gray-300 text-gray-500 px-4 py-2 rounded-md hover:bg-gray-50 transition"
-              >
-                เลือกรูปภาพ
-              </label>
-            </div>
             <div class="md:flex w-full gap-2 mb-4 pt-1 mt-5">
-              <!-- แสดงภาพตัวอย่างที่เลือก -->
+              <!-- แสดงภาพของสินค้า -->
               <div
-                v-if="previewImages.length > 0"
+                v-if="product.images.length > 0"
                 class="image-preview grid grid-cols-2 lg:grid-cols-5 gap-8"
               >
                 <div
-                  v-for="(image, imageIndex) in previewImages"
+                  v-for="(image, imageIndex) in product.images"
                   :key="imageIndex"
                   class="preview-item relative"
                 >
+                  <!-- แทนที่ชื่อไฟล์ภาพด้วยตัวแปร image -->
                   <img
-                    :src="image"
-                    alt="Image preview"
+                    :src="`${imageUrl}/api/uploads/${Math.ceil(
+                      product.id / 100
+                    )}/${image}`"
+                    alt="Product Image Preview"
                     class="w-32 h-32 lg:w-64 lg:h-48 object-cover rounded-md"
                   />
                   <!-- ปุ่มลบภาพ -->
                   <button
-                    @click="delImage(imageIndex)"
+                    @click="btnRemoveImage(image.id)"
                     class="absolute text-white bg-red-500 font-medium rounded-lg text-md text-center inline-flex items-center -top-2 -right-3 px-4 p-2.5"
                   >
                     <i class="fa-solid fa-trash-can"></i>
@@ -483,6 +515,8 @@
               </button>
             </div>
           </div>
+
+          <!------------------------------------------------------------------>
 
           <div v-if="formEdit">
             <!-- title -->
@@ -677,7 +711,7 @@
                 >
                   <!-- แทนที่ชื่อไฟล์ภาพด้วยตัวแปร image -->
                   <img
-                    :src="`${baseUrl}/api/uploads/${Math.ceil(
+                    :src="`${imageUrl}/api/uploads/${Math.ceil(
                       product.id / 100
                     )}/${image.path}`"
                     alt="Product Image Preview"
@@ -722,13 +756,17 @@ import axios from "axios";
 import backend_navbar from "@/components/backend/navbar.vue";
 import Modal from "@/components/backend/modal.vue";
 import pagination from "@/components/backend/paging.vue";
+import FlatPickr from "vue-flatpickr-component";
+import "flatpickr/dist/flatpickr.css";
+import { Thai } from "flatpickr/dist/l10n/th.js";
 
 export default {
-  components: { backend_navbar, Modal, pagination },
+  components: { backend_navbar, Modal, pagination, FlatPickr },
   data() {
     return {
       baseUrl: __BASE_URL__,
       apiUrl: __API_URL__,
+      imageUrl: __IMAGE_URL__,
       searchText: "",
       searchCodeProduct: "",
 
@@ -745,13 +783,12 @@ export default {
         detail: "",
         images: [],
       },
-      productTotal: "",
 
       categorys: [],
       categoryStatus: "",
       previewImages: [],
 
-      recommends:[],
+      recommends: [],
       recommend: {
         start_date: "",
         end_date: "",
@@ -765,6 +802,32 @@ export default {
         status: "",
       },
       totalList: [],
+
+      startDateConfig: {
+        locale: Thai,
+        dateFormat: "Y-m-d",
+        enableTime: false,
+        minDate: null, // ไม่จำกัดวันที่เริ่มต้น
+        maxDate: null, // ไม่จำกัดวันที่สิ้นสุด
+        disableMobile: true, // เปิดใช้งานบนมือถือ
+        allowInput: false, // อนุญาตให้พิมพ์วันที่ได้
+        monthSelectorType: "dropdown", // แสดงเดือนเป็น dropdown
+        yearSelectorType: "dropdown", // แสดงปีเป็น dropdown
+        onChange: this.onStartDateChange,
+      },
+      endDateConfig: {
+        locale: Thai,
+        dateFormat: "Y-m-d",
+        enableTime: false,
+        minDate: null,
+        maxDate: null,
+        disableMobile: true,
+        allowInput: false,
+        monthSelectorType: "dropdown",
+        yearSelectorType: "dropdown",
+        onChange: this.onEndDateChange,
+      },
+
       isFocus: false,
       formTable: true,
       formAdd: false,
@@ -814,10 +877,7 @@ export default {
           this.recommends = data.rows;
           this.totalList = data.total;
 
-          console.log(this.products);
-          console.log("limit", this.dataPaging.rows);
-          console.log("offset", this.dataPaging.pageNumber);
-          console.log("totalList", data.total);
+          console.log("recommends",this.recommends);
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error);
@@ -856,7 +916,10 @@ export default {
       this.formEdit = false;
       // this.getListCategory();
 
-      this.productId = "";
+      this.searchCodeProduct = "";
+      this.recommend.start_date = "";
+      this.recommend.end_date = "";
+
       this.product.code = "";
       this.product.name = "";
       this.product.cost = "";
@@ -864,7 +927,7 @@ export default {
       this.product.category_id = "";
       this.product.status = "";
       this.product.detail = "";
-      this.previewImages = [];
+      this.product.images = [];
     },
     searchProduct() {
       axios
@@ -877,16 +940,26 @@ export default {
         })
         .then((response) => {
           this.products = response.data.rows;
-          this.productTotal = response.data.total;
 
-          console.log(this.products)
-          console.log(this.productTotal)
+          console.log(this.products);
         })
         .catch((error) => {
           console.error("There was an error!", error);
         });
     },
-
+    clickProduct(product) {
+      this.products = [];
+      this.searchCodeProduct = "";
+      this.product.id = product.id;
+      this.product.code = product.code;
+      this.product.name = product.name;
+      this.product.cost = product.cost;
+      this.product.price = product.price;
+      this.product.category_id = product.category_id;
+      this.product.status = product.status;
+      this.product.detail = product.detail;
+      this.product.images = product.images;
+    },
 
     async showFormEdit(productId) {
       // เปิดฟอร์มแก้ไข
@@ -908,7 +981,7 @@ export default {
           const product = response.data.row;
 
           if (product) {
-            this.product.id = productId;
+            // this.product.id = product.id;
             this.product.code = product.code;
             this.product.name = product.name;
             this.product.cost = product.cost;
@@ -970,52 +1043,46 @@ export default {
 
     async btnAdd() {
       // ตรวจสอบความครบถ้วนของข้อมูล
-      if (!this.product.code) {
-        this.isFocus = true;
-        this.$refs.inputCodeProduct.focus();
-      } else if (!this.product.name) {
-        this.isFocus = true;
-        this.$refs.inputNameProduct.focus();
-      } else if (!this.product.cost) {
-        this.isFocus = true;
-        this.$refs.inputCostProduct.focus();
-      } else if (!this.product.price) {
-        this.isFocus = true;
-        this.$refs.inputPriceProduct.focus();
-      } else if (!this.product.category_id) {
-        this.isFocus = true;
-        this.$refs.inputTypeProduct.focus();
-      } else if (!this.product.status) {
-        this.isFocus = true;
-        this.$refs.inputStatusProduct.focus();
-      } else if (!this.product.detail) {
-        this.isFocus = true;
-        this.$refs.inputDetailProduct.focus();
+      if (!this.product.id) {
+        this.$refs.modal.showModal({
+          swlIcon: "warning",
+          swlTitle: "กรุณาเลือกสินค้า",
+        });
+      }
+      else if (!this.recommend.start_date) {
+        this.$refs.modal.showModal({
+          swlIcon: "warning",
+          swlTitle: "กรุณาเลือกวันที่เริ่มต้นการเเนะนำ",
+        });
+      }
+      else if (!this.recommend.end_date) {
+        this.$refs.modal.showModal({
+          swlIcon: "warning",
+          swlTitle: "กรุณาเลือกวันที่สิ้นสุดการเเนะนำ",
+        });
       } else {
         try {
           // ข้อมูลที่ต้องการส่งไปยัง API สำหรับผลิตภัณฑ์
-          const dataProduct = {
-            code: this.product.code,
-            name: this.product.name,
-            cost: this.product.cost,
-            price: this.product.price,
-            status: this.product.status,
-            category_id: this.product.category_id,
-            detail: this.product.detail,
+          this.recommend.status = "active";
+          const dataRecommend = {
+            product_id: this.product.id,
+            start_date: this.recommend.start_date,
+            end_date: this.recommend.end_date,
+            status: this.recommend.status,
           };
 
           // ส่งข้อมูลผลิตภัณฑ์และรูปภาพไปยัง API
-          const productResponse = await axios.post(`${this.apiUrl}products/`, {
-            product: dataProduct,
-            product_images: this.previewImages,
-          });
+          const response = await axios.post(
+            `${this.apiUrl}recommends/`,
+            dataRecommend
+          );
 
           // ตรวจสอบผลลัพธ์จากการเพิ่มผลิตภัณฑ์
-          if (productResponse.status === 200) {
+          if (response.status === 200) {
             this.$refs.modal.showAlertModal({
               swlIcon: "success",
               swlTitle: "สำเร็จ",
-              swlText: productResponse.data.message,
+              swlText: response.data.message,
             });
           }
         } catch (error) {
@@ -1084,6 +1151,17 @@ export default {
             swlText: error,
           });
         }
+      }
+    },
+
+    onStartDateChange(selectedDates) {
+      if (selectedDates[0]) {
+        this.endDateConfig.minDate = selectedDates[0];
+      }
+    },
+    onEndDateChange(selectedDates) {
+      if (selectedDates[0]) {
+        this.startDateConfig.maxDate = selectedDates[0];
       }
     },
 

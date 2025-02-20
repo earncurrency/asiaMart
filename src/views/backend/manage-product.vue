@@ -230,7 +230,7 @@
                       <div v-else class="w-24 h-24 lg:w-24 lg:h-24">
                         <img
                           class="w-full h-full rounded-md object-cover ring-4 ring-gray-300 shadow-md"
-                          :src="`${baseUrl}/src/assets/image/system/product.png`"
+                          :src="`${imageUrl}/src/assets/image/system/product.png`"
                         />
                       </div>
                     </th>
@@ -667,7 +667,7 @@
                 >
                   <!-- แทนที่ชื่อไฟล์ภาพด้วยตัวแปร image -->
                   <img
-                    :src="`${baseUrl}/api/uploads/${Math.ceil(
+                    :src="`${imageUrl}/api/uploads/${Math.ceil(
                       product.id / 100
                     )}/${image.path}`"
                     alt="Product Image Preview"
