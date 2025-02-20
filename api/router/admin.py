@@ -14,7 +14,7 @@ router = APIRouter(
 
 #เเสดง admin ทั้งหมด
 @router.get("/")
-def list_admins(limit: int = 10, page: int = 1, q: str = ''):
+def list_admins(page: int = 1, limit: int = 10, q: str = ''):
     session = SessionLocal()
         
     offset = (page * limit) - limit; 

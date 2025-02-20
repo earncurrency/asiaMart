@@ -433,7 +433,7 @@
                     <th scope="row" class="px-6 py-4">
                       <div class="w-24 h-14 lg:w-36 lg:h-24">
                         <img
-                          :src="`${baseUrl}/api/uploads/${Math.ceil(
+                          :src="`${imageUrl}/api/uploads/${Math.ceil(
                             product.id / 100
                           )}/${product.images.path}`"
                           alt="Product Image Preview"
@@ -535,6 +535,7 @@ export default {
     return {
       apiUrl: __API_URL__,
       baseUrl: __BASE_URL__,
+      imageUrl: __IMAGE_URL__,
       orders: [],
       searchText: "",
       order: {
@@ -606,7 +607,6 @@ export default {
           const data = response.data;
           this.orders = data.rows;
           this.totalList = data.total;
-          console.log(this.orders);
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error);
@@ -615,8 +615,6 @@ export default {
     reloadData(pageNo) {
       this.dataPaging.pageNumber = pageNo;
       this.getListOrders();
-
-      console.log("pageNo", pageNo);
     },
     pageSize(row) {
       // ตรวจสอบว่าค่า row ใหม่ไม่เท่ากับค่าเดิม
@@ -666,9 +664,6 @@ export default {
             this.order.total = order.total;
             this.order.length = order.length;
             this.order.products = order.products;
-
-            // แสดงข้อมูลสินค้าใน console
-            console.log("data Data:", order);
           } else {
             alert("ไม่พบข้อมูลประเภทสินค้าที่ต้องการแก้ไข");
           }
