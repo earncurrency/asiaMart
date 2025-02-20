@@ -7,6 +7,11 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
 
 date_default_timezone_set('Asia/Bangkok');
 
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
+
 //================================
 define('DEBUG', true);
 error_reporting(E_ALL);
@@ -25,44 +30,48 @@ switch($_SERVER['SERVER_NAME']){
 }
 
 //================================
-$method = $_SERVER['REQUEST_METHOD'];
-$endpoint = isset($_REQUEST['endpoint']) ? $_REQUEST['endpoint'] : '';
-$url = $apiUrl . $endpoint;
-
-//================================
 // รับข้อมูลที่ส่งมา (ถ้ามี)
 $rawInput = file_get_contents("php://input");
 $params = !empty($rawInput) ? json_decode($rawInput, true) : $_REQUEST;
 
+//================================
+$method = $_SERVER['REQUEST_METHOD'];
+$endpoint = isset($_REQUEST['endpoint']) ? $_REQUEST['endpoint'] : '';
+$url = $apiUrl . $endpoint;
+
+unset($params['endpoint']);
+$queryParam = ($method == 'POST' || $method == 'PUT')?'':'?'.http_build_query($params);
+
 // if($fpt = fopen(__DIR__.'/data.txt','a+')){
 //     fwrite($fpt, "========== '.$method.' = middleware.php ========="."\n");
 //     fwrite($fpt, json_encode($params)."\n");
+//     fwrite($fpt, 'url = '.$url. "\n");
 //     fwrite($fpt, "\n");
 //     fclose($fpt);
 // }else{
-//     echo 'can\'n open file';
+//     // echo 'can\'n open file';
 // }
 // exit;
 
 //================================
 // ตั้งค่า cURL เพื่อส่งข้อมูลไปยัง FastAPI
 $ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, $url.'?'.http_build_query($params));
-curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_URL, $url.$queryParam);
+// curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
 curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
-curl_setopt($ch, CURLOPT_VERBOSE, true);
-curl_setopt($ch, CURLOPT_ENCODING, '');
+// curl_setopt($ch, CURLOPT_VERBOSE, true);
+// curl_setopt($ch, CURLOPT_ENCODING, '');
 
-// if ($method == 'POST' || $method == 'PUT') {
+if ($method == 'POST' || $method == 'PUT') {
     curl_setopt($ch, CURLOPT_HTTPHEADER, ['Accept: application/json','Content-Type: application/json']);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($params));
 // }else{
     // curl_setopt($ch, CURLOPT_HTTPHEADER, ['Accept: application/json','Content-Type: application/x-www-form-urlencoded']);
     // curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
-// }
+}
 
 // ส่งคำขอไปยัง FastAPI
 $response = curl_exec($ch);
@@ -72,8 +81,6 @@ curl_close($ch);
 // ส่งผลลัพธ์กลับไปยัง Vue.js
 http_response_code($httpCode);
 echo $response;
-
-
 //================================
 
 ?>

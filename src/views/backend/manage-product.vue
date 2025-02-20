@@ -819,8 +819,6 @@ export default {
     reloadData(pageNo) {
       this.dataPaging.pageNumber = pageNo;
       this.getListProduct();
-
-      console.log("pageNo", pageNo);
     },
     pageSize(row) {
       // ตรวจสอบว่าค่า row ใหม่ไม่เท่ากับค่าเดิม
@@ -880,9 +878,6 @@ export default {
             ) {
               this.product.category_id = "";
             }
-
-            // แสดงข้อมูลสินค้าใน console
-            console.log("Product Data:", product);
           } else {
             alert("ไม่พบข้อมูลสมาชิกที่ต้องการแก้ไข");
           }
@@ -916,8 +911,6 @@ export default {
         .then((response) => {
           const data = response.data;
           this.categorys = data.rows;
-
-          console.log("categorys =", this.categorys);
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error);
@@ -1054,12 +1047,10 @@ export default {
           reader.onload = (e) => {
             const imageURL = e.target.result;
             this.previewImages.push(imageURL);
-            console.log("Image URL:", imageURL);
           };
           reader.readAsDataURL(file);
         }
       }
-      console.log(this.previewImages);
     },
     //ลบภาพจาก array previewImages
     delImage(imageIndex) {
@@ -1112,7 +1103,6 @@ export default {
 
     btnRemoveImage(imageId) {
       // เรียกใช้งาน modal เพื่อแสดงคำเตือน
-      console.log("imageId :", imageId);
       this.$refs.modal.showDeleteModal({
         swlIcon: "warning",
         swlTitle: "แจ้งเตือน",

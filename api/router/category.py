@@ -14,7 +14,7 @@ router = APIRouter(
 )
 
 @router.get("/")
-def list_category(category_status: str = '', limit: int = 10, page: int = 1, q: str = ''):
+def list_category(limit: int = 10, page: int = 1, category_status: str = '', q: str = ''):
     session = SessionLocal()
     
     offset = (page * limit) - limit; 

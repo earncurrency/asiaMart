@@ -438,8 +438,6 @@ export default {
           const data = response.data;
           this.categorys = data.rows;
           this.totalList = data.total;
-
-          console.log(this.categorys);
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error); // แสดงข้อผิดพลาด
@@ -449,7 +447,6 @@ export default {
       this.dataPaging.pageNumber = pageNo;
       this.getListCategory();
 
-      console.log("pageNo", pageNo);
     },
     pageSize(row) {
       // ตรวจสอบว่าค่า row ใหม่ไม่เท่ากับค่าเดิม
@@ -496,8 +493,6 @@ export default {
             this.category.name = category.name;
             this.category.status = category.status;
 
-            // แสดงข้อมูลสินค้าใน console
-            console.log("Product Data:", category);
           } else {
             alert("ไม่พบข้อมูลประเภทสินค้าที่ต้องการแก้ไข");
           }
@@ -590,7 +585,6 @@ export default {
     },
 
     btnDelete(productTypeId) {
-      console.log(productTypeId);
       // เรียกใช้งาน modal เพื่อแสดงคำเตือน
       this.$refs.modal.showDeleteModal({
         swlIcon: "warning",
@@ -618,7 +612,7 @@ export default {
                 });
             })
             .catch((error) => {
-              console.error("Error updating product status:", error);
+              // console.error("Error updating product status:", error);
               this.$swal.fire({
                 title: "เกิดข้อผิดพลาด",
                 text: "ไม่สามารถอัปเดตสถานะสินค้าได้",
