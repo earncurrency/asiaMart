@@ -12,8 +12,8 @@ from schema import ProductSchema ,ProductImageSchema, CategorySchema ,  Recommen
 
 # สร้าง APIRouter สำหรับสมาชิก
 router = APIRouter(
-    prefix = "/recommend",
-    tags = ["recommend"],
+    prefix = "/recommends",
+    tags = ["recommends"],
 )
 
 @router.get("/")
@@ -42,6 +42,7 @@ def get_reccomend(limit: int = 10, q: str = '', page: int = 1):
             ).first()
             start_date = recommend.start_date if recommend else None
             end_date = recommend.end_date if recommend else None
+            recommend_status = recommend.status if recommend else None
 
             product_images = session.query(ProductImageSchema).filter(
                 ProductImageSchema.product_id == product.id,
@@ -54,14 +55,10 @@ def get_reccomend(limit: int = 10, q: str = '', page: int = 1):
                 "id": product.id,
                 "code": product.code,
                 "name": product.name,
-                "cost": product.cost,
-                "price": product.price,
-                "status": product.status,
-                "category_id": product.category_id,
-                "detail": product.detail,
-                "images": image_paths ,
+                "images": image_paths,
                 "start_date": start_date.strftime("%Y-%m-%d %H:%M:%S"),  
-                "end_date": end_date.strftime("%Y-%m-%d %H:%M:%S") ,
+                "end_date": end_date.strftime("%Y-%m-%d %H:%M:%S"),
+                "recommend_status" : recommend_status ,
             })
 
         return {

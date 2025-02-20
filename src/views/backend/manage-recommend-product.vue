@@ -196,10 +196,10 @@
                       ชื่อ
                     </th>
                     <th scope="col" class="px-6 py-4 whitespace-nowrap">
-                      ราคาทุน
+                      เริ่มต้นเเนะนำ
                     </th>
                     <th scope="col" class="px-6 py-4 whitespace-nowrap">
-                      ราคาขาย
+                      สิ้นสุด
                     </th>
                     <th scope="col" class="px-6 py-4 whitespace-nowrap">
                       สถานะ
@@ -242,14 +242,14 @@
                       {{ product.name }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                      {{ product.cost }}
+                      {{ product.start_date }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                      {{ product.price }}
+                      {{ product.end_date }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                       <span
-                        v-if="product.status === 'active'"
+                        v-if="product.recommend_status === 'active'"
                         class="font-semibold text-green-500 p-1 bg-green-100 rounded-md"
                       >
                         แสดง
@@ -737,6 +737,12 @@ export default {
       categoryStatus: "",
       previewImages: [],
 
+      recommend:{
+        start_date:"",
+        end_date:"",
+        recommend_status:"",
+      },
+
       dataPaging: {
         pageNumber: 1,
         rows: 5,
@@ -796,12 +802,11 @@ export default {
       this.getListProduct();
     },
 
-    //เเสดงข้อมูลสินค้าบนตาราง
+    //เเสดงข้อมูลสินค้าเเนะนำบนตาราง
     async getListProduct() {
       await axios
-        .get(`${this.apiUrl}products/`, {
+        .get(`${this.apiUrl}recommends/`, {
           params: {
-            category_id: this.categoryId,
             limit: this.dataPaging.rows,
             page: this.dataPaging.pageNumber,
             q: this.searchText,
