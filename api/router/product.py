@@ -18,7 +18,7 @@ router = APIRouter(
 
 # ดึงข้อมูลทั้งหมดจากตาราง tb_product
 @router.get("/")
-def get_products_by_category_id(category_id: str = '', limit: int = 10, q: str = '', page: int = 1):  
+def get_products_by_category_id(page: int = 1, limit: int = 10, category_id: str = '', q: str = '', ):
     session = SessionLocal()
 
     offset = (page * limit) - limit

@@ -9,6 +9,7 @@ const router = createRouter({
             path: '/login',
             name: 'login',
             component: () => import('../views/frontend/login.vue'),
+            
         },
         {
             path: '/',
@@ -65,6 +66,11 @@ const router = createRouter({
         },
 
         //////////////////////////////////backend/////////////////////////////////////////    
+        {
+            path: '/backend',
+            name: 'backend',
+            component: () => import('../views/backend/dashboard.vue'),
+        },
         {
             path: '/backend/dashboard',
             name: 'backend/dashboard',

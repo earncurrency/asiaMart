@@ -24,8 +24,9 @@ export default defineConfig({
     ),
     __API_URL__: JSON.stringify(
       process.env.NODE_ENV === 'production'
-      ? 'https://app.asiagroup1999.co.th/asiaMartApi.php?endpoint='
-      : 'http://localhost/asiaMart/asiaMartApi.php?endpoint='
+      ? 'https://app.asiagroup1999.co.th/asiaMart/middleware.php?endpoint='
+      : 'http://localhost/asiaMart/middleware.php?endpoint='
+      // : 'http://127.0.0.1:8000/'
     ),
     __AUTH_URL__: JSON.stringify(
       process.env.NODE_ENV === "production"

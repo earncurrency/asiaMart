@@ -811,11 +811,6 @@ export default {
           const data = response.data;
           this.products = data.rows;
           this.totalList = data.total;
-
-          console.log(this.products);
-          console.log("limit", this.dataPaging.rows);
-          console.log("offset", this.dataPaging.pageNumber);
-          console.log("totalList", data.total);
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error);
