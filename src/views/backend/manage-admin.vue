@@ -519,7 +519,7 @@ export default {
 
     async getListAdmin() {
       await axios
-        .get(`${this.apiUrl}admins`, {
+        .get(`${this.apiUrl}admins/`, {
           params: {
             limit: this.dataPaging.rows,
             page: this.dataPaging.pageNumber,

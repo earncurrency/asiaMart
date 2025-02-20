@@ -35,7 +35,7 @@
                   <input
                     type="text"
                     v-model="searchText"
-                    @input="searchProduct"
+                    @input="searchRecommend"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 pr-10 p-2.5 focus:border-gray-300"
                     placeholder="ค้นหา..."
                   />
@@ -210,21 +210,21 @@
 
                 <tbody>
                   <tr
-                    v-for="(product, index) in products"
+                    v-for="(recommend, index) in recommends"
                     :key="index"
-                    @click="showFormEdit(product.id)"
+                    @click="showFormEdit(recommend.id)"
                     class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 cursor-pointer hover:bg-gray-100 transition"
                   >
                     <th scope="row" class="px-6 py-4">
                       <div
-                        v-if="product.images.length > 0 && product.images[0]"
+                        v-if="recommend.images.length > 0 && recommend.images[0]"
                         class="w-24 h-24 lg:w-24 lg:h-24"
                       >
                         <img
                           class="w-full h-full rounded-md object-cover ring-4 ring-gray-300 shadow-md"
                           :src="`${baseUrl}/api/uploads/${Math.ceil(
-                            product.id / 100
-                          )}/${product.images[0]}`"
+                            recommend.id / 100
+                          )}/${recommend.images[0]}`"
                         />
                       </div>
                       <div v-else class="w-24 h-24 lg:w-24 lg:h-24">
@@ -236,20 +236,20 @@
                     </th>
 
                     <td class="px-6 py-4 whitespace-nowrap font-semibold">
-                      {{ product.code }}
+                      {{ recommend.code }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                      {{ product.name }}
+                      {{ recommend.name }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                      {{ product.start_date }}
+                      {{ recommend.start_date }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                      {{ product.end_date }}
+                      {{ recommend.end_date }}
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                       <span
-                        v-if="product.recommend_status === 'active'"
+                        v-if="recommend.recommend_status === 'active'"
                         class="font-semibold text-green-500 p-1 bg-green-100 rounded-md"
                       >
                         แสดง
@@ -264,7 +264,7 @@
 
                     <td class="px-6 py-4">
                       <button
-                        @click.stop="btnDelete(product.id)"
+                        @click.stop="btnDelete(recommend.id)"
                         class="bg-red-500 text-white px-4 py-2 rounded-md"
                       >
                         <i class="fa-solid fa-trash-can"></i>
@@ -289,19 +289,30 @@
             </div>
 
             <div class="flex w-full gap-2 mb-2 pt-1 mt-4">
-              <div class="w-full lg:w-1/4">
+              <div class="relative w-full lg:w-1/4">
                 <input
                   type="text"
-                  v-model="product.code"
+                  v-model="searchCodeProduct"
+                  @input="searchProduct"
                   ref="inputCodeProduct"
                   :class="{
-                    'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                    'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                     'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                       !product.code,
                   }"
                   placeholder="รหัสสินค้า"
                   required
                 />
+                <div
+                  class="absolute z-10 bg-white border border-gray-300 shadow-md rounded-lg w-full"
+                   v-show="products.length > 0"
+                >
+                  <option
+                    class="cursor-pointer p-2 bg-white hover:bg-gray-50 text-black border-gray-300 hover:border-gray-50 rounded-lg whitespace-nowrap overflow-hidden overflow-ellipsis"
+                  >
+                    รหัส ชื่อ
+                  </option>
+                </div>
               </div>
               <div class="w-full lg:w-3/4">
                 <input
@@ -327,13 +338,13 @@
                     v-model="product.cost"
                     ref="inputCostProduct"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !product.cost,
                     }"
                     placeholder="ราคาทุน"
                     @input="validateNumberInput"
-                    required
+                    disabled
                   />
                 </div>
 
@@ -343,13 +354,13 @@
                     v-model="product.price"
                     ref="inputPriceProduct"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !product.price,
                     }"
                     placeholder="ราคาขาย"
                     @input="validateNumberInput"
-                    required
+                    disabled
                   />
                 </div>
               </div>
@@ -360,11 +371,11 @@
                     v-model="product.category_id"
                     ref="inputTypeProduct"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !product.category_id,
                     }"
-                    required
+                    disabled
                   >
                     <option value="" disabled selected>หมวดหมู่สินค้า</option>
                     <option v-for="category in categorys" :value="category.id">
@@ -378,11 +389,11 @@
                     v-model="product.status"
                     ref="inputStatusProduct"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !product.status,
                     }"
-                    required
+                    disabled
                   >
                     <option value="" disabled selected>สถานะ</option>
                     <option value="active">เเสดง</option>
@@ -401,19 +412,18 @@
                     ref="inputDetailProduct"
                     rows="4"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !product.detail,
                     }"
                     placeholder="รายละเอียดสินค้า"
-                    required
+                    disabled
                   />
                 </div>
               </div>
             </div>
 
             <div class="md:flex w-full gap-2 mb-2 pt-1 mt-4">
-              <!-- Input สำหรับเลือกรูปภาพหลายๆ รูป -->
               <input
                 type="file"
                 id="fileInput"
@@ -720,6 +730,8 @@ export default {
       baseUrl: __BASE_URL__,
       apiUrl: __API_URL__,
       searchText: "",
+      searchCodeProduct: "",
+
       products: [],
       productId: "",
       product: {
@@ -733,14 +745,17 @@ export default {
         detail: "",
         images: [],
       },
+      productTotal: "",
+
       categorys: [],
       categoryStatus: "",
       previewImages: [],
 
-      recommend:{
-        start_date:"",
-        end_date:"",
-        recommend_status:"",
+      recommends:[],
+      recommend: {
+        start_date: "",
+        end_date: "",
+        recommend_status: "",
       },
 
       dataPaging: {
@@ -750,7 +765,6 @@ export default {
         status: "",
       },
       totalList: [],
-
       isFocus: false,
       formTable: true,
       formAdd: false,
@@ -773,37 +787,20 @@ export default {
       if (adminRole !== "admin") {
         this.$router.push("/backend/login");
       } else {
-        this.getListProduct();
+        this.getListRecommend();
         this.getListCategory();
       }
     },
-    showFormAdd() {
-      this.formTable = false;
-      this.formAdd = true;
-      this.formEdit = false;
-      this.getListCategory();
-
-      this.productId = "";
-      this.product.code = "";
-      this.product.name = "";
-      this.product.cost = "";
-      this.product.price = "";
-      this.product.category_id = "";
-      this.product.status = "";
-      this.product.detail = "";
-      this.previewImages = [];
-    },
-
     showFormTable() {
       this.formTable = true;
       this.formAdd = false;
       this.formEdit = false;
       this.dataPaging.pageNumber = 1;
-      this.getListProduct();
+      this.getListRecommend();
     },
 
     //เเสดงข้อมูลสินค้าเเนะนำบนตาราง
-    async getListProduct() {
+    async getListRecommend() {
       await axios
         .get(`${this.apiUrl}recommends/`, {
           params: {
@@ -814,7 +811,7 @@ export default {
         })
         .then((response) => {
           const data = response.data;
-          this.products = data.rows;
+          this.recommends = data.rows;
           this.totalList = data.total;
 
           console.log(this.products);
@@ -828,7 +825,7 @@ export default {
     },
     reloadData(pageNo) {
       this.dataPaging.pageNumber = pageNo;
-      this.getListProduct();
+      this.getListRecommend();
 
       console.log("pageNo", pageNo);
     },
@@ -837,21 +834,59 @@ export default {
       if (this.dataPaging.rows !== row) {
         this.dataPaging.pageNumber = 1;
         this.dataPaging.rows = row;
-        this.getListProduct();
+        this.getListRecommend();
         this.pageSizeOpen = false;
       }
     },
-    searchProduct() {
+    searchRecommend() {
       this.dataPaging.pageNumber = 1;
-      this.getListProduct();
+      this.getListRecommend();
       this.$refs.paginationRef.resetPage();
     },
     xmark() {
       this.searchText = "";
       this.dataPaging.pageNumber = 1;
-      this.getListProduct();
+      this.getListRecommend();
       this.$refs.paginationRef.resetPage();
     },
+
+    showFormAdd() {
+      this.formTable = false;
+      this.formAdd = true;
+      this.formEdit = false;
+      // this.getListCategory();
+
+      this.productId = "";
+      this.product.code = "";
+      this.product.name = "";
+      this.product.cost = "";
+      this.product.price = "";
+      this.product.category_id = "";
+      this.product.status = "";
+      this.product.detail = "";
+      this.previewImages = [];
+    },
+    searchProduct() {
+      axios
+        .get(`${this.apiUrl}products/`, {
+          params: {
+            limit: this.dataPaging.rows,
+            page: this.dataPaging.pageNumber,
+            q: this.searchCodeProduct,
+          },
+        })
+        .then((response) => {
+          this.products = response.data.rows;
+          this.productTotal = response.data.total;
+
+          console.log(this.products)
+          console.log(this.productTotal)
+        })
+        .catch((error) => {
+          console.error("There was an error!", error);
+        });
+    },
+
 
     async showFormEdit(productId) {
       // เปิดฟอร์มแก้ไข
@@ -914,7 +949,6 @@ export default {
         this.loading = false;
       }
     },
-
     //เเสดงข้อมูลหมวดหมู่สินค้า
     async getListCategory() {
       this.categoryStatus = "active";

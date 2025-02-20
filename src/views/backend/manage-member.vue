@@ -413,7 +413,7 @@ export default {
     //เเสดงข้อมูลสมาชิกบนตาราง
     async getListMember() {
       await axios
-        .get(`${this.apiUrl}members`, {
+        .get(`${this.apiUrl}members/`, {
           params: {
             limit: this.dataPaging.rows,
             page: this.dataPaging.pageNumber,

@@ -66,6 +66,11 @@ const router = createRouter({
 
         //////////////////////////////////backend/////////////////////////////////////////    
         {
+            path: '/backend',
+            name: 'backend',
+            component: () => import('../views/backend/dashboard.vue'),
+        },
+        {
             path: '/backend/dashboard',
             name: 'backend/dashboard',
             component: () => import('../views/backend/dashboard.vue'),
