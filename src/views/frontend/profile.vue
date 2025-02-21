@@ -15,7 +15,7 @@ import axios from "axios";
           class="mt-4 mb-2 bg-gray-100 p-8 rounded-md flex lg:justify-center gap-4 lg:gap-8 items-center lg:flex-row flex-col text-center lg:text-left"
         >
           <img
-            src="../../assets/image/system/cathothead.jpg"
+            :src="`${baseUrl}/assets/image/system/cathothead.jpg`"
             alt=""
             class="h-28 w-28 lg:h-40 lg:w-40 rounded-full bg-gray-300 object-cover ring-4 ring-gray-300 shadow-md mx-auto lg:mx-0"
           />
@@ -82,25 +82,25 @@ import axios from "axios";
                   >
                     <img
                       v-if="order.status === 'new'"
-                      :src="`${baseUrl}/src/assets/image/system/product.png`"
+                      :src="`${baseUrl}/assets/image/system/product.png`"
                       alt=""
                       class="h-12 w-12 lg:h-16 lg:w-16 object-cover"
                     />
                     <img
                       v-else-if="order.status === 'pending'"
-                      :src="`${baseUrl}/src/assets/image/system/checklist.png`"
+                      :src="`${baseUrl}/assets/image/system/checklist.png`"
                       alt=""
                       class="h-12 w-12 lg:h-16 lg:w-16 object-cover"
                     />
                     <img
                       v-else-if="order.status === 'delivery'"
-                      :src="`${baseUrl}/src/assets/image/system/delivery-man.png`"
+                      :src="`${baseUrl}/assets/image/system/delivery-man.png`"
                       alt=""
                       class="h-12 w-12 lg:h-16 lg:w-16 object-cover"
                     />
                     <img
                       v-else
-                      :src="`${baseUrl}/src/assets/image/system/warning.png`"
+                      :src="`${baseUrl}/assets/image/system/warning.png`"
                       alt=""
                       class="h-12 w-12 lg:h-16 lg:w-16 object-cover"
                     />
@@ -160,7 +160,7 @@ import axios from "axios";
                 class="flex items-center justify-center gap-4 border p-2 lg:p-4 rounded-md mt-3 mb-3"
               >
                 <img
-                  src="../../assets/image/system/shopping-basket.png"
+                  :src="`${baseUrl}/assets/image/system/shopping-basket.png`"
                   alt=""
                   class="h-10 w-10 lg:h-14 lg:w-14 object-cover"
                 />
@@ -182,7 +182,7 @@ export default {
     return {
       baseUrl: __BASE_URL__,
       apiUrl: __API_URL__,
-
+      imageUrl: __IMAGE_URL__,
       orders: [],
       order: {
         id: "",
