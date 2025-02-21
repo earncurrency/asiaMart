@@ -790,6 +790,7 @@ export default {
 
       recommends: [],
       recommend: {
+        product_id:"",
         start_date: "",
         end_date: "",
         recommend_status: "",
