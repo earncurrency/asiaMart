@@ -24,25 +24,25 @@
               >
                 <img
                   v-if="order.status === 'new'"
-                  :src="`${baseUrl}/src/assets/image/system/product.png`"
+                  :src="`${baseUrl}/assets/image/system/product.png`"
                   alt=""
                   class="h-12 w-12 lg:h-16 lg:w-16 object-cover"
                 />
                 <img
                   v-if="order.status === 'pending'"
-                  :src="`${baseUrl}/src/assets/image/system/checklist.png`"
+                  :src="`${baseUrl}/assets/image/system/checklist.png`"
                   alt=""
                   class="h-12 w-12 lg:h-16 lg:w-16 object-cover"
                 />
                 <img
                   v-if="order.status === 'delivery'"
-                  :src="`${baseUrl}/src/assets/image/system/delivery-man.png`"
+                  :src="`${baseUrl}/assets/image/system/delivery-man.png`"
                   alt=""
                   class="h-12 w-12 lg:h-16 lg:w-16 object-cover"
                 />
                 <img
                   v-if="order.status === 'success'"
-                  :src="`${baseUrl}/src/assets/image/system/checked.png`"
+                  :src="`${baseUrl}/assets/image/system/checked.png`"
                   alt=""
                   class="h-12 w-12 lg:h-16 lg:w-16 object-cover"
                 />
@@ -128,7 +128,7 @@
                   <div class="flex gap-4 lg:gap-6 p-2 lg:p-4 rounded-md">
                     <div class="h-20 w-48 rounded-md">
                       <img
-                        :src="`${baseUrl}/api/uploads/${Math.ceil(
+                        :src="`${imageUrl}/api/uploads/${Math.ceil(
                           product.id / 100
                         )}/${product.images.path}`"
                         alt="Product Image Preview"
@@ -199,7 +199,7 @@ export default {
     return {
       baseUrl: __BASE_URL__,
       apiUrl: __API_URL__,
-
+      imageUrl: __IMAGE_URL__,
       order: {
         id: "",
         code: "",
