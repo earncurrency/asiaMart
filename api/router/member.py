@@ -15,7 +15,7 @@ router = APIRouter(
 
 # ดึงข้อมูลทั้งหมดจากตาราง tb_member
 @router.get("/")
-def get_members(limit: int = 10 , q: str = '', page: int = 1):
+def get_members(limit: int = 10 , q: str = '', page: int = 1, status: str = ''):
     session = SessionLocal()
 
     offset = (page * limit) - limit; 
@@ -26,6 +26,9 @@ def get_members(limit: int = 10 , q: str = '', page: int = 1):
 
         if q:
             query = query.filter(MemberSchema.name.ilike(f'%{q}%'))
+
+        if status:
+            query = query.filter(MemberSchema.status == status)    
 
         members = query.order_by(desc(MemberSchema.id)).limit(limit).offset(offset).all()    
 

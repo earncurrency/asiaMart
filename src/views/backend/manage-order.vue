@@ -1,6 +1,10 @@
 <template class="">
   <backend_navbar @showFormTable="showFormTable" />
-  <Modal ref="modal" @showFormTable="showFormTable" @reloadFormEdit="reloadFormEdit" />
+  <Modal
+    ref="modal"
+    @showFormTable="showFormTable"
+    @reloadFormEdit="reloadFormEdit"
+  />
   <div class="p-4 lg:pr-24 lg:pl-24 pt-6 sm:ml-64">
     <div
       class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14"
@@ -49,10 +53,10 @@
                   <button
                     class="border border-gray-300 bg-gray-50 font-medium rounded-lg text-sm px-16 p-2.5 text-center inline-flex items-center"
                     type="button"
-                    @click="dropdownStatus"
+                    @click="clickDropdownStatus"
                   >
                     <span class="mr-2">
-                      <span>ทั้งหมด</span>
+                      <span>{{ DropdownStatusName }}</span>
                     </span>
                     <i class="fa-solid fa-angle-down"></i>
                   </button>
@@ -74,7 +78,7 @@
                       <li>
                         <a
                           href="#"
-                          @click="DropdownStatus(0)"
+                          @click="DropdownStatus('new', 'รายการใหม่')"
                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           >รายการใหม่</a
                         >
@@ -82,7 +86,7 @@
                       <li>
                         <a
                           href="#"
-                          @click="DropdownStatus(1)"
+                          @click="DropdownStatus('pending', 'เตรียมสินค้า')"
                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           >เตรียมสินค้า</a
                         >
@@ -90,7 +94,7 @@
                       <li>
                         <a
                           href="#"
-                          @click="DropdownStatus(2)"
+                          @click="DropdownStatus('delivery', 'กำลังจัดส่ง')"
                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           >กำลังจัดส่ง</a
                         >
@@ -98,9 +102,9 @@
                       <li>
                         <a
                           href="#"
-                          @click="DropdownStatus(3)"
+                          @click="DropdownStatus('success', 'สำเร็จ')"
                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >ส่งสำเร็จ</a
+                          >สำเร็จ</a
                         >
                       </li>
                     </ul>
@@ -536,8 +540,9 @@ export default {
       apiUrl: __API_URL__,
       baseUrl: __BASE_URL__,
       imageUrl: __IMAGE_URL__,
-      orders: [],
       searchText: "",
+      orders: [],
+      orderStatus:"",
       order: {
         id: "",
         code: "",
@@ -565,7 +570,9 @@ export default {
       formTable: true,
       formEdit: false,
 
+      DropdownStatusName: "ทั้งหมด",
       DropdownStatusOpen: false,
+
       pageSizeOpen: false,
     };
   },
@@ -601,6 +608,7 @@ export default {
             limit: this.dataPaging.rows,
             page: this.dataPaging.pageNumber,
             q: this.searchText,
+            status: this.orderStatus,
           },
         })
         .then((response) => {
@@ -640,7 +648,7 @@ export default {
     reloadFormEdit(orderId) {
       this.showFormEdit(orderId);
     },
-    
+
     async showFormEdit(orderId) {
       this.formTable = false;
       this.formEdit = true;
@@ -752,10 +760,17 @@ export default {
       }
     },
 
-    DropdownStatus(statusName) {
-      this.pageSizeOpen = false;
+    ///// {{ DropdownStatus }} /////
+    DropdownStatus(status, name) {
+      this.orderStatus = status;
+      this.getListOrders();
+      this.DropdownStatusName = name;
+      if (status === "" || name === "") {
+        this.DropdownStatusName = "ทั้งหมด";
+      }
+      this.DropdownStatusOpen = false;
     },
-    dropdownStatus(event) {
+    clickDropdownStatus(event) {
       // ป้องกันการคลิกบนปุ่มที่ทำให้ event ไปถึง listener ของ document
       event.stopPropagation();
       this.DropdownStatusOpen = !this.DropdownStatusOpen;

@@ -50,10 +50,10 @@
                   <button
                     class="border border-gray-300 bg-gray-50 font-medium rounded-lg text-sm px-16 p-2.5 text-center inline-flex items-center h-full"
                     type="button"
-                    @click="dropdownStatus"
+                    @click="clickDropdownStatus"
                   >
                     <span class="mr-2">
-                      <span>ทั้งหมด</span>
+                      <span>{{ DropdownStatusName }}</span>
                     </span>
                     <i class="fa-solid fa-angle-down"></i>
                   </button>
@@ -75,7 +75,7 @@
                       <li>
                         <a
                           href="#"
-                          @click="DropdownStatus(0)"
+                          @click="DropdownStatus('active', 'เเสดง')"
                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           >เเสดง</a
                         >
@@ -83,7 +83,7 @@
                       <li>
                         <a
                           href="#"
-                          @click="DropdownStatus(1)"
+                          @click="DropdownStatus('inactive', 'ไม่เเสดง')"
                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           >ไม่เเสดง</a
                         >
@@ -362,6 +362,7 @@ export default {
       searchText: "",
       members: [],
       memberId: "",
+      memberStatus: "",
       member: {
         code: "",
         name: "",
@@ -382,6 +383,7 @@ export default {
       formAdd: false,
       formEdit: false,
 
+      DropdownStatusName: "ทั้งหมด",
       DropdownStatusOpen: false,
       pageSizeOpen: false,
     };
@@ -418,6 +420,7 @@ export default {
             limit: this.dataPaging.rows,
             page: this.dataPaging.pageNumber,
             q: this.searchText,
+            status: this.memberStatus,
           },
         })
         .then((response) => {
@@ -539,10 +542,17 @@ export default {
       }
     },
 
-    DropdownStatus(statusName) {
-      this.pageSizeOpen = false;
+    ///// {{ DropdownStatus }} /////
+    DropdownStatus(status, name) {
+      this.memberStatus = status;
+      this.getListMember();
+      this.DropdownStatusName = name;
+      if (status === "" || name === "") {
+        this.DropdownStatusName = "ทั้งหมด";
+      }
+      this.DropdownStatusOpen = false;
     },
-    dropdownStatus(event) {
+    clickDropdownStatus(event) {
       // ป้องกันการคลิกบนปุ่มที่ทำให้ event ไปถึง listener ของ document
       event.stopPropagation();
       this.DropdownStatusOpen = !this.DropdownStatusOpen;
@@ -554,6 +564,7 @@ export default {
         this.DropdownStatusOpen = false;
       }
     },
+
     togglePageSize(event) {
       // ป้องกันการคลิกบนปุ่มที่ทำให้ event ไปถึง listener ของ document
       event.stopPropagation();
