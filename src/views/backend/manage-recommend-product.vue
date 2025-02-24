@@ -201,9 +201,6 @@
                     <th scope="col" class="px-6 py-4 whitespace-nowrap">
                       สิ้นสุด
                     </th>
-                    <th scope="col" class="px-6 py-4 whitespace-nowrap">
-                      สถานะ
-                    </th>
                     <th scope="col" class="px-6 py-4 whitespace-nowrap"></th>
                   </tr>
                 </thead>
@@ -248,20 +245,6 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">
                       {{ recommend.end_date }}
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                      <span
-                        v-if="recommend.recommend_status === 'active'"
-                        class="font-semibold text-green-500 p-1 bg-green-100 rounded-md"
-                      >
-                        แสดง
-                      </span>
-                      <span
-                        v-else
-                        class="font-semibold text-red-500 p-1 bg-red-100 rounded-md"
-                      >
-                        ไม่แสดง
-                      </span>
                     </td>
 
                     <td class="px-6 py-4">
@@ -314,7 +297,7 @@
                   </option>
                 </div>
               </div>
-              <div class="w-full lg:w-1/3">
+              <div class="w-full lg:w-1/3 relative">
                 <flat-pickr
                   v-model="recommend.start_date"
                   ref="inputStart_date"
@@ -327,8 +310,11 @@
                   placeholder="วันเริ่มต้น"
                   required
                 />
+                <i
+                  class="fas fa-calendar-alt absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
+                ></i>
               </div>
-              <div class="w-full lg:w-1/3">
+              <div class="w-full lg:w-1/3 relative">
                 <flat-pickr
                   v-model="recommend.end_date"
                   ref="inputEnd_date"
@@ -341,6 +327,9 @@
                   placeholder="วันสิ้นสุด"
                   required
                 />
+                <i
+                  class="fas fa-calendar-alt absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
+                ></i>
               </div>
             </div>
 
@@ -487,13 +476,6 @@
                     alt="Product Image Preview"
                     class="w-32 h-32 lg:w-64 lg:h-48 object-cover rounded-md"
                   />
-                  <!-- ปุ่มลบภาพ -->
-                  <button
-                    @click="btnRemoveImage(image.id)"
-                    class="absolute text-white bg-red-500 font-medium rounded-lg text-md text-center inline-flex items-center -top-2 -right-3 px-4 p-2.5"
-                  >
-                    <i class="fa-solid fa-trash-can"></i>
-                  </button>
                 </div>
               </div>
             </div>
@@ -523,11 +505,71 @@
             <div class="flex justify-between items-center mb-2">
               <p class="text-3xl font-semibold">เเก้ไขข้อมูลสินค้า</p>
               <button
-                @click.stop="btnDelete(product.id)"
+                @click.stop="btnDelete(recommend.id)"
                 class="bg-red-500 text-white px-4 py-1.5 rounded-md"
               >
                 <i class="fa-solid fa-trash-can"></i>
               </button>
+            </div>
+
+            <div class="flex w-full gap-2 mb-2 pt-1 mt-4">
+              <div class="relative w-full lg:w-1/3">
+                <input
+                  type="text"
+                  v-model="searchCodeProduct"
+                  @input="searchProduct"
+                  class="block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300"
+                  placeholder="ค้นหาสินค้า"
+                  required
+                />
+                <div
+                  class="absolute z-10 bg-white border border-gray-300 shadow-md rounded-lg w-full"
+                  v-if="searchCodeProduct != ''"
+                >
+                  <option
+                    v-for="product in products"
+                    :key="product.id"
+                    @click="clickProduct(product)"
+                    class="cursor-pointer p-2 bg-white hover:bg-gray-50 text-black border-gray-300 hover:border-gray-50 rounded-lg whitespace-nowrap overflow-hidden overflow-ellipsis"
+                  >
+                    {{ product.code }} {{ product.name }}
+                  </option>
+                </div>
+              </div>
+              <div class="w-full lg:w-1/3 relative">
+                <flat-pickr
+                  v-model="recommend.start_date"
+                  ref="inputStart_date"
+                  :config="startDateConfig"
+                  :class="{
+                    'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                    'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
+                      !recommend.start_date,
+                  }"
+                  placeholder="วันเริ่มต้น"
+                  required
+                />
+                <i
+                  class="fas fa-calendar-alt absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
+                ></i>
+              </div>
+              <div class="w-full lg:w-1/3 relative">
+                <flat-pickr
+                  v-model="recommend.end_date"
+                  ref="inputEnd_date"
+                  :config="endDateConfig"
+                  :class="{
+                    'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                    'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
+                      !recommend.end_date,
+                  }"
+                  placeholder="วันสิ้นสุด"
+                  required
+                />
+                <i
+                  class="fas fa-calendar-alt absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
+                ></i>
+              </div>
             </div>
 
             <div class="flex w-full gap-2 mb-2 pt-1 mt-4">
@@ -542,7 +584,7 @@
                       !product.code,
                   }"
                   placeholder="รหัสสินค้า"
-                  required
+                  disabled
                 />
               </div>
               <div class="w-full lg:w-3/4">
@@ -551,12 +593,12 @@
                   v-model="product.name"
                   ref="inputNameProduct"
                   :class="{
-                    'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                    'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                     'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                       !product.name,
                   }"
                   placeholder="ใส่ชื่อสินค้า"
-                  required
+                  disabled
                 />
               </div>
             </div>
@@ -569,13 +611,13 @@
                     v-model="product.cost"
                     ref="inputCostProduct"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !product.cost,
                     }"
                     placeholder="ราคาทุน"
                     @input="validateNumberInput"
-                    required
+                    disabled
                   />
                 </div>
 
@@ -585,13 +627,13 @@
                     v-model="product.price"
                     ref="inputPriceProduct"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !product.price,
                     }"
                     placeholder="ราคาขาย"
                     @input="validateNumberInput"
-                    required
+                    disabled
                   />
                 </div>
               </div>
@@ -602,11 +644,11 @@
                     v-model="product.category_id"
                     ref="inputTypeProduct"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !product.category_id,
                     }"
-                    required
+                    disabled
                   >
                     <option value="" disabled selected>หมวดหมู่สินค้า</option>
                     <option v-for="category in categorys" :value="category.id">
@@ -620,11 +662,11 @@
                     v-model="product.status"
                     ref="inputStatusProduct"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !product.status,
                     }"
-                    required
+                    disabled
                   >
                     <option value="" disabled selected>สถานะ</option>
                     <option value="active">เเสดง</option>
@@ -643,61 +685,17 @@
                     ref="inputDetailProduct"
                     rows="4"
                     :class="{
-                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
                       'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                         !product.detail,
                     }"
                     placeholder="รายละเอียดสินค้า"
-                    required
+                    disabled
                   />
                 </div>
               </div>
             </div>
 
-            <div class="md:flex w-full gap-2 mb-2 pt-1 mt-4">
-              <!-- Input สำหรับเลือกรูปภาพหลายๆ รูป -->
-              <input
-                type="file"
-                id="fileInput"
-                @change="inputImage"
-                accept="image/*"
-                multiple
-                hidden
-              />
-              <label
-                for="fileInput"
-                class="cursor-pointer bg-gray-100 border border-gray-300 text-gray-500 px-4 py-2 rounded-md hover:bg-gray-50 transition"
-              >
-                เลือกรูปภาพ
-              </label>
-            </div>
-
-            <div class="md:flex w-full gap-2 mb-4 pt-1 mt-5">
-              <!-- แสดงภาพตัวอย่างที่เลือก -->
-              <div
-                v-if="previewImages.length > 0"
-                class="image-preview grid grid-cols-2 lg:grid-cols-5 gap-8"
-              >
-                <div
-                  v-for="(image, imageIndex) in previewImages"
-                  :key="imageIndex"
-                  class="preview-item relative"
-                >
-                  <img
-                    :src="image"
-                    alt="Image preview"
-                    class="w-32 h-32 lg:w-64 lg:h-48 object-cover rounded-md"
-                  />
-                  <!-- ปุ่มลบภาพ -->
-                  <button
-                    @click="delImage(imageIndex)"
-                    class="absolute text-white bg-red-500 font-medium rounded-lg text-md text-center inline-flex items-center -top-2 -right-3 px-4 p-2.5"
-                  >
-                    <i class="fa-solid fa-trash-can"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
             <div class="md:flex w-full gap-2 mb-4 pt-1 mt-5">
               <!-- แสดงภาพของสินค้า -->
               <div
@@ -713,17 +711,10 @@
                   <img
                     :src="`${imageUrl}/api/uploads/${Math.ceil(
                       product.id / 100
-                    )}/${image.path}`"
+                    )}/${image}`"
                     alt="Product Image Preview"
                     class="w-32 h-32 lg:w-64 lg:h-48 object-cover rounded-md"
                   />
-                  <!-- ปุ่มลบภาพ -->
-                  <button
-                    @click="btnRemoveImage(image.id)"
-                    class="absolute text-white bg-red-500 font-medium rounded-lg text-md text-center inline-flex items-center -top-2 -right-3 px-4 p-2.5"
-                  >
-                    <i class="fa-solid fa-trash-can"></i>
-                  </button>
                 </div>
               </div>
             </div>
@@ -788,12 +779,13 @@ export default {
       categoryStatus: "",
       previewImages: [],
 
+      recommendId: "",
       recommends: [],
       recommend: {
-        product_id:"",
+        id: "",
+        product_id: "",
         start_date: "",
         end_date: "",
-        recommend_status: "",
       },
 
       dataPaging: {
@@ -878,7 +870,7 @@ export default {
           this.recommends = data.rows;
           this.totalList = data.total;
 
-          console.log("recommends",this.recommends);
+          console.log("recommends", this.recommends);
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error);
@@ -921,6 +913,7 @@ export default {
       this.recommend.start_date = "";
       this.recommend.end_date = "";
 
+      this.product.id = "";
       this.product.code = "";
       this.product.name = "";
       this.product.cost = "";
@@ -930,6 +923,7 @@ export default {
       this.product.detail = "";
       this.product.images = [];
     },
+
     searchProduct() {
       axios
         .get(`${this.apiUrl}products/`, {
@@ -962,36 +956,39 @@ export default {
       this.product.images = product.images;
     },
 
-    async showFormEdit(productId) {
+    async showFormEdit(recommendId) {
       // เปิดฟอร์มแก้ไข
       this.formTable = false;
       this.formAdd = false;
       this.formEdit = true;
-      this.previewImages = [];
-      this.getListCategory();
-
-      // Set loading state to true
-      this.loading = true;
+      // this.previewImages = [];
+      // this.getListCategory();
 
       try {
         // เรียก API เพื่อดึงข้อมูลสินค้าที่ระบุ
-        const response = await axios.get(`${this.apiUrl}products/${productId}`);
+        const response = await axios.get(
+          `${this.apiUrl}recommends/${recommendId}`
+        );
 
         // ตรวจสอบว่าข้อมูลของสินค้าได้รับมาอย่างถูกต้อง
         if (response.status === 200) {
-          const product = response.data.row;
+          const recommend = response.data.row; // แก้จาก row เป็น data
 
-          if (product) {
-            // this.product.id = product.id;
-            this.product.code = product.code;
-            this.product.name = product.name;
-            this.product.cost = product.cost;
-            this.product.price = product.price;
-            this.product.category_id = product.category_id;
-            this.product.status = product.status;
-            this.product.detail = product.detail;
-            this.product.images = product.images;
+          if (recommend) {
+            this.recommend.id = recommendId;
+            this.product.id = recommend.product_id;
+            this.product.code = recommend.code;
+            this.product.name = recommend.name;
+            this.product.cost = recommend.cost;
+            this.product.price = recommend.price;
+            this.product.category_id = recommend.category_id;
+            this.product.status = recommend.status;
+            this.product.detail = recommend.detail;
+            this.product.images = recommend.images;
+            this.recommend.start_date = recommend.start_date;
+            this.recommend.end_date = recommend.end_date;
 
+            // ตรวจสอบ category_id
             if (
               !this.categorys.some(
                 (category) => category.id === this.product.category_id
@@ -1001,16 +998,16 @@ export default {
             }
 
             // แสดงข้อมูลสินค้าใน console
-            console.log("Product Data:", product);
+            console.log("Recommend Data:", recommend);
           } else {
-            alert("ไม่พบข้อมูลสมาชิกที่ต้องการแก้ไข");
+            alert("ไม่พบข้อมูลสินค้าที่ต้องการแก้ไข");
           }
         } else {
-          alert(`Failed to fetch product details: ${response.statusText}`);
+          alert(`Failed to fetch recommend details: ${response.statusText}`);
         }
       } catch (error) {
         console.error(
-          `Error fetching product ${productId} from ${this.apiUrl}products/${productId}:`,
+          `Error fetching recommend ${recommendId} from ${this.apiUrl}recommends/${recommendId}:`,
           error.response?.data?.detail || error.message
         );
         this.$refs.modal.showAlertModal({
@@ -1023,6 +1020,7 @@ export default {
         this.loading = false;
       }
     },
+
     //เเสดงข้อมูลหมวดหมู่สินค้า
     async getListCategory() {
       this.categoryStatus = "active";
@@ -1049,36 +1047,29 @@ export default {
           swlIcon: "warning",
           swlTitle: "กรุณาเลือกสินค้า",
         });
-      }
-      else if (!this.recommend.start_date) {
+      } else if (!this.recommend.start_date) {
         this.$refs.modal.showModal({
           swlIcon: "warning",
           swlTitle: "กรุณาเลือกวันที่เริ่มต้นการเเนะนำ",
         });
-      }
-      else if (!this.recommend.end_date) {
+      } else if (!this.recommend.end_date) {
         this.$refs.modal.showModal({
           swlIcon: "warning",
           swlTitle: "กรุณาเลือกวันที่สิ้นสุดการเเนะนำ",
         });
       } else {
         try {
-          // ข้อมูลที่ต้องการส่งไปยัง API สำหรับผลิตภัณฑ์
-          this.recommend.status = "active";
           const dataRecommend = {
             product_id: this.product.id,
             start_date: this.recommend.start_date,
             end_date: this.recommend.end_date,
-            status: this.recommend.status,
           };
 
-          // ส่งข้อมูลผลิตภัณฑ์และรูปภาพไปยัง API
           const response = await axios.post(
             `${this.apiUrl}recommends/`,
             dataRecommend
           );
 
-          // ตรวจสอบผลลัพธ์จากการเพิ่มผลิตภัณฑ์
           if (response.status === 200) {
             this.$refs.modal.showAlertModal({
               swlIcon: "success",
@@ -1088,55 +1079,51 @@ export default {
           }
         } catch (error) {
           // หากเกิดข้อผิดพลาดในการส่งข้อมูล
-          this.$refs.modal.showAlertModal({
-            swlIcon: "error",
-            swlTitle: "เกิดข้อผิดพลาด",
-            swlText: error,
-          });
+          if (error.response && error.response.status === 400) {
+            // แสดงข้อความแจ้งเตือนหากมีสินค้านี้อยู่แล้ว
+            this.$refs.modal.showModal({
+              swlIcon: "info",
+              swlTitle: "เเจ้งเตือน",
+              swlText: error.response.data.detail,
+            });
+          } else {
+            this.$refs.modal.showAlertModal({
+              swlIcon: "error",
+              swlTitle: "เกิดข้อผิดพลาด",
+              swlText: error.message,
+            });
+          }
         }
       }
     },
 
     async btnEdit() {
-      if (!this.product.code) {
-        this.isFocus = true;
-        this.$refs.inputCodeProduct.focus();
-      } else if (!this.product.name) {
-        this.isFocus = true;
-        this.$refs.inputNameProduct.focus();
-      } else if (!this.product.cost) {
-        this.isFocus = true;
-        this.$refs.inputCostProduct.focus();
-      } else if (!this.product.price) {
-        this.isFocus = true;
-        this.$refs.inputPriceProduct.focus();
-      } else if (!this.product.category_id) {
-        this.isFocus = true;
-        this.$refs.inputTypeProduct.focus();
-      } else if (!this.product.status) {
-        this.isFocus = true;
-        this.$refs.inputStatusProduct.focus();
-      } else if (!this.product.detail) {
-        this.isFocus = true;
-        this.$refs.inputDetailProduct.focus();
+      if (!this.product.id) {
+        this.$refs.modal.showModal({
+          swlIcon: "warning",
+          swlTitle: "กรุณาเลือกสินค้า",
+        });
+      } else if (!this.recommend.start_date) {
+        this.$refs.modal.showModal({
+          swlIcon: "warning",
+          swlTitle: "กรุณาเลือกวันที่เริ่มต้นการเเนะนำ",
+        });
+      } else if (!this.recommend.end_date) {
+        this.$refs.modal.showModal({
+          swlIcon: "warning",
+          swlTitle: "กรุณาเลือกวันที่สิ้นสุดการเเนะนำ",
+        });
       } else {
         try {
-          const dataProduct = {
-            code: this.product.code,
-            name: this.product.name,
-            cost: this.product.cost,
-            price: this.product.price,
-            status: this.product.status,
-            category_id: this.product.category_id,
-            detail: this.product.detail,
+          const dataRecommend = {
+            product_id: this.product.id,
+            start_date: this.recommend.start_date,
+            end_date: this.recommend.end_date,
           };
 
           const response = await axios.put(
-            `${this.apiUrl}products/${this.product.id}`,
-            {
-              product: dataProduct,
-              product_images: this.previewImages,
-            }
+            `${this.apiUrl}recommends/${this.recommend.id}`,
+            dataRecommend
           );
           if (response.status === 200) {
             this.$refs.modal.showSuccessModal({
@@ -1155,41 +1142,7 @@ export default {
       }
     },
 
-    onStartDateChange(selectedDates) {
-      if (selectedDates[0]) {
-        this.endDateConfig.minDate = selectedDates[0];
-      }
-    },
-    onEndDateChange(selectedDates) {
-      if (selectedDates[0]) {
-        this.startDateConfig.maxDate = selectedDates[0];
-      }
-    },
-
-    inputImage(event) {
-      const files = event.target.files;
-      this.previewImages = [];
-
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        if (file && file.type.startsWith("image")) {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const imageURL = e.target.result;
-            this.previewImages.push(imageURL);
-            console.log("Image URL:", imageURL);
-          };
-          reader.readAsDataURL(file);
-        }
-      }
-      console.log(this.previewImages);
-    },
-    //ลบภาพจาก array previewImages
-    delImage(imageIndex) {
-      this.previewImages.splice(imageIndex, 1);
-    },
-
-    btnDelete(productId) {
+    btnDelete(recommendId) {
       // เรียกใช้งาน modal เพื่อแสดงคำเตือน
       this.$refs.modal.showDeleteModal({
         swlIcon: "warning",
@@ -1233,49 +1186,34 @@ export default {
       });
     },
 
-    btnRemoveImage(imageId) {
-      // เรียกใช้งาน modal เพื่อแสดงคำเตือน
-      console.log("imageId :", imageId);
-      this.$refs.modal.showDeleteModal({
-        swlIcon: "warning",
-        swlTitle: "แจ้งเตือน",
-        swlText: "คุณต้องการลบรูปสินค้านี้หรือไม่!",
-        onConfirm: () => {
-          // เมื่อผู้ใช้กด "ยืนยัน" ใน modal
-          axios
-            .delete(`${this.apiUrl}products/image/${imageId}`)
-            .then((response) => {
-              // แสดงข้อความว่า "ลบสำเร็จ"
-              this.$swal
-                .fire({
-                  title: "ลบสำเร็จ",
-                  icon: "success",
-                  confirmButtonText: "ยืนยัน",
-                  customClass: {
-                    confirmButton:
-                      "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400",
-                  },
-                })
-                .then(() => {
-                  // เมื่อกดปุ่ม "ยืนยัน" ใน swal ที่สอง
-                  this.showFormTable();
-                });
-            })
-            .catch((error) => {
-              console.error("Error updating product status:", error);
-              this.$swal.fire({
-                title: "เกิดข้อผิดพลาด",
-                text: "ไม่สามารถอัปเดตสถานะสินค้าได้",
-                icon: "error",
-                confirmButtonText: "ยืนยัน",
-                customClass: {
-                  confirmButton:
-                    "bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400",
-                },
-              });
-            });
-        },
-      });
+    onStartDateChange(selectedDates) {
+      if (selectedDates[0]) {
+        this.endDateConfig.minDate = selectedDates[0];
+      }
+    },
+    onEndDateChange(selectedDates) {
+      if (selectedDates[0]) {
+        this.startDateConfig.maxDate = selectedDates[0];
+      }
+    },
+
+    inputImage(event) {
+      const files = event.target.files;
+      this.previewImages = [];
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (file && file.type.startsWith("image")) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const imageURL = e.target.result;
+            this.previewImages.push(imageURL);
+            console.log("Image URL:", imageURL);
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+      console.log(this.previewImages);
     },
 
     validateNumberInput(event) {

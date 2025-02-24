@@ -14,54 +14,51 @@ router = APIRouter(
     prefix = "/recommends",
     tags = ["recommends"],
 )
-
 @router.get("/")
-def get_reccomend(limit: int = 10, q: str = '', page: int = 1):  
+def get_recommend(limit: int = 10, q: str = '', page: int = 1):
     session = SessionLocal()
-
+    
     offset = (page * limit) - limit
-
+    
     try:
 
-        query = session.query(ProductSchema).filter(ProductSchema.id == RecommendSchema.product_id ,ProductSchema.status != 'remove')
+        query = session.query(RecommendSchema).join(
+            ProductSchema,
+            RecommendSchema.product_id == ProductSchema.id
+        ).filter(ProductSchema.status != 'remove')
 
         if q:
             query = query.filter(ProductSchema.name.ilike(f'%{q}%'))
 
-        products = query.order_by(desc(ProductSchema.id)).limit(limit).offset(offset).all()
-
+        recommends = query.order_by(desc(RecommendSchema.id)).limit(limit).offset(offset).all()
+        
         total = query.count()
 
-        # สร้างผลลัพธ์ที่ต้องการส่งกลับ
         result = []
-        for product in products:
-
-            recommend = session.query(RecommendSchema).filter(
-                RecommendSchema.product_id == product.id
+        for recommend in recommends:
+            # Get product
+            product = session.query(ProductSchema).filter(
+                ProductSchema.id == recommend.product_id
             ).first()
-            start_date = recommend.start_date if recommend else None
-            end_date = recommend.end_date if recommend else None
-            recommend_status = recommend.status if recommend else None
 
+            # Get product images
             product_images = session.query(ProductImageSchema).filter(
                 ProductImageSchema.product_id == product.id,
                 ProductImageSchema.status == 'active'
             ).all()
             image_paths = [image.path for image in product_images]
 
-
             result.append({
-                "id": product.id,
+                "id": recommend.id,
                 "code": product.code,
                 "name": product.name,
                 "images": image_paths,
-                "start_date": start_date.strftime("%Y-%m-%d"),  
-                "end_date": end_date.strftime("%Y-%m-%d"),
-                "recommend_status" : recommend_status ,
+                "start_date": recommend.start_date.strftime("%Y-%m-%d"),
+                "end_date": recommend.end_date.strftime("%Y-%m-%d"),
             })
 
         return {
-            "message": "Get active products by recommend",
+            "message": "Get all recommends with products",
             "rows": result,
             "total": total
         }
@@ -69,17 +66,96 @@ def get_reccomend(limit: int = 10, q: str = '', page: int = 1):
     finally:
         session.close()
 
+@router.get("/{recommend_id}")
+def get_recommend(recommend_id: int):
+    session = SessionLocal()
+    
+    try:
+
+        recommend = session.query(RecommendSchema).join(ProductSchema,RecommendSchema.product_id == ProductSchema.id
+        ).filter(RecommendSchema.id == recommend_id, ProductSchema.status != 'remove').first()
+        
+        if not recommend:
+            raise HTTPException(status_code=404, detail="ไม่พบรายการสินค้าที่เเนะนำ")
+
+        # Get product
+        product = session.query(ProductSchema).filter(ProductSchema.id == recommend.product_id).first()
+
+        # Get product image
+        product_images = session.query(ProductImageSchema).filter(
+            ProductImageSchema.product_id == product.id,
+            ProductImageSchema.status == 'active'
+        ).all()
+
+        image_paths = [image.path for image in product_images]
+
+        return {
+            "message": "Get recommend by recommend_id: {recommend_id}",
+            "row":{
+                "product_id": recommend.product_id,
+                "code": product.code,
+                "name": product.name,
+                "cost": product.cost,
+                "price": product.price,
+                "status": product.status,
+                "category_id": product.category_id,
+                "detail": product.detail,
+                "images": image_paths,
+                "start_date": recommend.start_date.strftime("%Y-%m-%d"),
+                "end_date": recommend.end_date.strftime("%Y-%m-%d"),
+            } 
+        }
+
+    finally:
+        session.close()
+
+@router.put("/{recommend_id}")
+def update_recommend(recommend_id: int, recommend: RecommendModel):
+    session: Session = SessionLocal()
+    try:
+        existing_recommend = session.query(RecommendSchema).filter(RecommendSchema.id == recommend_id).first()
+
+        if not existing_recommend:
+            raise HTTPException(status_code=404, detail="ไม่พบข้อมูล")
+
+        if recommend.product_id is not None:
+            existing_recommend.product_id = recommend.product_id
+        if recommend.start_date is not None:
+            existing_recommend.start_date = recommend.start_date
+        if recommend.end_date is not None:
+            existing_recommend.end_date = recommend.end_date
+
+        updated_fields = {} 
+        updated_fields = existing_recommend
+        session.commit()
+
+        return {
+            "success": True,
+            "message": "เเก้ไขข้อมูลสำเร็จ!",
+            "id": recommend_id,
+            "updated_data": updated_fields  
+        }
+    finally:
+        session.close()
 
 @router.post("/")
 async def add_reccomend(recommend: RecommendModel):
     session = SessionLocal()
     try:
+
+        # ตรวจสอบว่า product_id มีอยู่แล้วหรือไม่
+        existing_recommend = session.query(RecommendSchema).filter(RecommendSchema.product_id == recommend.product_id).first()
+
+        if existing_recommend:
+            raise HTTPException(
+                status_code=400,
+                detail="สินค้านี้มีกำลังถูกเเนะนำอยู่"
+            )
         
         new_recommend = RecommendSchema(
             product_id = recommend.product_id,
             start_date=recommend.start_date,
             end_date=recommend.end_date,
-            status=recommend.status,
         )
         session.add(new_recommend)
         session.commit()  
