@@ -15,7 +15,7 @@ router = APIRouter(
     tags = ["recommends"],
 )
 @router.get("/")
-def get_recommend(limit: int = 10, q: str = '', page: int = 1):
+def get_recommend(limit: int = 10, q: str = '', page: int = 1 , status: str = ''):
     session = SessionLocal()
     
     offset = (page * limit) - limit
@@ -29,6 +29,9 @@ def get_recommend(limit: int = 10, q: str = '', page: int = 1):
 
         if q:
             query = query.filter(ProductSchema.name.ilike(f'%{q}%'))
+
+        if status:
+            query = query.filter(RecommendSchema.status == status)    
 
         recommends = query.order_by(desc(RecommendSchema.id)).limit(limit).offset(offset).all()
         
@@ -55,6 +58,7 @@ def get_recommend(limit: int = 10, q: str = '', page: int = 1):
                 "images": image_paths,
                 "start_date": recommend.start_date.strftime("%Y-%m-%d"),
                 "end_date": recommend.end_date.strftime("%Y-%m-%d"),
+                "status" : recommend.status,
             })
 
         return {
@@ -97,12 +101,13 @@ def get_recommend(recommend_id: int):
                 "name": product.name,
                 "cost": product.cost,
                 "price": product.price,
-                "status": product.status,
+                "product_status": product.status,
                 "category_id": product.category_id,
                 "detail": product.detail,
                 "images": image_paths,
                 "start_date": recommend.start_date.strftime("%Y-%m-%d"),
                 "end_date": recommend.end_date.strftime("%Y-%m-%d"),
+                "status": recommend.status,
             } 
         }
 
@@ -124,6 +129,8 @@ def update_recommend(recommend_id: int, recommend: RecommendModel):
             existing_recommend.start_date = recommend.start_date
         if recommend.end_date is not None:
             existing_recommend.end_date = recommend.end_date
+        if recommend.status is not None:
+            existing_recommend.status = recommend.status    
 
         updated_fields = {} 
         updated_fields = existing_recommend
@@ -156,6 +163,7 @@ async def add_reccomend(recommend: RecommendModel):
             product_id = recommend.product_id,
             start_date=recommend.start_date,
             end_date=recommend.end_date,
+            status=recommend.status,
         )
         session.add(new_recommend)
         session.commit()  

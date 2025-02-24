@@ -56,10 +56,10 @@
                   <button
                     class="border border-gray-300 bg-gray-50 font-medium rounded-lg text-sm px-16 p-2.5 text-center inline-flex items-center h-full"
                     type="button"
-                    @click="dropdownStatus"
+                    @click="clickDropdownStatus"
                   >
                     <span class="mr-2">
-                      <span>ทั้งหมด</span>
+                      <span>{{ DropdownStatusName }}</span>
                     </span>
                     <i class="fa-solid fa-angle-down"></i>
                   </button>
@@ -81,7 +81,7 @@
                       <li>
                         <a
                           href="#"
-                          @click="DropdownStatus('active')"
+                          @click="DropdownStatus('active', 'เเสดง')"
                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           >เเสดง</a
                         >
@@ -89,7 +89,7 @@
                       <li>
                         <a
                           href="#"
-                          @click="DropdownStatus('inactive')"
+                          @click="DropdownStatus('inactive', 'ไม่เเสดง')"
                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                           >ไม่เเสดง</a
                         >
@@ -385,7 +385,9 @@ export default {
       formAdd: false,
       formEdit: false,
 
+      DropdownStatusName: "ทั้งหมด",
       DropdownStatusOpen: false,
+      
       pageSizeOpen: false,
     };
   },
@@ -406,7 +408,7 @@ export default {
       }
     },
 
-    // เพิ่มหมวดหมู่สินค้า
+    // เเสดง form เพิ่ม category
     showFormAdd() {
       this.formTable = false;
       this.formAdd = true;
@@ -416,6 +418,7 @@ export default {
       this.category.status = "";
     },
 
+    // เเสดง form ตาราง category
     showFormTable() {
       this.formTable = true;
       this.formAdd = false;
@@ -424,7 +427,7 @@ export default {
       this.getListCategory();
     },
 
-    //เเสดงข้อมูลประเภทสินค้าบนตาราง
+    // เเสดงข้อมูลประเภทสินค้าบนตาราง
     async getListCategory() {
       await axios
         .get(`${this.apiUrl}category/`, {
@@ -432,6 +435,7 @@ export default {
             limit: this.dataPaging.rows,
             page: this.dataPaging.pageNumber,
             q: this.searchText,
+            status: this.categoryStatus,
           },
         })
         .then((response) => {
@@ -443,32 +447,8 @@ export default {
           console.error("There was an error fetching the data:", error); // แสดงข้อผิดพลาด
         });
     },
-    reloadData(pageNo) {
-      this.dataPaging.pageNumber = pageNo;
-      this.getListCategory();
 
-    },
-    pageSize(row) {
-      // ตรวจสอบว่าค่า row ใหม่ไม่เท่ากับค่าเดิม
-      if (this.dataPaging.rows !== row) {
-        this.dataPaging.pageNumber = 1;
-        this.dataPaging.rows = row;
-        this.getListCategory();
-        this.pageSizeOpen = false;
-      }
-    },
-    searchCategory() {
-      this.dataPaging.pageNumber = 1;
-      this.getListCategory();
-      this.$refs.paginationRef.resetPage();
-    },
-    xmark() {
-      this.searchText = "";
-      this.dataPaging.pageNumber = 1;
-      this.getListCategory();
-      this.$refs.paginationRef.resetPage();
-    },
-
+    // เเสดง form เเก้ไข category
     async showFormEdit(productTypeId) {
       // เปิดฟอร์มแก้ไข
       this.formTable = false;
@@ -492,7 +472,6 @@ export default {
             this.category.id = productTypeId;
             this.category.name = category.name;
             this.category.status = category.status;
-
           } else {
             alert("ไม่พบข้อมูลประเภทสินค้าที่ต้องการแก้ไข");
           }
@@ -515,6 +494,26 @@ export default {
       }
     },
 
+    // reloadData paging
+    reloadData(pageNo) {
+      this.dataPaging.pageNumber = pageNo;
+      this.getListCategory();
+    },
+
+    ///// {{ search and clear input search }} /////
+    searchCategory() {
+      this.dataPaging.pageNumber = 1;
+      this.getListCategory();
+      this.$refs.paginationRef.resetPage();
+    },
+    xmark() {
+      this.searchText = "";
+      this.dataPaging.pageNumber = 1;
+      this.getListCategory();
+      this.$refs.paginationRef.resetPage();
+    },
+
+    ///// {{ btnAdd }} /////
     async btnAdd() {
       if (!this.category.name) {
         this.isFocus = true;
@@ -551,6 +550,7 @@ export default {
       }
     },
 
+    ///// {{ btnEdit }} /////
     async btnEdit() {
       if (!this.category.name) {
         this.isFocus = true;
@@ -584,6 +584,7 @@ export default {
       }
     },
 
+    ///// {{ btnDelete }} /////
     btnDelete(productTypeId) {
       // เรียกใช้งาน modal เพื่อแสดงคำเตือน
       this.$refs.modal.showDeleteModal({
@@ -628,12 +629,17 @@ export default {
       });
     },
 
-    DropdownStatus(status) {
+    ///// {{ DropdownStatus }} /////
+    DropdownStatus(status, name) {
       this.categoryStatus = status;
       this.getListCategory();
-      this.pageSizeOpen = false;
+      this.DropdownStatusName = name;
+      if (status === "" || name === "") {
+        this.DropdownStatusName = "ทั้งหมด";
+      }
+      this.DropdownStatusOpen = false;
     },
-    dropdownStatus(event) {
+    clickDropdownStatus(event) {
       // ป้องกันการคลิกบนปุ่มที่ทำให้ event ไปถึง listener ของ document
       event.stopPropagation();
       this.DropdownStatusOpen = !this.DropdownStatusOpen;
@@ -646,6 +652,16 @@ export default {
       }
     },
 
+    ///// {{ DropdownPageSiz }} /////
+    pageSize(row) {
+      // ตรวจสอบว่าค่า row ใหม่ไม่เท่ากับค่าเดิม
+      if (this.dataPaging.rows !== row) {
+        this.dataPaging.pageNumber = 1;
+        this.dataPaging.rows = row;
+        this.getListCategory();
+        this.pageSizeOpen = false;
+      }
+    },
     togglePageSize(event) {
       // ป้องกันการคลิกบนปุ่มที่ทำให้ event ไปถึง listener ของ document
       event.stopPropagation();

@@ -18,7 +18,7 @@ router = APIRouter(
 
 # ดึงข้อมูลทั้งหมดจากตาราง tb_product
 @router.get("/")
-def get_products_by_category_id(page: int = 1, limit: int = 10, category_id: str = '', q: str = '', ):
+def get_products_by_category_id(page: int = 1, limit: int = 5, category_id: str = '', status: str = '', q: str = '',):
     session = SessionLocal()
 
     offset = (page * limit) - limit
@@ -30,6 +30,9 @@ def get_products_by_category_id(page: int = 1, limit: int = 10, category_id: str
 
         if category_id:
             query = query.filter(ProductSchema.category_id == category_id)
+
+        if status:
+            query = query.filter(ProductSchema.status == status)
 
         if q:
             query = query.filter(ProductSchema.name.ilike(f'%{q}%') ,ProductSchema.status == 'active')

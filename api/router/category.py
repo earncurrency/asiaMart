@@ -14,28 +14,37 @@ router = APIRouter(
 )
 
 @router.get("/")
-def list_category(limit: int = 10, page: int = 1, category_status: str = '', q: str = ''):
+def list_category(limit: int = None, page: int = None, status: str = '', q: str = ''):
     session = SessionLocal()
-    
-    offset = (page * limit) - limit; 
 
     try:
 
-        query = session.query(CategorySchema).filter(CategorySchema.status != 'remove')
-
-        if category_status:
-            query = query.filter(CategorySchema.status == category_status)
+        query = session.query(CategorySchema)
 
         if q:
             query = query.filter(CategorySchema.name.ilike(f'%{q}%'))
-            
-        # ถ้ามี category_status จะไม่ใช้ limit และ offset
-        if category_status:
-            categorys = query.order_by(desc(CategorySchema.id)).all()
-        else:
-            # ถ้าไม่มี category_status ใช้ limit และ offset
+
+        if status:
+            query = query.filter(CategorySchema.status == status)
+
+        if limit and page:
+            if status:
+                query = query.filter(CategorySchema.status == status)
+            else:
+                query = query.filter(CategorySchema.status != 'remove')
+                
+            offset = (page * limit) - limit
             categorys = query.order_by(desc(CategorySchema.id)).limit(limit).offset(offset).all()
 
+        else:
+            if status:
+                query = query.filter(CategorySchema.status == status)
+            else:
+                query = query.filter(CategorySchema.status == 'active')
+            
+            categorys = query.order_by(desc(CategorySchema.id)).all()
+
+    
         total = query.count()
 
         return {

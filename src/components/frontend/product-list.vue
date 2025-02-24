@@ -204,12 +204,10 @@ export default {
     },
 
     async getListCategory() {
-      this.categoryStatus = "active";
+      // this.categoryStatus = "active";
 
       await axios
-        .get(`${this.apiUrl}category/`, {
-          params: { category_status: this.categoryStatus },
-        })
+        .get(`${this.apiUrl}category/`)
         .then((response) => {
           const data = response.data;
           this.categorys = data.rows;
@@ -222,7 +220,7 @@ export default {
     clickCategory(id) {
       // this.$router.push(`/category/${categoryId}`);
       this.dataPaging.pageNumber = 1;
-      this.$refs.paginationRef.resetPage();0
+      this.$refs.paginationRef.resetPage();
     },
   },
 };

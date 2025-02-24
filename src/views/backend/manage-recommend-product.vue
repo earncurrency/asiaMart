@@ -56,10 +56,10 @@
                   <button
                     class="border border-gray-300 bg-gray-50 font-medium rounded-lg text-sm px-16 p-2.5 text-center inline-flex items-center h-full"
                     type="button"
-                    @click="dropdownStatus"
+                    @click="clickDropdownStatus"
                   >
                     <span class="mr-2">
-                      <span>ทั้งหมด</span>
+                      <span>{{ DropdownStatusName }}</span>
                     </span>
                     <i class="fa-solid fa-angle-down"></i>
                   </button>
@@ -81,33 +81,17 @@
                       <li>
                         <a
                           href="#"
-                          @click="DropdownStatus(0)"
+                          @click="DropdownStatus('active', 'เเสดง')"
                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >อาหาร</a
+                          >เเสดง</a
                         >
                       </li>
                       <li>
                         <a
                           href="#"
-                          @click="DropdownStatus(1)"
+                          @click="DropdownStatus('inactive', 'ไม่เเสดง')"
                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >เครื่องดื่ม</a
-                        >
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          @click="DropdownStatus(2)"
-                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >ของทานเล่น</a
-                        >
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          @click="DropdownStatus(3)"
-                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >ของใช้ทั่วไป</a
+                          >ไม่เเสดง</a
                         >
                       </li>
                     </ul>
@@ -201,6 +185,9 @@
                     <th scope="col" class="px-6 py-4 whitespace-nowrap">
                       สิ้นสุด
                     </th>
+                    <th scope="col" class="px-6 py-4 whitespace-nowrap">
+                      สถานะ
+                    </th>
                     <th scope="col" class="px-6 py-4 whitespace-nowrap"></th>
                   </tr>
                 </thead>
@@ -246,7 +233,20 @@
                     <td class="px-6 py-4 whitespace-nowrap">
                       {{ recommend.end_date }}
                     </td>
-
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span
+                        v-if="recommend.status === 'active'"
+                        class="font-semibold text-green-500 p-1 bg-green-100 rounded-md"
+                      >
+                        แสดง
+                      </span>
+                      <span
+                        v-else
+                        class="font-semibold text-red-500 p-1 bg-red-100 rounded-md"
+                      >
+                        ไม่แสดง
+                      </span>
+                    </td>
                     <td class="px-6 py-4">
                       <button
                         @click.stop="btnDelete(recommend.id)"
@@ -300,7 +300,7 @@
               <div class="w-full lg:w-1/3 relative">
                 <flat-pickr
                   v-model="recommend.start_date"
-                  ref="inputStart_date"
+                  ref="inputStartDate"
                   :config="startDateConfig"
                   :class="{
                     'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
@@ -317,7 +317,7 @@
               <div class="w-full lg:w-1/3 relative">
                 <flat-pickr
                   v-model="recommend.end_date"
-                  ref="inputEnd_date"
+                  ref="inputEndDate"
                   :config="endDateConfig"
                   :class="{
                     'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
@@ -330,6 +330,22 @@
                 <i
                   class="fas fa-calendar-alt absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
                 ></i>
+              </div>
+              <div class="w-full lg:w-1/3 relative">
+                <select
+                  v-model="recommend.status"
+                  ref="inputStatusRecommend"
+                  :class="{
+                    'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                    'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
+                      !recommend.status,
+                  }"
+                  required
+                >
+                  <option value="" disabled selected>สถานะ</option>
+                  <option value="active">เเสดง</option>
+                  <option value="inactive">ไม่เเสดง</option>
+                </select>
               </div>
             </div>
 
@@ -503,7 +519,7 @@
           <div v-if="formEdit">
             <!-- title -->
             <div class="flex justify-between items-center mb-2">
-              <p class="text-3xl font-semibold">เเก้ไขข้อมูลสินค้า</p>
+              <p class="text-3xl font-semibold">เเก้ไขข้อมูลสินค้าเเนะนำ</p>
               <button
                 @click.stop="btnDelete(recommend.id)"
                 class="bg-red-500 text-white px-4 py-1.5 rounded-md"
@@ -539,7 +555,7 @@
               <div class="w-full lg:w-1/3 relative">
                 <flat-pickr
                   v-model="recommend.start_date"
-                  ref="inputStart_date"
+                  ref="inputStartDate"
                   :config="startDateConfig"
                   :class="{
                     'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
@@ -556,7 +572,7 @@
               <div class="w-full lg:w-1/3 relative">
                 <flat-pickr
                   v-model="recommend.end_date"
-                  ref="inputEnd_date"
+                  ref="inputEndDate"
                   :config="endDateConfig"
                   :class="{
                     'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
@@ -569,6 +585,22 @@
                 <i
                   class="fas fa-calendar-alt absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
                 ></i>
+              </div>
+              <div class="w-full lg:w-1/3 relative">
+                <select
+                  v-model="recommend.status"
+                  ref="inputStatusRecommend"
+                  :class="{
+                    'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                    'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
+                      !recommend.status,
+                  }"
+                  required
+                >
+                  <option value="" disabled selected>สถานะ</option>
+                  <option value="active">เเสดง</option>
+                  <option value="inactive">ไม่เเสดง</option>
+                </select>
               </div>
             </div>
 
@@ -781,11 +813,13 @@ export default {
 
       recommendId: "",
       recommends: [],
+      recommendStatus:"",
       recommend: {
         id: "",
         product_id: "",
         start_date: "",
         end_date: "",
+        status: "",
       },
 
       dataPaging: {
@@ -826,7 +860,9 @@ export default {
       formAdd: false,
       formEdit: false,
 
+      DropdownStatusName: "ทั้งหมด",
       DropdownStatusOpen: false,
+
       pageSizeOpen: false,
     };
   },
@@ -863,6 +899,7 @@ export default {
             limit: this.dataPaging.rows,
             page: this.dataPaging.pageNumber,
             q: this.searchText,
+            status: this.recommendStatus,
           },
         })
         .then((response) => {
@@ -982,11 +1019,12 @@ export default {
             this.product.cost = recommend.cost;
             this.product.price = recommend.price;
             this.product.category_id = recommend.category_id;
-            this.product.status = recommend.status;
+            this.product.status = recommend.product_status;
             this.product.detail = recommend.detail;
             this.product.images = recommend.images;
             this.recommend.start_date = recommend.start_date;
             this.recommend.end_date = recommend.end_date;
+            this.recommend.status = recommend.status;
 
             // ตรวจสอบ category_id
             if (
@@ -1044,25 +1082,29 @@ export default {
       // ตรวจสอบความครบถ้วนของข้อมูล
       if (!this.product.id) {
         this.$refs.modal.showModal({
-          swlIcon: "warning",
+          swlIcon: "info",
           swlTitle: "กรุณาเลือกสินค้า",
         });
       } else if (!this.recommend.start_date) {
         this.$refs.modal.showModal({
-          swlIcon: "warning",
+          swlIcon: "info",
           swlTitle: "กรุณาเลือกวันที่เริ่มต้นการเเนะนำ",
         });
       } else if (!this.recommend.end_date) {
         this.$refs.modal.showModal({
-          swlIcon: "warning",
+          swlIcon: "info",
           swlTitle: "กรุณาเลือกวันที่สิ้นสุดการเเนะนำ",
         });
+      } else if (!this.recommend.status) {
+        this.isFocus = true;
+        this.$refs.inputStatusRecommend.focus();
       } else {
         try {
           const dataRecommend = {
             product_id: this.product.id,
             start_date: this.recommend.start_date,
             end_date: this.recommend.end_date,
+            status: this.recommend.status,
           };
 
           const response = await axios.post(
@@ -1100,25 +1142,29 @@ export default {
     async btnEdit() {
       if (!this.product.id) {
         this.$refs.modal.showModal({
-          swlIcon: "warning",
+          swlIcon: "info",
           swlTitle: "กรุณาเลือกสินค้า",
         });
       } else if (!this.recommend.start_date) {
         this.$refs.modal.showModal({
-          swlIcon: "warning",
+          swlIcon: "info",
           swlTitle: "กรุณาเลือกวันที่เริ่มต้นการเเนะนำ",
         });
       } else if (!this.recommend.end_date) {
         this.$refs.modal.showModal({
-          swlIcon: "warning",
+          swlIcon: "info",
           swlTitle: "กรุณาเลือกวันที่สิ้นสุดการเเนะนำ",
         });
+      } else if (!this.recommend.status) {
+        this.isFocus = true;
+        this.$refs.inputStatusRecommend.focus();
       } else {
         try {
           const dataRecommend = {
             product_id: this.product.id,
             start_date: this.recommend.start_date,
             end_date: this.recommend.end_date,
+            status: this.recommend.status,
           };
 
           const response = await axios.put(
@@ -1228,7 +1274,18 @@ export default {
       this.product[event.target.name] = value; // อัพเดตข้อมูลใน model (product.cost หรือ product.price)
     },
 
-    dropdownStatus(event) {
+    ///// {{ DropdownStatus }} /////
+    DropdownStatus(status, name) {
+      this.recommendStatus = status;
+      this.getListRecommend();
+      this.DropdownStatusName = name;
+      if (status === "" || name === "") {
+        this.DropdownStatusName = "ทั้งหมด";
+      }
+      this.DropdownStatusOpen = false;
+      console.log("DropdownStatus", status, name);
+    },
+    clickDropdownStatus(event) {
       // ป้องกันการคลิกบนปุ่มที่ทำให้ event ไปถึง listener ของ document
       event.stopPropagation();
       this.DropdownStatusOpen = !this.DropdownStatusOpen;
@@ -1241,9 +1298,6 @@ export default {
       }
     },
 
-    DropdownPageSize(size) {
-      this.pageSizeOpen = false;
-    },
     togglePageSize(event) {
       // ป้องกันการคลิกบนปุ่มที่ทำให้ event ไปถึง listener ของ document
       event.stopPropagation();

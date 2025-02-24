@@ -56,10 +56,10 @@
                   <button
                     class="border border-gray-300 bg-gray-50 font-medium rounded-lg text-sm px-16 p-2.5 text-center inline-flex items-center h-full"
                     type="button"
-                    @click="dropdownStatus"
+                    @click="clickDropdownStatus"
                   >
                     <span class="mr-2">
-                      <span>ทั้งหมด</span>
+                      <span>{{ DropdownStatusName }}</span>
                     </span>
                     <i class="fa-solid fa-angle-down"></i>
                   </button>
@@ -81,38 +81,61 @@
                       <li>
                         <a
                           href="#"
-                          @click="DropdownStatus(0)"
+                          @click="DropdownStatus('active', 'เเสดง')"
                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >อาหาร</a
+                          >เเสดง</a
                         >
                       </li>
                       <li>
                         <a
                           href="#"
-                          @click="DropdownStatus(1)"
+                          @click="DropdownStatus('inactive', 'ไม่เเสดง')"
                           class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >เครื่องดื่ม</a
-                        >
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          @click="DropdownStatus(2)"
-                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >ของทานเล่น</a
-                        >
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          @click="DropdownStatus(3)"
-                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          >ของใช้ทั่วไป</a
+                          >ไม่เเสดง</a
                         >
                       </li>
                     </ul>
                   </div>
                 </div>
+                <div class="relative">
+                  <!-- ปุ่มเลือกสถานะ-->
+                  <button
+                    class="border border-gray-300 bg-gray-50 font-medium rounded-lg text-sm px-16 p-2.5 text-center inline-flex items-center h-full"
+                    type="button"
+                    @click="clickDropdownCategory"
+                  >
+                    <span class="mr-2">
+                      <span>{{ DropdownCategoryName }}</span>
+                    </span>
+                    <i class="fa-solid fa-angle-down"></i>
+                  </button>
+                  <!-- เมนูสถานะ -->
+                  <div
+                    v-show="DropdownCategoryOpen"
+                    ref="statusMenu"
+                    class="z-50 absolute right-0 mt-2 text-base list-none w-full bg-white divide-y divide-gray-100 rounded-lg shadow border border-gray-300"
+                  >
+                    <ul class="py-2">
+                      <li>
+                        <a
+                          href="#"
+                          @click="DropdownCategory('')"
+                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >ทั้งหมด</a
+                        >
+                      </li>
+                      <li v-for="category in categorys">
+                        <a
+                          href="#"
+                          @click="DropdownCategory(category.id, category.name)"
+                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          >{{ category.name }}</a
+                        >
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
                 <!-- เลือกขนาดเเถวในตาราง -->
                 <div class="relative">
                   <!-- ปุ่มเลือกขนาดเเถวในตาราง -->
@@ -723,6 +746,7 @@ export default {
       searchText: "",
       products: [],
       productId: "",
+      productStatus:"",
       product: {
         id: "",
         code: "",
@@ -735,7 +759,7 @@ export default {
         images: [],
       },
       categorys: [],
-      categoryStatus: "",
+      categoryId: "",
       previewImages: [],
 
       dataPaging: {
@@ -751,13 +775,19 @@ export default {
       formAdd: false,
       formEdit: false,
 
-      DropdownStatusOpen: false,
       pageSizeOpen: false,
+
+      DropdownCategoryName: "ทั้งหมด",
+      DropdownCategoryOpen: false,
+
+      DropdownStatusName: "ทั้งหมด",
+      DropdownStatusOpen: false,
     };
   },
   mounted() {
     this.checkAuth();
     document.addEventListener("click", this.closeDropdownStatus);
+    document.addEventListener("click", this.closeDropdownCategory);
     document.addEventListener("click", this.closeDropdown);
   },
 
@@ -772,6 +802,7 @@ export default {
         this.getListCategory();
       }
     },
+
     showFormAdd() {
       this.formTable = false;
       this.formAdd = true;
@@ -796,7 +827,7 @@ export default {
       this.dataPaging.pageNumber = 1;
       this.getListProduct();
     },
-
+    
     //เเสดงข้อมูลสินค้าบนตาราง
     async getListProduct() {
       await axios
@@ -806,6 +837,7 @@ export default {
             limit: this.dataPaging.rows,
             page: this.dataPaging.pageNumber,
             q: this.searchText,
+            status: this.productStatus,
           },
         })
         .then((response) => {
@@ -817,19 +849,12 @@ export default {
           console.error("There was an error fetching the data:", error);
         });
     },
+
     reloadData(pageNo) {
       this.dataPaging.pageNumber = pageNo;
       this.getListProduct();
     },
-    pageSize(row) {
-      // ตรวจสอบว่าค่า row ใหม่ไม่เท่ากับค่าเดิม
-      if (this.dataPaging.rows !== row) {
-        this.dataPaging.pageNumber = 1;
-        this.dataPaging.rows = row;
-        this.getListProduct();
-        this.pageSizeOpen = false;
-      }
-    },
+
     searchProduct() {
       this.dataPaging.pageNumber = 1;
       this.getListProduct();
@@ -840,6 +865,19 @@ export default {
       this.dataPaging.pageNumber = 1;
       this.getListProduct();
       this.$refs.paginationRef.resetPage();
+    },
+
+    //เเสดงข้อมูลหมวดหมู่สินค้า
+    async getListCategory() {
+      await axios
+        .get(`${this.apiUrl}category/`)
+        .then((response) => {
+          const data = response.data;
+          this.categorys = data.rows;
+        })
+        .catch((error) => {
+          console.error("There was an error fetching the data:", error);
+        });
     },
 
     async showFormEdit(productId) {
@@ -899,23 +937,6 @@ export default {
         // Set loading state to false
         this.loading = false;
       }
-    },
-
-    //เเสดงข้อมูลหมวดหมู่สินค้า
-    async getListCategory() {
-      this.categoryStatus = "active";
-
-      await axios
-        .get(`${this.apiUrl}category/`, {
-          params: { category_status: this.categoryStatus },
-        })
-        .then((response) => {
-          const data = response.data;
-          this.categorys = data.rows;
-        })
-        .catch((error) => {
-          console.error("There was an error fetching the data:", error);
-        });
     },
 
     async btnAdd() {
@@ -1158,7 +1179,18 @@ export default {
       this.product[event.target.name] = value; // อัพเดตข้อมูลใน model (product.cost หรือ product.price)
     },
 
-    dropdownStatus(event) {
+    ///// {{ DropdownStatus }} /////
+    DropdownStatus(status, name) {
+      this.productStatus = status;
+      this.getListProduct();
+      this.DropdownStatusName = name;
+      if (status === "" || name === "") {
+        this.DropdownStatusName = "ทั้งหมด";
+      }
+      this.DropdownStatusOpen = false;
+      console.log("DropdownStatus",status , name)
+    },
+    clickDropdownStatus(event) {
       // ป้องกันการคลิกบนปุ่มที่ทำให้ event ไปถึง listener ของ document
       event.stopPropagation();
       this.DropdownStatusOpen = !this.DropdownStatusOpen;
@@ -1171,8 +1203,40 @@ export default {
       }
     },
 
-    DropdownPageSize(size) {
-      this.pageSizeOpen = false;
+    ///// {{ DropdownCategory }} /////
+    DropdownCategory(id, name) {
+      this.categoryId = id;
+      this.getListProduct();
+      this.DropdownCategoryName = name;
+
+      if (id === "" || name === "") {
+        this.DropdownCategoryName = "ทั้งหมด";
+      }
+
+      this.DropdownCategoryOpen = false;
+    },
+    clickDropdownCategory(event) {
+      // ป้องกันการคลิกบนปุ่มที่ทำให้ event ไปถึง listener ของ document
+      event.stopPropagation();
+      this.DropdownCategoryOpen = !this.DropdownCategoryOpen;
+    },
+    closeDropdownCategory(event) {
+      // ตรวจสอบว่าคลิกภายนอกปุ่มและ dropdown หรือไม่
+      const dropdown = this.$refs.statusMenu;
+      if (dropdown && !dropdown.contains(event.target)) {
+        this.DropdownCategoryOpen = false;
+      }
+    },
+
+    ///// {{ DropdownPageSiz }} /////
+    pageSize(row) {
+      // ตรวจสอบว่าค่า row ใหม่ไม่เท่ากับค่าเดิม
+      if (this.dataPaging.rows !== row) {
+        this.dataPaging.pageNumber = 1;
+        this.dataPaging.rows = row;
+        this.getListProduct();
+        this.pageSizeOpen = false;
+      }
     },
     togglePageSize(event) {
       // ป้องกันการคลิกบนปุ่มที่ทำให้ event ไปถึง listener ของ document

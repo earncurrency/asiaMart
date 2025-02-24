@@ -59,6 +59,7 @@ class RecommendModel(BaseModel):
     product_id: Optional[int] = None
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
+    status: Optional[str] = None
 
 class Config:
     orm_mode = True

@@ -95,6 +95,7 @@ class RecommendSchema(Base):
     product_id = Column(Integer)
     start_date = Column(Date)
     end_date = Column(Date)
+    status = Column(String(15))
     
 # สร้างตารางในฐานข้อมูล (หากยังไม่มี)
 Base.metadata.create_all(bind=engine)

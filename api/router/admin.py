@@ -14,7 +14,7 @@ router = APIRouter(
 
 #เเสดง admin ทั้งหมด
 @router.get("/")
-def list_admins(page: int = 1, limit: int = 10, q: str = ''):
+def list_admins(page: int = 1, limit: int = 10, status: str = '', q: str = ''):
     session = SessionLocal()
         
     offset = (page * limit) - limit; 
@@ -24,6 +24,9 @@ def list_admins(page: int = 1, limit: int = 10, q: str = ''):
         offset = (page * limit) - limit; 
 
         query = session.query(AdminSchema).filter(AdminSchema.status != 'remove')
+
+        if status:
+            query = query.filter(AdminSchema.status == status)
 
         if q:
             query = query.filter(AdminSchema.name.ilike(f'%{q}%'))
