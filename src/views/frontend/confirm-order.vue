@@ -170,7 +170,7 @@
                         <div class="flex gap-4 lg:gap-6 p-2 lg:p-4 rounded-md">
                           <div class="h-20 w-48 object-cover rounded-md">
                             <img
-                              :src="`${baseUrl}/api/uploads/${Math.ceil(
+                              :src="`${imageUrl}/api/uploads/${Math.ceil(
                                 item.id / 100
                               )}/${item.image}`"
                               alt=""
@@ -265,6 +265,7 @@ export default {
     return {
       apiUrl: __API_URL__,
       baseUrl: __BASE_URL__,
+      imageUrl: __IMAGE_URL__,
       deliveryOption: "",
       carts: [],
       cartsLength: 0,
