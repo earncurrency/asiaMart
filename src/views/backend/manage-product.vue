@@ -59,7 +59,7 @@
                     @click="clickDropdownStatus"
                   >
                     <span class="mr-2">
-                      <span>{{ DropdownStatusName }}</span>
+                      <span>สถานะ : {{ DropdownStatusName }}</span>
                     </span>
                     <i class="fa-solid fa-angle-down"></i>
                   </button>
@@ -105,7 +105,7 @@
                     @click="clickDropdownCategory"
                   >
                     <span class="mr-2">
-                      <span>{{ DropdownCategoryName }}</span>
+                      <span>ประเภท : {{ DropdownCategoryName }}</span>
                     </span>
                     <i class="fa-solid fa-angle-down"></i>
                   </button>
@@ -1182,12 +1182,14 @@ export default {
     ///// {{ DropdownStatus }} /////
     DropdownStatus(status, name) {
       this.productStatus = status;
+      this.dataPaging.pageNumber = 1;
       this.getListProduct();
       this.DropdownStatusName = name;
       if (status === "" || name === "") {
         this.DropdownStatusName = "ทั้งหมด";
       }
       this.DropdownStatusOpen = false;
+      this.$refs.paginationRef.resetPage();
       console.log("DropdownStatus",status , name)
     },
     clickDropdownStatus(event) {

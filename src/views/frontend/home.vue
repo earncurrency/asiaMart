@@ -22,20 +22,23 @@
         <!-- <hr class="my-2 text-gray-600"> -->
 
         <!-- <div class="flex justify-center">
-                    <p class="text-3xl font-semibold mt-8 mb-2">โปรโมชั่น</p>
-                </div>
+          <p class="text-3xl font-semibold mt-8 mb-2">โปรโมชั่น</p>
+        </div>
 
-                <promotion /> -->
+        <promotion /> -->
 
         <div class="flex justify-center">
           <p class="text-3xl font-semibold mt-8 mb-4 lg:mb-16">รายการสินค้า</p>
         </div>
 
         <productList />
-        <!-- 
-                <div class="flex justify-center mt-8 mb-4">
-                    <button class="bg-gray-400 text-gray-900 p-2 pl-6 pr-6 rounded-md">ดูเพิ่มเติม</button>
-                </div> -->
+
+        <div class="flex justify-center">
+          <p class="text-3xl font-semibold mt-8 mb-4 lg:mb-16">สินค้าเเนะนำ</p>
+        </div>
+
+        <recommendList />
+
       </div>
     </div>
   </div>
@@ -45,9 +48,16 @@
 import frontend_navbar from "@/components/frontend/navbar.vue";
 import imageBanner from "@/components/frontend/image-banner.vue";
 import productList from "@/components/frontend/product-list.vue";
+import recommendList from "@/components/frontend/recommend-list.vue";
 import promotion from "@/components/frontend/promotion.vue";
 export default {
-  components: { frontend_navbar, imageBanner, productList, promotion },
+  components: {
+    frontend_navbar,
+    imageBanner,
+    productList,
+    promotion,
+    recommendList,
+  },
   data() {
     return {};
   },

@@ -15,7 +15,7 @@ router = APIRouter(
     tags = ["recommends"],
 )
 @router.get("/")
-def get_recommend(limit: int = 10, q: str = '', page: int = 1 , status: str = ''):
+def get_recommends(limit: int = 10, q: str = '', page: int = 1 , status: str = ''):
     session = SessionLocal()
     
     offset = (page * limit) - limit
@@ -26,6 +26,8 @@ def get_recommend(limit: int = 10, q: str = '', page: int = 1 , status: str = ''
             ProductSchema,
             RecommendSchema.product_id == ProductSchema.id
         ).filter(ProductSchema.status != 'remove')
+
+        query = query.filter(RecommendSchema.status != 'remove')
 
         if q:
             query = query.filter(ProductSchema.name.ilike(f'%{q}%'))
@@ -176,3 +178,27 @@ async def add_reccomend(recommend: RecommendModel):
         }
     finally:
         session.close()
+
+@router.delete("/{recommend_id}")
+def remove_recommend(recommend_id: int):
+    session: Session = SessionLocal()  #
+
+    try:
+        existing_recommend = session.query(RecommendSchema).filter(RecommendSchema.id == recommend_id).first()
+
+        existing_recommend.status = "remove"
+
+        # บันทึกการเปลี่ยนแปลง
+        session.commit()
+
+        # อัปเดตข้อมูลสินค้าและส่งกลับ
+        session.refresh(existing_recommend)
+
+        return {
+            "success": True,
+            "message": "อัปเดตสถานะเป็น remove สำเร็จ",
+            "updated_data": existing_recommend
+        }
+
+    finally:
+        session.close() 

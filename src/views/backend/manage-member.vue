@@ -53,7 +53,7 @@
                     @click="clickDropdownStatus"
                   >
                     <span class="mr-2">
-                      <span>{{ DropdownStatusName }}</span>
+                      <span>สถานะ : {{ DropdownStatusName }}</span>
                     </span>
                     <i class="fa-solid fa-angle-down"></i>
                   </button>
@@ -545,12 +545,14 @@ export default {
     ///// {{ DropdownStatus }} /////
     DropdownStatus(status, name) {
       this.memberStatus = status;
+      this.dataPaging.pageNumber = 1;
       this.getListMember();
       this.DropdownStatusName = name;
       if (status === "" || name === "") {
         this.DropdownStatusName = "ทั้งหมด";
       }
       this.DropdownStatusOpen = false;
+      this.$refs.paginationRef.resetPage();
     },
     clickDropdownStatus(event) {
       // ป้องกันการคลิกบนปุ่มที่ทำให้ event ไปถึง listener ของ document

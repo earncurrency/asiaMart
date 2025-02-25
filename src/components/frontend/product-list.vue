@@ -2,7 +2,7 @@
   <div class="lg:flex items-center justify-between font-medium p-4 lg:p-0">
     <!-- ปุ่มนี้จะแสดงเมื่อจอใหญ่ -->
     <div class="flex items-center max-w-xl lg:w-1/3">
-      <label for="voice-search" class="sr-only">Search</label>
+      <!-- <label for="voice-search" class="sr-only">Search</label> -->
 
       <div class="relative w-full">
         <div
@@ -31,6 +31,7 @@
     <ul
       class="flex flex-wrap justify-center text-md font-medium text-center mt-4 lg:mt-0 text-gray-500 dark:text-gray-400"
     >
+
       <li v-for="(category, index) in categorys" :key="index" class="me-2">
         <RouterLink
           :to="`/category/${category.id}/${category.name}`"

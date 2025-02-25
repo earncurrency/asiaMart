@@ -59,7 +59,7 @@
                     @click="clickDropdownStatus"
                   >
                     <span class="mr-2">
-                      <span>{{ DropdownStatusName }}</span>
+                      <span>สถานะ : {{ DropdownStatusName }}</span>
                     </span>
                     <i class="fa-solid fa-angle-down"></i>
                   </button>
@@ -1197,7 +1197,7 @@ export default {
         onConfirm: () => {
           // เมื่อผู้ใช้กด "ยืนยัน" ใน modal
           axios
-            .delete(`${this.apiUrl}products/${productId}`)
+            .delete(`${this.apiUrl}recommends/${recommendId}`)
             .then((response) => {
               // แสดงข้อความว่า "ลบสำเร็จ"
               this.$swal
@@ -1277,12 +1277,14 @@ export default {
     ///// {{ DropdownStatus }} /////
     DropdownStatus(status, name) {
       this.recommendStatus = status;
+      this.dataPaging.pageNumber = 1;
       this.getListRecommend();
       this.DropdownStatusName = name;
       if (status === "" || name === "") {
         this.DropdownStatusName = "ทั้งหมด";
       }
       this.DropdownStatusOpen = false;
+      this.$refs.paginationRef.resetPage();
       console.log("DropdownStatus", status, name);
     },
     clickDropdownStatus(event) {
