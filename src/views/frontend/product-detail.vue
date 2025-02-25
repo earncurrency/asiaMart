@@ -30,14 +30,14 @@
                 class="w-full lg:h-28 h-20 cursor-pointer"
                 @click="
                   selectImage(
-                    `${baseUrl}/api/uploads/${Math.ceil(product.id / 100)}/${
+                    `${imageUrl}/api/uploads/${Math.ceil(product.id / 100)}/${
                       image.path
                     }`
                   )
                 "
               >
                 <img
-                  :src="`${baseUrl}/api/uploads/${Math.ceil(
+                  :src="`${imageUrl}/api/uploads/${Math.ceil(
                     product.id / 100
                   )}/${image.path}`"
                   alt="image 1"
@@ -125,6 +125,7 @@ export default {
     return {
       apiUrl: __API_URL__,
       baseUrl: __BASE_URL__,
+      imageUrl: __IMAGE_URL__,
       product: {
         id: "",
         code: "",
@@ -195,7 +196,7 @@ export default {
         this.product = response.data.row;
 
         if (this.product.images[0]) {
-          this.selectedImage = `${this.baseUrl}/api/uploads/${Math.ceil(
+          this.selectedImage = `${this.imageUrl}/api/uploads/${Math.ceil(
             this.productId / 100
           )}/${this.product.images[0].path}`;
         }

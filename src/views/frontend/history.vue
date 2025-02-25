@@ -30,37 +30,37 @@
                   >
                     <img
                       v-if="order.status === 'new'"
-                      :src="`${baseUrl}/src/assets/image/system/product.png`"
+                      :src="`${baseUrl}/assets/image/system/product.png`"
                       alt=""
                       class="h-12 w-12 lg:h-16 lg:w-16 object-cover"
                     />
                     <img
                       v-else-if="order.status === 'pending'"
-                      :src="`${baseUrl}/src/assets/image/system/checklist.png`"
+                      :src="`${baseUrl}/assets/image/system/checklist.png`"
                       alt=""
                       class="h-12 w-12 lg:h-16 lg:w-16 object-cover"
                     />
                     <img
                       v-else-if="order.status === 'delivery'"
-                      :src="`${baseUrl}/src/assets/image/system/delivery-man.png`"
+                      :src="`${baseUrl}/assets/image/system/delivery-man.png`"
                       alt=""
                       class="h-12 w-12 lg:h-16 lg:w-16 object-cover"
                     />
                     <img
                       v-else-if="order.status === 'success'"
-                      :src="`${baseUrl}/src/assets/image/system/checked.png`"
+                      :src="`${baseUrl}/assets/image/system/checked.png`"
                       alt=""
                       class="h-12 w-12 lg:h-16 lg:w-16 object-cover"
                     />
                     <img
                       v-else-if="order.status === 'cancel'"
-                      :src="`${baseUrl}/src/assets/image/system/x-button.png`"
+                      :src="`${baseUrl}/assets/image/system/x-button.png`"
                       alt=""
                       class="h-12 w-12 lg:h-16 lg:w-16 object-cover"
                     />
                     <img
                       v-else
-                      :src="`${baseUrl}/src/assets/image/system/warning.png`"
+                      :src="`${baseUrl}/assets/image/system/warning.png`"
                       alt=""
                       class="h-12 w-12 lg:h-16 lg:w-16 object-cover"
                     />

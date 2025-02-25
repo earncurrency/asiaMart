@@ -43,7 +43,7 @@
                         <RouterLink :to="`/product-detail/${item.id}`">
                           <div class="h-28 w-28 lg:h-32 lg:w-48">
                             <img
-                              :src="`${baseUrl}/api/uploads/${Math.ceil(
+                              :src="`${imageUrl}/api/uploads/${Math.ceil(
                                 item.id / 100
                               )}/${item.image}`"
                               alt=""
@@ -175,6 +175,7 @@ export default {
     return {
       apiUrl: __API_URL__,
       baseUrl: __BASE_URL__,
+      imageUrl: __IMAGE_URL__,
       carts: [],
       cartsLength: 0,
       member_id: "",
