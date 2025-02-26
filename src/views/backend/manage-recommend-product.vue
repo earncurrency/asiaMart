@@ -1172,7 +1172,7 @@ export default {
             dataRecommend
           );
           if (response.status === 200) {
-            this.$refs.modal.showSuccessModal({
+            this.$refs.modal.showAlertModal({
               swlIcon: "success",
               swlTitle: "สำเร็จ",
               swlText: response.data.message,

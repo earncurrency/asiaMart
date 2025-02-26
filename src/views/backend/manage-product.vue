@@ -953,9 +953,6 @@ export default {
       } else if (!this.product.price) {
         this.isFocus = true;
         this.$refs.inputPriceProduct.focus();
-      } else if (!this.product.category_id) {
-        this.isFocus = true;
-        this.$refs.inputTypeProduct.focus();
       } else if (!this.product.status) {
         this.isFocus = true;
         this.$refs.inputStatusProduct.focus();
@@ -971,7 +968,7 @@ export default {
             cost: this.product.cost,
             price: this.product.price,
             status: this.product.status,
-            category_id: this.product.category_id,
+            category_id: this.product.category_id || null,
             detail: this.product.detail,
           };
 
@@ -1013,9 +1010,6 @@ export default {
       } else if (!this.product.price) {
         this.isFocus = true;
         this.$refs.inputPriceProduct.focus();
-      } else if (!this.product.category_id) {
-        this.isFocus = true;
-        this.$refs.inputTypeProduct.focus();
       } else if (!this.product.status) {
         this.isFocus = true;
         this.$refs.inputStatusProduct.focus();
@@ -1030,7 +1024,7 @@ export default {
             cost: this.product.cost,
             price: this.product.price,
             status: this.product.status,
-            category_id: this.product.category_id,
+            category_id: this.product.category_id || null,
             detail: this.product.detail,
           };
 
@@ -1042,7 +1036,7 @@ export default {
             }
           );
           if (response.status === 200) {
-            this.$refs.modal.showSuccessModal({
+            this.$refs.modal.showAlertModal({
               swlIcon: "success",
               swlTitle: "สำเร็จ",
               swlText: response.data.message,
