@@ -66,39 +66,16 @@
                     />
                     <div>
                       <div class="flex gap-2 mt-1">
-                        <p class="">เลขที่ :</p>
-                        <p class="font-semibold">{{ order.code }}</p>
+                        <p class="">เลขที่ :</p><p class="font-semibold">{{ order.code }}</p>
                       </div>
 
                       <div class="flex gap-2 mt-1">
                         <p class="">สถานะ :</p>
-                        <p class="font-semibold" v-if="order.status === 'new'">
-                          รอรับออเดอร์
-                        </p>
-                        <p
-                          class="font-semibold"
-                          v-else-if="order.status === 'pending'"
-                        >
-                          กำลังเตรียมสินค้า
-                        </p>
-                        <p
-                          class="font-semibold"
-                          v-else-if="order.status === 'delivery'"
-                        >
-                          กำลังจัดส่ง
-                        </p>
-                        <p
-                          class="font-semibold"
-                          v-else-if="order.status === 'success'"
-                        >
-                          สำเร็จ
-                        </p>
-                        <p
-                          class="font-semibold"
-                          v-else-if="order.status === 'cancel'"
-                        >
-                          ยกเลิก
-                        </p>
+                        <p class="font-semibold" v-if="order.status === 'new'">รอรับออเดอร์</p>
+                        <p class="font-semibold" v-else-if="order.status === 'pending'">กำลังเตรียมสินค้า</p>
+                        <p class="font-semibold" v-else-if="order.status === 'delivery'">กำลังจัดส่ง</p>
+                        <p class="font-semibold" v-else-if="order.status === 'success'">สำเร็จ</p>
+                        <p class="font-semibold" v-else-if="order.status === 'cancel'">ยกเลิก</p>
                         <p class="font-semibold" v-else>ไม่พบสถานะ</p>
                       </div>
                     </div>
@@ -106,12 +83,10 @@
 
                   <div class="lg:flex lg:justify-end gap-4">
                     <div class="flex gap-2">
-                      <p>จำนวนสินค้า :</p>
-                      <p class="">{{ order.length }} ชิ้น</p>
+                      <p>จำนวนสินค้า :</p><p class="">{{ order.length }} ชิ้น</p>
                     </div>
                     <div class="flex gap-2 text-orange-500">
-                      <p>ราคารวม :</p>
-                      <p class="font-semibold">{{ order.total }} บาท</p>
+                      <p>ราคารวม :</p><p class="font-semibold">{{ order.total }} บาท</p>
                     </div>
                   </div>
                 </div>
