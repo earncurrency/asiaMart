@@ -15,19 +15,19 @@ router = APIRouter(
     tags = ["recommends"],
 )
 @router.get("/")
-def get_recommends(limit: int = 10, q: str = '', page: int = 1 , status: str = ''):
+def get_recommends(limit: int = None, q: str = '', page: int = None, status: str = ''):
     session = SessionLocal()
     
-    offset = (page * limit) - limit
+    # offset = (page * limit) - limit
     
     try:
 
         query = session.query(RecommendSchema).join(
             ProductSchema,
             RecommendSchema.product_id == ProductSchema.id
-        ).filter(ProductSchema.status != 'remove')
+        ).filter(ProductSchema.status != 'remove',RecommendSchema.status != 'remove')
 
-        query = query.filter(RecommendSchema.status != 'remove')
+        # query = query.filter(RecommendSchema.status != 'remove')
 
         if q:
             query = query.filter(ProductSchema.name.ilike(f'%{q}%'))
@@ -35,7 +35,13 @@ def get_recommends(limit: int = 10, q: str = '', page: int = 1 , status: str = '
         if status:
             query = query.filter(RecommendSchema.status == status)    
 
-        recommends = query.order_by(desc(RecommendSchema.id)).limit(limit).offset(offset).all()
+        if limit is None:
+            query = query.filter(ProductSchema.status == 'active',RecommendSchema.status == 'active')  
+            recommends = query.order_by(desc(RecommendSchema.id)).all()
+        else:
+            # คำนวณ offset ถ้ามี page ส่งมา
+            offset = (page * limit) - limit if page else 0
+            recommends = query.order_by(desc(RecommendSchema.id)).limit(limit).offset(offset).all()
         
         total = query.count()
 
@@ -55,8 +61,10 @@ def get_recommends(limit: int = 10, q: str = '', page: int = 1 , status: str = '
 
             result.append({
                 "id": recommend.id,
+                "product_id": recommend.product_id,
                 "code": product.code,
                 "name": product.name,
+                "price": product.price,
                 "images": image_paths,
                 "start_date": recommend.start_date.strftime("%Y-%m-%d"),
                 "end_date": recommend.end_date.strftime("%Y-%m-%d"),

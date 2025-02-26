@@ -9,17 +9,40 @@
     >
       <div>
         <!-- Title -->
-        <!-- <div class="title-content lg:flex items-center justify-between font-medium mt-4 gap-4 p-4 lg:p-0">
-                    <div class="hidden lg:flex justify-center">
-                        <p class="text-3xl font-semibold ">Asia Mart</p>
-                    </div>
+        <div
+          class="title-content lg:flex items-center justify-between font-medium mt-4 gap-4 p-4 lg:p-0"
+        >
+          <div class="flex items-center max-w-xl lg:w-1/3">
+            <!-- <label for="voice-search" class="sr-only">Search</label> -->
 
+            <div class="relative w-full">
+              <div
+                class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
+              >
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </div>
+              <input
+                type="text"
+                v-model="searchText"
+                @input="searchProduct"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 pr-10 p-2.5 focus:border-gray-300"
+                placeholder="ค้นหา..."
+              />
 
-  
+              <button
+                @click="xmark"
+                class="absolute inset-y-0 end-0 flex items-center ps-3 p-3 pointer"
+              >
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+          </div>
+          <div class="lg:flex justify-center">
+            <tabsCategory />
+          </div>
+        </div>
 
-                </div> -->
-
-        <!-- <hr class="my-2 text-gray-600"> -->
+        <hr class="my-2 text-gray-600" />
 
         <!-- <div class="flex justify-center">
           <p class="text-3xl font-semibold mt-8 mb-2">โปรโมชั่น</p>
@@ -28,17 +51,16 @@
         <promotion /> -->
 
         <div class="flex justify-center">
-          <p class="text-3xl font-semibold mt-8 mb-4 lg:mb-16">รายการสินค้า</p>
-        </div>
-
-        <productList />
-
-        <div class="flex justify-center">
           <p class="text-3xl font-semibold mt-8 mb-4 lg:mb-16">สินค้าเเนะนำ</p>
         </div>
 
         <recommendList />
 
+        <!-- <div class="flex justify-center">
+          <p class="text-3xl font-semibold mt-8 mb-4 lg:mb-16">รายการสินค้า</p>
+        </div>
+
+        <productList /> -->
       </div>
     </div>
   </div>
@@ -50,6 +72,7 @@ import imageBanner from "@/components/frontend/image-banner.vue";
 import productList from "@/components/frontend/product-list.vue";
 import recommendList from "@/components/frontend/recommend-list.vue";
 import promotion from "@/components/frontend/promotion.vue";
+import tabsCategory from "@/components/frontend/tabs-category.vue";
 export default {
   components: {
     frontend_navbar,
@@ -57,9 +80,12 @@ export default {
     productList,
     promotion,
     recommendList,
+    tabsCategory,
   },
   data() {
-    return {};
+    return {
+      searchText: "",
+    };
   },
   mounted() {
     this.checkAuth();

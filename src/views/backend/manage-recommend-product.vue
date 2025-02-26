@@ -277,7 +277,7 @@
               <div class="relative w-full lg:w-1/3">
                 <input
                   type="text"
-                  v-model="searchCodeProduct"
+                  v-model="searchDataProduct"
                   @input="searchProduct"
                   class="block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300"
                   placeholder="ค้นหาสินค้า"
@@ -285,7 +285,7 @@
                 />
                 <div
                   class="absolute z-10 bg-white border border-gray-300 shadow-md rounded-lg w-full"
-                  v-if="searchCodeProduct != ''"
+                  v-show="products.length > 0"
                 >
                   <option
                     v-for="product in products"
@@ -532,7 +532,7 @@
               <div class="relative w-full lg:w-1/3">
                 <input
                   type="text"
-                  v-model="searchCodeProduct"
+                  v-model="searchDataProduct"
                   @input="searchProduct"
                   class="block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-white h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300"
                   placeholder="ค้นหาสินค้า"
@@ -540,7 +540,7 @@
                 />
                 <div
                   class="absolute z-10 bg-white border border-gray-300 shadow-md rounded-lg w-full"
-                  v-if="searchCodeProduct != ''"
+                  v-show="products.length > 0"
                 >
                   <option
                     v-for="product in products"
@@ -791,7 +791,7 @@ export default {
       apiUrl: __API_URL__,
       imageUrl: __IMAGE_URL__,
       searchText: "",
-      searchCodeProduct: "",
+      searchDataProduct: "",
 
       products: [],
       productId: "",
@@ -813,7 +813,7 @@ export default {
 
       recommendId: "",
       recommends: [],
-      recommendStatus:"",
+      recommendStatus: "",
       recommend: {
         id: "",
         product_id: "",
@@ -946,9 +946,10 @@ export default {
       this.formEdit = false;
       // this.getListCategory();
 
-      this.searchCodeProduct = "";
+      this.searchDataProduct = "";
       this.recommend.start_date = "";
       this.recommend.end_date = "";
+      this.recommend.status = "";
 
       this.product.id = "";
       this.product.code = "";
@@ -963,11 +964,9 @@ export default {
 
     searchProduct() {
       axios
-        .get(`${this.apiUrl}products/`, {
+        .get(`${this.apiUrl}products/search/`, {
           params: {
-            limit: this.dataPaging.rows,
-            page: this.dataPaging.pageNumber,
-            q: this.searchCodeProduct,
+            q: this.searchDataProduct,
           },
         })
         .then((response) => {
@@ -981,7 +980,7 @@ export default {
     },
     clickProduct(product) {
       this.products = [];
-      this.searchCodeProduct = "";
+      this.searchDataProduct = "";
       this.product.id = product.id;
       this.product.code = product.code;
       this.product.name = product.name;

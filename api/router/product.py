@@ -350,3 +350,58 @@ def get_products_by_category_id(category_id: str = '', limit: int = 10, q: str =
     finally:
         session.close()
 
+@router.get("/search/")
+def get_products_by_q(q: str = ''):
+    session = SessionLocal()
+
+    try:
+        print(f"q = {q}")
+
+        if not q:
+            return {
+                "message": "ไม่มีข้อมูลที่ค้นหา.",
+                "rows": [],
+                "total": 0
+            }
+
+        # สร้าง query พื้นฐาน
+        query = session.query(ProductSchema).filter(
+            ProductSchema.name.ilike(f'%{q}%'),
+            ProductSchema.status == 'active'
+        )
+
+        # ดึงข้อมูลและเรียงลำดับตาม id จากมากไปน้อย
+        products = query.order_by(desc(ProductSchema.id)).all()
+        total = query.count()
+
+        # สร้างผลลัพธ์ที่ต้องการส่งกลับ
+        result = []
+        for product in products:
+            # ดึงรูปภาพสินค้า
+            product_images = session.query(ProductImageSchema).filter(
+                ProductImageSchema.product_id == product.id,
+                ProductImageSchema.status == 'active'
+            ).all()
+            image_paths = [image.path for image in product_images]
+
+            # เพิ่มข้อมูลสินค้าในผลลัพธ์
+            result.append({
+                "id": product.id,
+                "code": product.code,
+                "name": product.name,
+                "cost": product.cost,
+                "price": product.price,
+                "status": product.status,
+                "category_id": product.category_id,
+                "detail": product.detail,
+                "images": image_paths
+            })
+
+        return {
+            "message": f"พบ {total} สินค้าที่ '{q}'",
+            "rows": result,
+            "total": total
+        }
+
+    finally:
+        session.close()

@@ -2,11 +2,13 @@
 import axios from "axios";
 </script>
 <template>
+
+
   <ul
     class="flex flex-wrap justify-center text-md font-medium text-center mt-4 lg:mt-0 text-gray-500 dark:text-gray-400"
   >
     <li v-for="(category, index) in categorys" :key="index" class="me-2">
-      <RouterLink :to="`/category/${category.id}`">
+      <RouterLink :to="`/category/${category.id}/${category.name}`">
         <a
           href="#"
           class="inline-block px-4 py-3 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white"
@@ -49,7 +51,6 @@ export default {
           console.error("There was an error fetching the data:", error); // แสดงข้อผิดพลาด
         });
     },
-
   },
 };
 </script>

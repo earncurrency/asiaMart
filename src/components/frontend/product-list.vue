@@ -76,7 +76,7 @@
               :src="`${imageUrl}/api/uploads/${Math.ceil(product.id / 100)}/${
                 product.images[0]
               }`"
-              alt="card image"
+              alt="Card 1"
               class="w-full h-full object-cover rounded-t-lg lg:rounded-lg p-1 cursor-pointer"
             />
           </div>
