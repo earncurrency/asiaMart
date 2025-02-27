@@ -13,16 +13,14 @@
         <input
           type="text"
           v-model="searchText"
-          @input="searchProduct"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 pr-10 p-2.5 focus:border-gray-300"
           placeholder="ค้นหา..."
         />
-
         <button
-          @click="xmark"
-          class="absolute inset-y-0 end-0 flex items-center ps-3 p-3 pointer"
+          @click="searchBtn"
+          class="absolute inset-y-0 end-0 flex items-center ps-3 p-3 pointer text-white bg-gray-800 rounded-lg"
         >
-          <i class="fa-solid fa-xmark"></i>
+          <i class="fa-solid fa-search"></i>
         </button>
       </div>
     </div>
@@ -31,7 +29,6 @@
     <ul
       class="flex flex-wrap justify-center text-md font-medium text-center mt-4 lg:mt-0 text-gray-500 dark:text-gray-400"
     >
-
       <li v-for="(category, index) in categorys" :key="index" class="me-2">
         <RouterLink
           :to="`/category/${category.id}/${category.name}`"
@@ -130,6 +127,10 @@ export default {
       type: String,
       required: false,
     },
+    searchQuery: {
+      type: String,
+      required: false,
+    },
   },
   data() {
     return {
@@ -152,12 +153,17 @@ export default {
     };
   },
   mounted() {
+    this.searchText = this.searchQuery || "";
+
     this.getListProduct();
     this.getListCategory();
   },
   watch: {
     categoryId(newCategoryId) {
       this.getListProduct(newCategoryId);
+    },
+    searchQuery(newSearchText) {
+      this.searchText = newSearchText;
     },
   },
   methods: {
@@ -192,10 +198,13 @@ export default {
       console.log("pageNo", pageNo);
     },
 
-    searchProduct() {
-      this.dataPaging.pageNumber = 1;
-      this.getListProduct();
-      this.$refs.paginationRef.resetPage();
+    searchBtn() {
+      if (this.searchText !== "") {
+        this.dataPaging.pageNumber = 1;
+        this.getListProduct();
+        this.$refs.paginationRef.resetPage();
+        this.$router.push(`/search/${this.searchText}`);
+      }
     },
     xmark() {
       this.searchText = "";

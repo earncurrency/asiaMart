@@ -25,10 +25,7 @@ export default {
     return {
       apiUrl: __API_URL__,
 
-      categorys: {
-        id: "",
-        name: "",
-      },
+      categorys: [],
     };
   },
   mounted() {

@@ -55,6 +55,12 @@ const router = createRouter({
             props: true,
         },
         {
+            path: '/search/:searchQuery',
+            name: 'search',
+            component: () => import('../views/frontend/search.vue'),
+            props: true,
+        },
+        {
             path: '/history',
             name: 'history',
             component: () => import('../views/frontend/history.vue'),

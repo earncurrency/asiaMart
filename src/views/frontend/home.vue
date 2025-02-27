@@ -16,24 +16,17 @@
             <!-- <label for="voice-search" class="sr-only">Search</label> -->
 
             <div class="relative w-full">
-              <div
-                class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
-              >
-                <i class="fa-solid fa-magnifying-glass"></i>
-              </div>
               <input
                 type="text"
                 v-model="searchText"
-                @input="searchProduct"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 pr-10 p-2.5 focus:border-gray-300"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-3 pr-12 p-2.5 focus:border-gray-300"
                 placeholder="ค้นหา..."
               />
-
               <button
-                @click="xmark"
-                class="absolute inset-y-0 end-0 flex items-center ps-3 p-3 pointer"
+                @click="searchBtn"
+                class="absolute inset-y-0 end-0 flex items-center ps-3 p-3 pointer text-white bg-gray-800 rounded-lg"
               >
-                <i class="fa-solid fa-xmark"></i>
+                <i class="fa-solid fa-search"></i>
               </button>
             </div>
           </div>
@@ -69,7 +62,6 @@
 <script>
 import frontend_navbar from "@/components/frontend/navbar.vue";
 import imageBanner from "@/components/frontend/image-banner.vue";
-import productList from "@/components/frontend/product-list.vue";
 import recommendList from "@/components/frontend/recommend-list.vue";
 import promotion from "@/components/frontend/promotion.vue";
 import tabsCategory from "@/components/frontend/tabs-category.vue";
@@ -77,11 +69,11 @@ export default {
   components: {
     frontend_navbar,
     imageBanner,
-    productList,
     promotion,
     recommendList,
     tabsCategory,
   },
+
   data() {
     return {
       searchText: "",
@@ -97,6 +89,11 @@ export default {
 
       if (!storedHash || storedHash === "") {
         this.$router.push("/login");
+      }
+    },
+    searchBtn() {
+      if (this.searchText !== "") {
+        this.$router.push(`/search/${this.searchText}`);
       }
     },
   },

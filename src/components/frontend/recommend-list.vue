@@ -95,7 +95,7 @@ export default {
           this.products = data.rows;
           this.totalList = data.total;
 
-          console.log("recommends", this.recommends);
+          console.log("recommends", this.products);
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error);
