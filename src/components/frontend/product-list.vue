@@ -32,7 +32,7 @@
       <li v-for="(category, index) in categorys" :key="index" class="me-2">
         <RouterLink
           :to="`/category/${category.id}/${category.name}`"
-          @click="clickCategory(category.id)"
+          @click="clickCategory()"
         >
           <a
             href="#"
@@ -98,8 +98,8 @@
       </RouterLink>
     </div>
   </div>
-  <div v-if="products.length === 0" class=""></div>
-  <div v-else class="">
+  <!-- <div v-if="products.length === 0" class=""></div> -->
+  <div class="">
     <pagination
       ref="paginationRef"
       :pageSize="dataPaging.rows"
@@ -227,7 +227,7 @@ export default {
           console.error("There was an error fetching the data:", error); // แสดงข้อผิดพลาด
         });
     },
-    clickCategory(id) {
+    clickCategory() {
       // this.$router.push(`/category/${categoryId}`);
       this.dataPaging.pageNumber = 1;
       this.$refs.paginationRef.resetPage();

@@ -55,9 +55,8 @@ export default {
     },
     totalList: {
       required: false,
-      default: 1,
+      default: 0,
     },
-
   },
   data() {
     return {
@@ -77,6 +76,13 @@ export default {
     pageSize(newPageSize) {
       this.currentPage = 1;
       this.changeShowRowNumber();
+    },
+    totalList(newTotalList) {
+      if (newTotalList === 0) {
+        this.firstRowNumber = 0;
+      } else {
+        this.firstRowNumber = 1; 
+      }
     },
   },
   computed: {
