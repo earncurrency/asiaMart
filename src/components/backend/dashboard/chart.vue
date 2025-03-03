@@ -4,18 +4,9 @@ import VueApexCharts from "vue3-apexcharts";
 </script>
 
 <template>
-  <div class="grid grid-cols-1 lg:grid-cols gap-4 mt-8">
+  <div class="grid grid-cols-1 lg:grid-cols gap-4">
     <!-- กราฟแสดงกำไรรายเดือนต่อปี -->
     <div class="w-full rounded-md shadow-md lg:col-span-3">
-      <div class="p-4 flex justify-start gap-4 items-center">
-        <div
-          class="h-12 w-12 rounded-md bg-gray-100 flex items-center justify-center text-blue-500"
-        >
-          <i class="fa-solid fa-chart-simple"></i>
-        </div>
-        <p class="text-2xl font-semibold">กราฟแสดงยอดขายรายเดือนต่อปี</p>
-      </div>
-
       <!-- กราฟเส้น -->
       <apexcharts
         height="450"
@@ -88,33 +79,7 @@ export default {
         },
       ],
 
-      donutChartOptions: {
-        chart: {
-          id: "vuechart-donut-example",
-          type: "donut",
-        },
-        labels: ["อาหาร", "เครื่องดื่ม", "ของทานเล่น", "ของใช้ทั่วไป"],
-        plotOptions: {
-          donut: {
-            size: "10%",
-          },
-        },
-      },
-      donutChartSeries: [5, 8, 21, 2],
 
-      locationChartOptions: {
-        chart: {
-          id: "vuechart-donut-example",
-          type: "donut",
-        },
-        labels: ["รับที่ AsiaMart", "บางมด", "บ้านเเพ้ว", "มหาชัย"],
-        plotOptions: {
-          donut: {
-            size: "10%",
-          },
-        },
-      },
-      locationChartSeries: [5, 22, 38, 5],
     };
   },
   mounted() {
@@ -145,11 +110,7 @@ export default {
             },
           ];
 
-          // console.log(
-          //   "Chart data updated:",
-          //   this.lineChartOptions,
-          //   this.lineChartSeries
-          // );
+
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error);

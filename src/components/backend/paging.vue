@@ -81,7 +81,7 @@ export default {
       if (newTotalList === 0) {
         this.firstRowNumber = 0;
       } else {
-        this.firstRowNumber = 1; 
+        this.firstRowNumber = 1;
       }
     },
   },
@@ -154,6 +154,10 @@ export default {
       this.changeShowRowNumber();
     },
     changeShowRowNumber() {
+      if (this.totalList= 0) {
+        this.firstRowNumber = 0;
+      } 
+
       if (this.currentPage > this.totalPagination) {
         this.currentPage = this.totalPagination;
       }

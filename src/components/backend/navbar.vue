@@ -80,7 +80,7 @@ import { faL } from "@fortawesome/free-solid-svg-icons";
                   <li>
                     <a
                       @click="logout()"
-                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white "
+                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white"
                       role="menuitem"
                       >ออกจากระบบ</a
                     >
@@ -151,7 +151,9 @@ import { faL } from "@fortawesome/free-solid-svg-icons";
               <div class="text-xl text-white">
                 <i class="fa-regular fa-thumbs-up"></i>
               </div>
-              <span class="flex-1 ms-3 whitespace-nowrap">รายการสินค้าเเนะนำ</span>
+              <span class="flex-1 ms-3 whitespace-nowrap"
+                >รายการสินค้าเเนะนำ</span
+              >
             </a>
           </RouterLink>
         </li>
@@ -210,13 +212,14 @@ import { faL } from "@fortawesome/free-solid-svg-icons";
           >
             <span class="flex-1 ms-7 whitespace-nowrap">- สินค้าคงคลัง</span>
           </a>
-
-          <a
-            href="#"
-            class="flex items-center p-2 text-gray-400 rounded-lg group"
-          >
-            <span class="flex-1 ms-7 whitespace-nowrap">- ยอดขาย</span>
-          </a>
+          <RouterLink to="/backend/report">
+            <a
+              href="#"
+              class="flex items-center p-2 text-white rounded-lg group"
+            >
+              <span class="flex-1 ms-7 whitespace-nowrap">- ยอดขาย</span>
+            </a>
+          </RouterLink>
         </li>
       </ul>
     </div>
@@ -240,7 +243,6 @@ export default {
     window.addEventListener("resize", this.checkScreenWidth);
 
     this.setdata();
-
   },
   destroyed() {
     // Clean up the event listener
@@ -255,13 +257,11 @@ export default {
     },
 
     setdata() {
-
       let admin_name = localStorage.getItem("admin_name");
       this.admin_name = admin_name;
 
       let admin_role = localStorage.getItem("admin_role");
       this.admin_role = admin_role;
-
     },
 
     logout() {

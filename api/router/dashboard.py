@@ -46,7 +46,7 @@ def chart():
     finally:
         session.close()
 
-#เเสดง order ทั้งหมด
+#เเสดง total ทั้งหมด
 @router.get("/total/")
 def total():
 

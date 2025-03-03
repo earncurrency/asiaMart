@@ -1,6 +1,6 @@
 <template>
   <div class="relative">
-    <div class="overflow-hidden">
+    <div v-if="products.length > 0" class="overflow-hidden">
       <div
         class="flex transition-transform duration-300 ease-in-out"
         :style="{
@@ -41,19 +41,22 @@
           </RouterLink>
         </div>
       </div>
+      <button
+        @click="prev"
+        class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
+      >
+        &lt;
+      </button>
+      <button
+        @click="next"
+        class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
+      >
+        &gt;
+      </button>
     </div>
-    <button
-      @click="prev"
-      class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
-    >
-      &lt;
-    </button>
-    <button
-      @click="next"
-      class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
-    >
-      &gt;
-    </button>
+    <div v-else class="text-center py-4 pt-8 text-gray-600">
+      ไม่มีสินค้าแนะนำขณะนี้
+    </div>
   </div>
 </template>
 
@@ -103,14 +106,20 @@ export default {
     },
 
     prev() {
-      this.currentIndex = Math.max(this.currentIndex - 1, 0);
+      if (this.currentIndex > 0) {
+        this.currentIndex--;
+      }
     },
+
     next() {
-      this.currentIndex = Math.min(
-        this.currentIndex + 1,
-        this.products.length - this.visibleItems
-      );
+      if (this.currentIndex < this.products.length - this.visibleItems) {
+        this.currentIndex++;
+      } else {
+        //ลูป
+        this.currentIndex = 0;
+      }
     },
+
     updateVisibleItems() {
       if (window.innerWidth < 768) {
         this.visibleItems = 2; // หน้าจอเล็ก (โทรศัพท์มือถือ) แสดง 2 สินค้า
