@@ -143,7 +143,11 @@ export default {
     // ฟังก์ชั่นที่ทำงานเมื่อผู้ใช้คลิกที่หมายเลขหน้า
     resetPage() {
       this.currentPage = 1;
-      this.firstRowNumber = 1;
+      if ((this.totalList = 0)) {
+        this.firstRowNumber = 0;
+      } else {
+        this.firstRowNumber = 1;
+      }
     },
     clickPage(pageNo) {
       if (pageNo === "..." || pageNo < 1 || pageNo > this.totalPagination)
@@ -154,9 +158,9 @@ export default {
       this.changeShowRowNumber();
     },
     changeShowRowNumber() {
-      if (this.totalList= 0) {
+      if ((this.totalList = 0)) {
         this.firstRowNumber = 0;
-      } 
+      }
 
       if (this.currentPage > this.totalPagination) {
         this.currentPage = this.totalPagination;

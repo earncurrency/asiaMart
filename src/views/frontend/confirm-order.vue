@@ -428,6 +428,7 @@ export default {
       if (!this.member.phone) {
         this.inputNowPhone = false;
         this.inputNewPhone = true;
+        this.boxBtn = true;
         this.$refs.inputNewPhone.focus();
         return;
       }

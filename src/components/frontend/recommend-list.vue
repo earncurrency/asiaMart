@@ -54,7 +54,7 @@
         &gt;
       </button>
     </div>
-    <div v-else class="text-center py-4 pt-8 text-gray-600">
+    <div v-else class="text-center text-xl py-4 pt-8 mb-8 text-gray-600">
       ไม่มีสินค้าแนะนำขณะนี้
     </div>
   </div>

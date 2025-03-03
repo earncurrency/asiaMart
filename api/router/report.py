@@ -13,14 +13,14 @@ router = APIRouter(
 )
 
 @router.get("/chart/")
-def chart(month_year: str = ''):
+def chart(year_month: str = ''):
     session = SessionLocal()
     try:
-        # แยกเดือนและปีจาก month_year
-        if month_year:
-            month, year = map(int, month_year.split('/'))
+        # แยกเดือนและปีจาก year_month
+        if year_month:
+            year, month = map(int, year_month.split('/'))
         else:
-            month, year = None, None
+            year, month = None, None
 
         # Query เพื่อ group by วัน เดือน และปี และคำนวณผลรวมของ total
         query = session.query(
@@ -32,7 +32,7 @@ def chart(month_year: str = ''):
             OrderSchema.status == 'success'
         )
 
-        # เพิ่มเงื่อนไขกรองตามเดือนและปีหาก month_year ถูกระบุ
+        # เพิ่มเงื่อนไขกรองตามเดือนและปีหาก year_month ถูกระบุ
         if month and year:
             query = query.filter(
                 extract('month', OrderSchema.order_date) == month,
@@ -51,7 +51,7 @@ def chart(month_year: str = ''):
 
         # แปลงผลลัพธ์ให้อยู่ในรูปแบบที่ต้องการ
         chart_data = [{
-            'day_month_year': f"{str(result.day).zfill(2)}/{str(result.month).zfill(2)}/{result.year}",
+            'day_month_year': f"{result.year}/{str(result.month).zfill(2)}/{str(result.day).zfill(2)}",
             'total_sum': result.total_sum
         } for result in results]
 

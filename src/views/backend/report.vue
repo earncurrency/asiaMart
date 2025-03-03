@@ -35,12 +35,20 @@
                   class="z-50 absolute right-0 mt-2 text-base list-none w-full bg-white divide-y divide-gray-100 rounded-lg shadow border border-gray-300"
                 >
                   <ul class="py-2">
-                    <li v-for="monthYear in monthYears">
+                    <li>
                       <a
                         href="#"
-                        @click="DropdownMonthYear(monthYear)"
+                        @click="DropdownMonthYear('')"
                         class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        >{{ monthYear }}</a
+                        >ทั้งหมด</a
+                      >
+                    </li>
+                    <li v-for="yearMonth in yearMonths">
+                      <a
+                        href="#"
+                        @click="DropdownMonthYear(yearMonth)"
+                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >{{ yearMonth }}</a
                       >
                     </li>
                   </ul>
@@ -51,9 +59,11 @@
 
           <!-- grid chart -->
           <div class="p-4 flex justify-start gap-4 items-center">
-            <p class="text-2xl font-semibold">กราฟแสดงยอดขาย {{ DropdownMonthYearsName }}</p>
+            <p class="text-2xl font-semibold">
+              กราฟแสดงยอดขาย {{ DropdownMonthYearsName }}
+            </p>
           </div>
-          <report_chart :monthYear="monthYear" />
+          <report_chart :yearMonth="yearMonth" />
 
           <!-- ตาราง -->
           <!-- <div class="p-4 flex justify-start gap-4 items-center mt-8">
@@ -129,8 +139,8 @@ export default {
       apiUrl: __API_URL__,
 
       DropdownMonthYearsName: "ทั้งหมด",
-      monthYears: [],
-      monthYear: "",
+      yearMonths: [],
+      yearMonth: "",
 
       DropdownStatusOpen: false,
       pageSizeOpen: false,
@@ -149,10 +159,10 @@ export default {
         .then((response) => {
           const data = response.data.rows;
 
-          this.monthYears = data.map((item) => item.month_year);
+          this.yearMonths = data.map((item) => item.month_year);
 
-          console.log("เดือนที่เลือก", this.monthYear);
-          console.log("getMonthYear", this.monthYears);
+          console.log("เดือนที่เลือก", this.yearMonth);
+          console.log("getMonthYear", this.yearMonths);
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error);
@@ -175,17 +185,17 @@ export default {
       }
     },
 
-    DropdownMonthYear(montYear) {
-      this.monthYear = montYear;
+    DropdownMonthYear(yearMonth) {
+      this.yearMonth = yearMonth;
       this.getMonthYear();
 
-      this.DropdownMonthYearsName = montYear;
-      if (montYear === "") {
-        this.DropdownCategoryName = "ทั้งหมด";
+      this.DropdownMonthYearsName = yearMonth;
+      if (yearMonth === "") {
+        this.DropdownMonthYearsName = "ทั้งหมด";
       }
 
       this.pageSizeOpen = false;
-      console.log(this.monthYear);
+      console.log(this.yearMonth);
     },
     togglePageSize(event) {
       // ป้องกันการคลิกบนปุ่มที่ทำให้ event ไปถึง listener ของ document

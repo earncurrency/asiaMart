@@ -26,7 +26,7 @@ export default {
     apexcharts: VueApexCharts,
   },
   props: {
-    monthYear: {
+    yearMonth: {
       required: false,
       default: "",
     },
@@ -55,19 +55,19 @@ export default {
     this.getDataChart();
   },
   watch: {
-    monthYear(newMonthYear) {
+    yearMonth(newMonthYear) {
       this.getDataChart();
     },
   },
   methods: {
     getDataChart() {
 
-      // if (!this.monthYear) return;
+      // if (!this.yearMonth) return;
 
       axios
         .get(`${this.apiUrl}report/chart/`, {
           params: {
-            month_year: this.monthYear,
+            year_month: this.yearMonth,
           },
         })
         .then((response) => {

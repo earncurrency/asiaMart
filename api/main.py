@@ -37,6 +37,7 @@ app.include_router(category.router)
 app.include_router(order.router)
 app.include_router(admin.router)
 app.include_router(dashboard.router)
+app.include_router(recommend.router)
 app.include_router(report.router)
 
 if __name__ == '__main__':

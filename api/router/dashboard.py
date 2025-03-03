@@ -33,7 +33,7 @@ def chart():
 
         # แปลงผลลัพธ์ให้อยู่ในรูปแบบที่ต้องการ
         chart_data = [{
-            'month_year': f"{str(result.month).zfill(2)}/{result.year}",
+            'month_year': f"{result.year}/{str(result.month).zfill(2)}",
             'total_sum': result.total_sum
         } for result in results]
 

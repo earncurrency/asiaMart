@@ -87,19 +87,20 @@ import axios from "axios";
           <i class="fa-solid fa-baht-sign"></i>
         </div>
       </div>
-      <div
-        class="flex justify-between items-center p-2 bg-gray-100 text-sm text-blue-500 cursor-pointer rounded-b-md"
-      >
-        <p>ดูทั้งหมด</p>
-        <i class="fa-solid fa-circle-arrow-right"></i>
-      </div>
+      <RouterLink to="/backend/report">
+        <div
+          class="flex justify-between items-center p-2 bg-gray-100 text-sm text-blue-500 cursor-pointer rounded-b-md"
+        >
+          <p>ดูทั้งหมด</p>
+          <i class="fa-solid fa-circle-arrow-right"></i>
+        </div>
+      </RouterLink>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-
   data() {
     return {
       apiUrl: __API_URL__,
@@ -108,14 +109,12 @@ export default {
       memberTotal: "",
       orderTotal: "",
       total_sales: "",
-
     };
   },
   mounted() {
     this.getTotal();
   },
   methods: {
-
     async getTotal() {
       await axios
         .get(`${this.apiUrl}dashboard/total/`)
@@ -125,14 +124,13 @@ export default {
 
           this.productTotal = data.product;
           this.memberTotal = data.member;
-          this.orderTotal= data.order;
+          this.orderTotal = data.order;
           this.total_sales = data.total_sales;
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error);
         });
     },
-
   },
 };
 </script>
