@@ -15,7 +15,13 @@
         >
           <div>
             <!-- รูปใหญ่ด้านบนที่จะแสดงภาพที่เลือก -->
-            <div class="lg:h-96 h-60 w-full cursor-pointer">
+            <div v-if="!selectedImage" class="lg:h-96 h-60 w-full cursor-pointer">
+            <img
+              class="h-full w-full object-contain rounded-md"
+              :src="`${imageUrl}/src/assets/image/system/product.png`"
+            />
+          </div>
+            <div  v-else class="lg:h-96 h-60 w-full cursor-pointer">
               <img
                 :src="selectedImage"
                 alt="Selected Food"
@@ -200,6 +206,7 @@ export default {
             this.productId / 100
           )}/${this.product.images[0].path}`;
         }
+        console.log("this.selectedImage",this.selectedImage);
       } catch (error) {
         console.error("Error fetching product:", error);
       }

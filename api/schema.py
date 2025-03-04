@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, TIMESTAMP ,Date
+from sqlalchemy import Column, Integer, String, Float, TIMESTAMP ,Date, Text
 from sqlalchemy.ext.declarative import declarative_base
 from database import engine
 
@@ -27,7 +27,7 @@ class ProductSchema(Base):
     price = Column(Float)
     status = Column(String(15))
     category_id = Column(Integer)
-    detail = Column(String(255))
+    detail = Column(Text)  
 
 #สร้าง โครงสร้างของตาราง tb_product_image
 class ProductImageSchema(Base):

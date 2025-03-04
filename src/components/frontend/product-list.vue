@@ -1,62 +1,13 @@
 <template>
-  <div class="lg:flex items-center justify-between font-medium p-4 lg:p-0">
-    <!-- ปุ่มนี้จะแสดงเมื่อจอใหญ่ -->
-    <div class="flex items-center max-w-xl lg:w-1/3">
-      <!-- <label for="voice-search" class="sr-only">Search</label> -->
-
-      <div class="relative w-full">
-        <div
-          class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none"
-        >
-          <i class="fa-solid fa-magnifying-glass"></i>
-        </div>
-        <input
-          type="text"
-          v-model="searchText"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full pl-10 pr-10 p-2.5 focus:border-gray-300"
-          placeholder="ค้นหา..."
-        />
-        <button
-          @click="searchBtn"
-          class="absolute inset-y-0 end-0 flex items-center ps-3 p-3 pointer text-white bg-gray-800 rounded-lg"
-        >
-          <i class="fa-solid fa-search"></i>
-        </button>
-      </div>
-    </div>
-
-    <!-- tabs Category-->
-    <ul
-      class="flex flex-wrap justify-center text-md font-medium text-center mt-4 lg:mt-0 text-gray-500 dark:text-gray-400"
-    >
-      <li v-for="(category, index) in categorys" :key="index" class="me-2">
-        <RouterLink
-          :to="`/category/${category.id}/${category.name}`"
-          @click="clickCategory()"
-        >
-          <a
-            href="#"
-            class="inline-block px-4 py-3 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white"
-            >{{ category.name }}</a
-          >
-        </RouterLink>
-
-        <!-- <a
-          @click="clickCategory(category.id)"
-          href="#"
-          class="inline-block px-4 py-3 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white"
-          >{{ category.name }}</a
-        > -->
-      </li>
-    </ul>
-  </div>
+  <!-- tabsCategory -->
+  <tabsCategory v-if="!isHomePage" @clickCategory="clickCategory"/>
 
   <hr class="my-2 text-gray-600" />
 
   <div
     v-if="products.length === 0"
     class="text-center mt-24 mb-8 text-xl text-gray-600"
-    >
+  >
     ไม่มีสินค้าในหมวดหมู่นี้เเสดงอยู่
   </div>
   <div
@@ -68,13 +19,22 @@
         <div
           class="bg-white rounded-lg shadow-lg lg:shadow-none lg:border lg:p-2"
         >
-          <div class="h-48 lg:h-72">
+          <div
+            v-if="product.images.length > 0 && product.images[0]"
+            class="h-48 lg:h-72"
+          >
             <img
               :src="`${imageUrl}/api/uploads/${Math.ceil(product.id / 100)}/${
                 product.images[0]
               }`"
               alt="Card 1"
               class="w-full h-full object-cover rounded-t-lg lg:rounded-lg p-1 cursor-pointer"
+            />
+          </div>
+          <div v-else class="h-48 lg:h-72">
+            <img
+              class="w-full h-full object-cover rounded-t-lg lg:rounded-lg p-1 cursor-pointer"
+              :src="`${imageUrl}/src/assets/image/system/product.png`"
             />
           </div>
           <div class="p-2 pt-4">
@@ -112,10 +72,12 @@
 <script>
 import { useRoute } from "vue-router";
 import axios from "axios";
+import tabsCategory from "@/components/frontend/tabs-category.vue";
 import pagination from "@/components/backend/paging.vue";
 
 export default {
   components: {
+    tabsCategory,
     pagination,
   },
   props: {
@@ -138,7 +100,6 @@ export default {
       apiUrl: __API_URL__,
       imageUrl: __IMAGE_URL__,
       products: [],
-      searchText: "",
       categorys: {
         id: "",
         name: "",
@@ -150,7 +111,15 @@ export default {
         status: "",
       },
       totalList: [],
+
+      category_id: this.categoryId === "0" ? "" : this.categoryId || "",
     };
+  },
+  computed: {
+    // เช็คว่าเป็นหน้า Home หรือไม่
+    isHomePage() {
+      return this.$route.name === "home";
+    },
   },
   mounted() {
     this.searchText = this.searchQuery || "";
@@ -160,7 +129,10 @@ export default {
   },
   watch: {
     categoryId(newCategoryId) {
-      this.getListProduct(newCategoryId);
+      // ตรวจสอบว่า newCategoryId เป็น "0" หรือไม่
+      this.category_id = newCategoryId === "0" ? "" : newCategoryId;
+      this.dataPaging.pageNumber = 1;
+      this.getListProduct();
     },
     searchQuery(newSearchText) {
       this.searchText = newSearchText;
@@ -172,7 +144,7 @@ export default {
 
         .get(`${this.apiUrl}products/cat/`, {
           params: {
-            category_id: this.categoryId,
+            category_id: this.category_id,
             limit: this.dataPaging.rows,
             page: this.dataPaging.pageNumber,
             q: this.searchText,
@@ -198,14 +170,6 @@ export default {
       console.log("pageNo", pageNo);
     },
 
-    searchBtn() {
-      if (this.searchText !== "") {
-        this.dataPaging.pageNumber = 1;
-        this.getListProduct();
-        this.$refs.paginationRef.resetPage();
-        this.$router.push(`/search/${this.searchText}`);
-      }
-    },
     xmark() {
       this.searchText = "";
       this.dataPaging.pageNumber = 1;
@@ -227,9 +191,10 @@ export default {
           console.error("There was an error fetching the data:", error); // แสดงข้อผิดพลาด
         });
     },
-    clickCategory() {
-      // this.$router.push(`/category/${categoryId}`);
+    clickCategory(catId) {
       this.dataPaging.pageNumber = 1;
+      this.category_id = catId;
+      this.getListProduct();
       this.$refs.paginationRef.resetPage();
     },
   },

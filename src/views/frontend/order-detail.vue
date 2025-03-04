@@ -123,35 +123,40 @@
                 <div
                   v-for="(product, index) in order.products"
                   :key="index"
-                  class="w-full h-auto rounded-md text-md cursor-pointer border bg-gray-50"
+                  class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer"
                 >
-                  <div class="flex gap-4 lg:gap-6 p-2 lg:p-4 rounded-md">
-                    <div class="h-20 w-48 rounded-md">
-                      <img
-                        :src="`${imageUrl}/api/uploads/${Math.ceil(
-                          product.id / 100
-                        )}/${product.images.path}`"
-                        alt="Product Image Preview"
-                        class="w-full h-full rounded-md object-cover ring-1 ring-gray-200 shadow-md"
-                      />
-                    </div>
+                  <!-- รูปภาพสินค้า -->
+                  <div
+                    class="flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden"
+                  >
+                    <img
+                      v-if="product.images.path"
+                      :src="`${imageUrl}/api/uploads/${Math.ceil(
+                        product.id / 100
+                      )}/${product.images.path}`"
+                      alt="Product Image Preview"
+                      class="w-full h-full object-cover"
+                    />
+                    <img
+                      v-else
+                      :src="`${imageUrl}/src/assets/image/system/product.png`"
+                      alt="Default Product Image"
+                      class="w-full h-full object-cover"
+                    />
+                  </div>
 
-                    <div class="w-full">
-                      <div class="flex justify-between">
-                        <p class="text-mb mb-1 lg:mb-2">
-                          {{ product.product_name }}
-                        </p>
-                        <p
-                          class="font-semibold text-mb text-orange-500 mb-2 lg:mb-3"
-                        >
-                          {{ product.product_price }} บาท
-                        </p>
-                      </div>
-                      <div class="flex justify-end">
-                        <p class="text-mb mb-2 lg:mb-3">
-                          จำนวน X{{ product.qty }}
-                        </p>
-                      </div>
+                  <!-- รายละเอียดสินค้า -->
+                  <div class="ml-4 flex-1">
+                    <p
+                      class="text-lg font-medium text-gray-800 overflow-hidden text-ellipsis whitespace-nowrap w-36 lg:w-full"
+                    >
+                      {{ product.product_name }}
+                    </p>
+                    <div class="flex justify-between">
+                      <p class="text-lg font-semibold text-orange-500">
+                        {{ product.product_price }} บาท
+                      </p>
+                      <p class="text-gray-600">จำนวน X{{ product.qty }}</p>
                     </div>
                   </div>
                 </div>

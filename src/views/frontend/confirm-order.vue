@@ -145,55 +145,69 @@
                 <!--รายการสินค้า-->
                 <div class="mb-8">
                   <p class="mb-2 text-xl font-semibold">รายการสินค้า</p>
-                  <div
-                    class="bg-gray-50 shadow-md p-4 rounded-md grid grid-rows-auto gap-4"
-                  >
+                  <div class="bg-gray-50 shadow-lg p-6 rounded-lg space-y-6">
                     <!-- สินค้า -->
 
+                    <!-- แสดงข้อความเมื่อไม่มีสินค้าในตระกร้า -->
                     <div
                       v-if="carts.length === 0"
-                      class="w-full h-auto rounded-md text-md cursor-pointer border bg-gray-50"
+                      class="flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-200 rounded-lg"
                     >
-                      <div class="flex gap-4 lg:gap-6 p-2 lg:p-4 rounded-md">
-                        <div class="w-full">
-                          <div class="flex items-center justify-center">
-                            <h1 class="text-center">ไม่มีสินค้าในตระกร้า</h1>
-                          </div>
-                        </div>
-                      </div>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-12 w-12 text-gray-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                        />
+                      </svg>
+                      <p class="mt-4 text-gray-500 text-lg">
+                        ไม่มีสินค้าในตระกร้า
+                      </p>
                     </div>
 
-                    <div v-for="(item, index) in carts" :key="index">
+                    <!-- แสดงรายการสินค้าในตระกร้า -->
+                    <div
+                      v-for="(item, index) in carts"
+                      :key="index"
+                      class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer"
+                    >
+                      <!-- รูปภาพสินค้า -->
                       <div
-                        class="w-full h-auto rounded-md text-md cursor-pointer border bg-gray-50"
+                        class="flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden"
                       >
-                        <div class="flex gap-4 lg:gap-6 p-2 lg:p-4 rounded-md">
-                          <div class="h-20 w-48 object-cover rounded-md">
-                            <img
-                              :src="`${imageUrl}/api/uploads/${Math.ceil(
-                                item.id / 100
-                              )}/${item.image}`"
-                              alt=""
-                              class="w-full h-full object-cover rounded-md"
-                            />
-                          </div>
-                          <div class="w-full">
-                            <div class="flex justify-between">
-                              <p class="text-mb mb-1 lg:mb-2">
-                                {{ item.name }}
-                              </p>
-                              <p
-                                class="font-semibold text-mb text-orange-500 mb-2 lg:mb-3"
-                              >
-                                {{ item.price }} บาท
-                              </p>
-                            </div>
-                            <div class="flex justify-end">
-                              <p class="text-mb mb-2 lg:mb-3">
-                                จำนวน X{{ item.qty }}
-                              </p>
-                            </div>
-                          </div>
+                        <img
+                          v-if="item.image"
+                          :src="`${imageUrl}/api/uploads/${Math.ceil(
+                            item.id / 100
+                          )}/${item.image}`"
+                          alt="สินค้า"
+                          class="w-full h-full object-cover"
+                        />
+                        <img
+                          v-else
+                          :src="`${imageUrl}/src/assets/image/system/product.png`"
+                          alt="สินค้าเริ่มต้น"
+                          class="w-full h-full object-cover"
+                        />
+                      </div>
+
+                      <!-- รายละเอียดสินค้า -->
+                      <div class="ml-4 flex-1">
+                        <p class="text-lg font-medium text-gray-800 overflow-hidden text-ellipsis whitespace-nowrap w-36 lg:w-full">
+                          {{ item.name }}
+                        </p>
+                        <div class="flex items-center justify-between mt-2">
+                          <p class="text-lg font-semibold text-orange-500">
+                            {{ item.price }} บาท
+                          </p>
+                          <p class="text-gray-600">จำนวน X{{ item.qty }}</p>
                         </div>
                       </div>
                     </div>

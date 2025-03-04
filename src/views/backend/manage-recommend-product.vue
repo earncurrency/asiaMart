@@ -1076,7 +1076,6 @@ export default {
           console.error("There was an error fetching the data:", error);
         });
     },
-
     async btnAdd() {
       // ตรวจสอบความครบถ้วนของข้อมูล
       if (!this.product.id) {
@@ -1111,29 +1110,27 @@ export default {
             dataRecommend
           );
 
-          if (response.status === 200) {
+          if (response.data.success) {
             this.$refs.modal.showAlertModal({
               swlIcon: "success",
               swlTitle: "สำเร็จ",
               swlText: response.data.message,
             });
-          }
-        } catch (error) {
-          // หากเกิดข้อผิดพลาดในการส่งข้อมูล
-          if (error.response && error.response.status === 400) {
+          } else {
             // แสดงข้อความแจ้งเตือนหากมีสินค้านี้อยู่แล้ว
             this.$refs.modal.showModal({
               swlIcon: "info",
               swlTitle: "เเจ้งเตือน",
-              swlText: error.response.data.detail,
-            });
-          } else {
-            this.$refs.modal.showAlertModal({
-              swlIcon: "error",
-              swlTitle: "เกิดข้อผิดพลาด",
-              swlText: error.message,
+              swlText: response.data.message,
             });
           }
+        } catch (error) {
+          // หากเกิดข้อผิดพลาดอื่นๆ
+          this.$refs.modal.showAlertModal({
+            swlIcon: "error",
+            swlTitle: "เกิดข้อผิดพลาด",
+            swlText: error.message,
+          });
         }
       }
     },

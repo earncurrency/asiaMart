@@ -746,7 +746,7 @@ export default {
       searchText: "",
       products: [],
       productId: "",
-      productStatus:"",
+      productStatus: "",
       product: {
         id: "",
         code: "",
@@ -827,7 +827,7 @@ export default {
       this.dataPaging.pageNumber = 1;
       this.getListProduct();
     },
-    
+
     //เเสดงข้อมูลสินค้าบนตาราง
     async getListProduct() {
       await axios
@@ -1184,7 +1184,7 @@ export default {
       }
       this.DropdownStatusOpen = false;
       this.$refs.paginationRef.resetPage();
-      console.log("DropdownStatus",status , name)
+      console.log("DropdownStatus", status, name);
     },
     clickDropdownStatus(event) {
       // ป้องกันการคลิกบนปุ่มที่ทำให้ event ไปถึง listener ของ document
@@ -1202,13 +1202,14 @@ export default {
     ///// {{ DropdownCategory }} /////
     DropdownCategory(id, name) {
       this.categoryId = id;
+      this.dataPaging.pageNumber = 1;
       this.getListProduct();
       this.DropdownCategoryName = name;
 
       if (id === "" || name === "") {
         this.DropdownCategoryName = "ทั้งหมด";
       }
-
+      this.$refs.paginationRef.resetPage();
       this.DropdownCategoryOpen = false;
     },
     clickDropdownCategory(event) {

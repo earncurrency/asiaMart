@@ -41,23 +41,34 @@
                     >
                       <div class="flex gap-4 lg:gap-6 p-2 lg:p-4 rounded-md">
                         <RouterLink :to="`/product-detail/${item.id}`">
-                          <div class="h-28 w-28 lg:h-32 lg:w-48">
+                          <div
+                            v-if="item.image"
+                            class="h-28 w-28 lg:h-32 lg:w-48"
+                          >
                             <img
                               :src="`${imageUrl}/api/uploads/${Math.ceil(
                                 item.id / 100
                               )}/${item.image}`"
                               alt=""
-                              class="w-full h-full object-cover rounded-md"
+                              class="w-full h-full object-contain rounded-md"
+                            />
+                          </div>
+                          <div v-else class="h-28 w-28 lg:h-32 lg:w-48">
+                            <img
+                              class="w-full h-full object-contain rounded-md"
+                              :src="`${imageUrl}/src/assets/image/system/product.png`"
                             />
                           </div>
                         </RouterLink>
 
                         <div class="flex flex-col w-full">
                           <div
-                            class="flex justify-between items-center mb-1 lg:mb-2"
+                            class="flex justify-between items-center mb-1 lg:mb-2 w-full"
                           >
                             <RouterLink :to="`/product-detail/${item.id}`">
-                              <p class="text-mb cursor-pointer">
+                              <p
+                                class="text-mb cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap w-36 lg:w-full"
+                              >
                                 {{ item.name }}
                               </p>
                             </RouterLink>

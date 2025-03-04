@@ -65,7 +65,7 @@ export default {
       activeClass:
         "flex items-center justify-center px-2 lg:px-3 h-8 leading-tight text-gray-700 bg-gray-300 border border-gray-300 hover:bg-gray-100 hover:text-gray-700 transition",
       currentPage: 1,
-      firstRowNumber: 1,
+      firstRowNumber: "",
       lastRowNumber: null,
     };
   },
@@ -78,11 +78,8 @@ export default {
       this.changeShowRowNumber();
     },
     totalList(newTotalList) {
-      if (newTotalList === 0) {
-        this.firstRowNumber = 0;
-      } else {
-        this.firstRowNumber = 1;
-      }
+      this.currentPage = 1;
+      this.firstRowNumber = newTotalList === 0 ? 0 : 1;
     },
   },
   computed: {
@@ -143,11 +140,6 @@ export default {
     // ฟังก์ชั่นที่ทำงานเมื่อผู้ใช้คลิกที่หมายเลขหน้า
     resetPage() {
       this.currentPage = 1;
-      if ((this.totalList = 0)) {
-        this.firstRowNumber = 0;
-      } else {
-        this.firstRowNumber = 1;
-      }
     },
     clickPage(pageNo) {
       if (pageNo === "..." || pageNo < 1 || pageNo > this.totalPagination)
@@ -158,10 +150,6 @@ export default {
       this.changeShowRowNumber();
     },
     changeShowRowNumber() {
-      if ((this.totalList = 0)) {
-        this.firstRowNumber = 0;
-      }
-
       if (this.currentPage > this.totalPagination) {
         this.currentPage = this.totalPagination;
       }

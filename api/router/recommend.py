@@ -159,15 +159,14 @@ def update_recommend(recommend_id: int, recommend: RecommendModel):
 async def add_reccomend(recommend: RecommendModel):
     session = SessionLocal()
     try:
-
         # ตรวจสอบว่า product_id มีอยู่แล้วหรือไม่
         existing_recommend = session.query(RecommendSchema).filter(RecommendSchema.product_id == recommend.product_id).first()
 
         if existing_recommend:
-            raise HTTPException(
-                status_code=400,
-                detail="สินค้านี้มีกำลังถูกเเนะนำอยู่"
-            )
+            return {
+                "success": False,
+                "message": "สินค้านี้มีกำลังถูกเเนะนำอยู่",
+            }
         
         new_recommend = RecommendSchema(
             product_id = recommend.product_id,
