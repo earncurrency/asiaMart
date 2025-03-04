@@ -152,7 +152,7 @@
                     <div
                       v-if="carts.length === 0"
                       class="flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-200 rounded-lg"
-                    >
+                      >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         class="h-12 w-12 text-gray-400"

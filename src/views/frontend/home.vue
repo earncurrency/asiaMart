@@ -31,7 +31,7 @@
 
         <productList />
 
-        <div class="flex justify-center mt-8">
+        <div class="flex justify-center mt-8 mb-8">
           <RouterLink :to="`/category/0/ทั้งหมด`">
             <button
               class="p-2 pr-4 pl-4 rounded-lg bg-gray-800 text-white mt-6 hover:bg-gray-600 transition"

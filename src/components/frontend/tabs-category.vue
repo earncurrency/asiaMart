@@ -30,7 +30,7 @@ import axios from "axios";
         <RouterLink :to="`/category/0/ทั้งหมด`" @click="clickCate('')">
           <a
             href="#"
-            class="inline-block px-4 py-3 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white"
+            class="inline-block px-4 py-2 lg:py-3 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white"
             >ทั้งหมด</a
           >
         </RouterLink>
@@ -41,7 +41,7 @@ import axios from "axios";
           >
             <a
               href="#"
-              class="inline-block px-4 py-3 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white"
+              class="inline-block px-4 py-2 lg:py-3 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white"
               >{{ category.name }}</a
             >
           </RouterLink>
