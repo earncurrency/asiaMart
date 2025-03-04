@@ -60,7 +60,7 @@
   </div>
   <!-- <div v-if="products.length === 0" class=""></div> -->
   <div class="">
-    <pagination
+    <pagination 
       ref="paginationRef"
       :pageSize="dataPaging.rows"
       :totalList="totalList"
@@ -106,7 +106,7 @@ export default {
       },
       dataPaging: {
         pageNumber: 1,
-        rows: 4,
+        rows: 8,
         totalPage: 0,
         status: "",
       },

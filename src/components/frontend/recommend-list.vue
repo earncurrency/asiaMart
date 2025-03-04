@@ -18,7 +18,7 @@
                 :src="`${imageUrl}/api/uploads/${Math.ceil(product.id / 100)}/${
                   product.images[0]
                 }`"
-                class="w-full h-48 p-1 object-contain"
+                class="w-full h-48 lg:h-72 p-1 object-contain"
               />
               <div class="p-4">
                 <h3
