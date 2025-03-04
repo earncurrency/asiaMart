@@ -1,6 +1,6 @@
 <template>
   <!-- tabsCategory -->
-  <tabsCategory v-if="!isHomePage" @clickCategory="clickCategory"/>
+  <tabsCategory v-if="!isHomePage" @clickCategory="clickCategory" />
 
   <hr class="my-2 text-gray-600" />
 
@@ -60,7 +60,8 @@
   </div>
   <!-- <div v-if="products.length === 0" class=""></div> -->
   <div class="">
-    <pagination 
+    <pagination
+      v-if="!isHomePage"
       ref="paginationRef"
       :pageSize="dataPaging.rows"
       :totalList="totalList"
