@@ -213,7 +213,8 @@
                   <tr>
                     <th scope="col" class="px-6 py-4 whitespace-nowrap">รูป</th>
                     <th scope="col" class="px-6 py-4 whitespace-nowrap">
-                      รหัส
+                      <!-- รหัส -->
+                       Barcode
                     </th>
                     <th scope="col" class="px-6 py-4 whitespace-nowrap">
                       ชื่อ
@@ -322,7 +323,7 @@
                     'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
                       !product.code,
                   }"
-                  placeholder="รหัสสินค้า"
+                  placeholder="Barcode"
                   required
                 />
               </div>
@@ -956,9 +957,9 @@ export default {
       } else if (!this.product.status) {
         this.isFocus = true;
         this.$refs.inputStatusProduct.focus();
-      } else if (!this.product.detail) {
-        this.isFocus = true;
-        this.$refs.inputDetailProduct.focus();
+      // } else if (!this.product.detail) {
+      //   this.isFocus = true;
+      //   this.$refs.inputDetailProduct.focus();
       } else {
         try {
           // ข้อมูลที่ต้องการส่งไปยัง API สำหรับผลิตภัณฑ์
@@ -1013,9 +1014,9 @@ export default {
       } else if (!this.product.status) {
         this.isFocus = true;
         this.$refs.inputStatusProduct.focus();
-      } else if (!this.product.detail) {
-        this.isFocus = true;
-        this.$refs.inputDetailProduct.focus();
+      // } else if (!this.product.detail) {
+      //   this.isFocus = true;
+      //   this.$refs.inputDetailProduct.focus();
       } else {
         try {
           const dataProduct = {
