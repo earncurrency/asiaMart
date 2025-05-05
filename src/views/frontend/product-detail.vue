@@ -206,7 +206,7 @@ export default {
             this.productId / 100
           )}/${this.product.images[0].path}`;
         }
-        console.log("this.selectedImage",this.selectedImage);
+        //console.log("this.selectedImage",this.selectedImage);
       } catch (error) {
         console.error("Error fetching product:", error);
       }
@@ -238,9 +238,9 @@ export default {
         existingItem.qty += parseFloat(this.qty);
       } else {
         // หากยังไม่มีให้เพิ่มรายการสินค้าใหม่
-        console.log("=========================");
-        console.log(this.product);
-        console.log("=========================");
+        // console.log("=========================");
+        // console.log(this.product);
+        // console.log("=========================");
 
         carts.push({
           member_id: this.member.id,
@@ -267,8 +267,8 @@ export default {
         });
 
       // แสดงข้อมูลใน localStorage ที่บันทึกอยู่ในคอนโซล
-      console.log("ตะกร้าสินค้า:", carts);
-      console.log("รายการ:", carts.length);
+      // console.log("ตะกร้าสินค้า:", carts);
+      // console.log("รายการ:", carts.length);
     },
     decrementQuantity() {
       if (this.qty > 1) {

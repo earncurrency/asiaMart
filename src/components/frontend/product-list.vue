@@ -159,7 +159,7 @@ export default {
           this.totalList = data.total;
 
           // console.log("totalList", this.totalList);
-          console.log(this.products);
+          // console.log(this.products);
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error);
@@ -170,7 +170,7 @@ export default {
 
       this.getListProduct();
 
-      console.log("pageNo", pageNo);
+      // console.log("pageNo", pageNo);
     },
 
     xmark() {
@@ -188,7 +188,7 @@ export default {
         .then((response) => {
           const data = response.data;
           this.categorys = data.rows;
-          console.log("categorys", this.categorys);
+          // console.log("categorys", this.categorys);
         })
         .catch((error) => {
           console.error("There was an error fetching the data:", error); // แสดงข้อผิดพลาด
