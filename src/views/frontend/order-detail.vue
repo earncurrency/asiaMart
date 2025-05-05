@@ -78,6 +78,17 @@
               >
                 <div class="mb-5">
                   <label class="block text-md font-medium text-gray-900 mb-3"
+                    >รหัสพนักงาน</label
+                  >
+                  <input
+                    v-model="order.member_code"
+                    type="text"
+                    class="bg-gray-50 border border-gray-300 text-orange-500 text-md rounded-lg focus:border-gray-300 block w-full p-2"
+                    disabled
+                  />
+                </div>
+                <div class="mb-5">
+                  <label class="block text-md font-medium text-gray-900 mb-3"
                     >ชื่อผู้รับสินค้า</label
                   >
                   <input
@@ -210,6 +221,7 @@ export default {
         code: "",
         order_date: "",
         member_id: "",
+        member_code: "",
         member_name: "",
         member_phone: "",
         address: "",

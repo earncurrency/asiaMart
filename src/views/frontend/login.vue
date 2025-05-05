@@ -87,7 +87,7 @@ export default {
                 name: this.member.name,
                 status: "active",
               };
-
+              //พิ่มข้อมูลสมาชิก
               axios.post(`${this.apiUrl}members/`, member);
      
             } else {

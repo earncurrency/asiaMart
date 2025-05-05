@@ -353,6 +353,20 @@
                 <div class="lg:w-1/2 w-full">
                   <input
                     type="text"
+                    v-model="order.member_code"
+                    ref="inputMemberOrder"
+                    :class="{
+                      'block text-sm text-gray-900 border border-gray-300 rounded-lg w-full bg-gray-100 h-full p-2.5 focus:border-blue-300 focus:ring-2 focus:ring-blue-300': true,
+                      'focus:border-blue-300 focus:ring-2 focus:ring-blue-300':
+                        !order.member_code,
+                    }"
+                    placeholder="รหัสพนักงานผู้รับ"
+                    disabled
+                  />
+                </div>
+                <div class="lg:w-1/2 w-full">
+                  <input
+                    type="text"
                     v-model="order.member_name"
                     ref="inputMemberOrder"
                     :class="{
@@ -475,7 +489,7 @@
 
             <hr class="my-2 text-gray-600" />
 
-            <div class="w-full mb-4 pt-1 mt-4">
+            <!-- <div class="w-full mb-4 pt-1 mt-4">
               <textarea
                 type="text"
                 v-model="order.info"
@@ -488,7 +502,7 @@
                 }"
                 placeholder="หมายเหตุ"
               />
-            </div>
+            </div> -->
 
             <div class="flex gap-2 justify-center mt-4 md:mt-4">
               <button
@@ -542,12 +556,13 @@ export default {
       imageUrl: __IMAGE_URL__,
       searchText: "",
       orders: [],
-      orderStatus:"",
+      orderStatus: "",
       order: {
         id: "",
         code: "",
         order_date: "",
         member_id: "",
+        member_code: "",
         member_name: "",
         member_phone: "",
         address: "",
@@ -666,6 +681,7 @@ export default {
             this.order.code = order.code;
             this.order.order_date = order.order_date;
             this.order.status = order.status;
+            this.order.member_code = order.member_code;
             this.order.member_name = order.member_name;
             this.order.member_phone = order.member_phone;
             this.order.address = order.address;

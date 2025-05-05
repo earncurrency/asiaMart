@@ -57,6 +57,7 @@ class OrderSchema(Base):
     code = Column(String(20))
     order_date = Column(TIMESTAMP)
     member_id = Column(Integer)
+    member_code = Column(String(15))
     member_name = Column(String(30))
     member_phone = Column(String(15))
     address = Column(String(25))

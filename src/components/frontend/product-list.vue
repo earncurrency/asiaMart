@@ -137,6 +137,8 @@ export default {
     },
     searchQuery(newSearchText) {
       this.searchText = newSearchText;
+      this.getListProduct();
+
     },
   },
   methods: {

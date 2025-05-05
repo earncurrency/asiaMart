@@ -28,6 +28,19 @@
                     <div class="mb-5">
                       <label
                         class="block text-md font-medium text-gray-900 mb-3"
+                        >รหัสพนักงาน</label
+                      >
+                      <input
+                        v-model="member.code"
+                        type="text"
+                        class="bg-gray-50 border border-gray-300 text-orange-500 text-md rounded-lg focus:border-gray-300 block w-full p-2"
+                        value=""
+                        disabled
+                      />
+                    </div>
+                    <div class="mb-5">
+                      <label
+                        class="block text-md font-medium text-gray-900 mb-3"
                         >ชื่อผู้รับสินค้า</label
                       >
                       <input
@@ -38,6 +51,7 @@
                         disabled
                       />
                     </div>
+
                     <div class="mb-5">
                       <div class="flex justify-between mb-2 items-center">
                         <label class="block text-md font-medium text-gray-900"
@@ -152,7 +166,7 @@
                     <div
                       v-if="carts.length === 0"
                       class="flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-200 rounded-lg"
-                      >
+                    >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         class="h-12 w-12 text-gray-400"
@@ -200,7 +214,9 @@
 
                       <!-- รายละเอียดสินค้า -->
                       <div class="ml-4 flex-1">
-                        <p class="text-lg font-medium text-gray-800 overflow-hidden text-ellipsis whitespace-nowrap w-36 lg:w-full">
+                        <p
+                          class="text-lg font-medium text-gray-800 overflow-hidden text-ellipsis whitespace-nowrap w-36 lg:w-full"
+                        >
                           {{ item.name }}
                         </p>
                         <div class="flex items-center justify-between mt-2">
@@ -460,6 +476,7 @@ export default {
         const order = {
           code: this.order.code,
           member_id: this.member.id,
+          member_code: this.member.code,
           member_name: this.member.name,
           member_phone: this.member.phone,
           address: this.deliveryOption,
